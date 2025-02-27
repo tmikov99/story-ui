@@ -5,6 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
+import SideMenu from './components/SideMenu';
+import MainGrid from './components/MainGrid';
+import Page from './components/Page';
 
 
 
@@ -14,6 +17,7 @@ function App() {
     <AppTheme>
       <CssBaseline enableColorScheme />
       <Box sx={{ display: 'flex' }}>
+        <SideMenu />
         <Box 
           component="main"
           sx={(theme) => ({
@@ -31,7 +35,8 @@ function App() {
             }}
           >
             <Header />
-            <TextEditor></TextEditor>
+            {/* <MainGrid /> */}
+            <Page />
           </Stack>
         </Box>
       </Box>
