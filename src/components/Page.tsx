@@ -20,12 +20,12 @@ export default function MainGrid() {
         <Paper 
             elevation={3}
             sx={{
-                paddingLeft: 16, 
-                paddingRight: 16, 
+                paddingLeft: {xs: 4, md: 8, lg: 12, xl: 16}, 
+                paddingRight: {xs: 4, md: 8, lg: 12, xl: 16},
                 paddingTop: 8, 
                 paddingBottom: 8, 
-                marginLeft: 16, 
-                marginRight: 16,
+                marginLeft: {xs: 2, sm: 4, md: 8, lg: 12, xl: 16},
+                marginRight: {xs: 2, sm: 4, md: 8, lg: 12, xl: 16}, 
                 position: "relative",
             }}
         >

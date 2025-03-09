@@ -17,14 +17,14 @@ import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
 const mainListItems1 = [
-  { text: 'Home', icon: <AutoStoriesRoundedIcon /> },
-  { text: 'Trending', icon: <AutoStoriesRoundedIcon /> },
+  { text: 'Home', icon: <AutoStoriesRoundedIcon />, path: '/' },
+  { text: 'Trending', icon: <AutoStoriesRoundedIcon />, path: '/page' },
 ];
 const mainListItems2 = [
-  { text: 'History', icon: <AutoStoriesRoundedIcon /> },
-  { text: 'Saved stories', icon: <LanRoundedIcon /> },
-  { text: 'Read later', icon: <AnalyticsRoundedIcon /> },
-  { text: 'Liked stories', icon: <AutoStoriesRoundedIcon /> },
+  { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '#history'},
+  { text: 'Saved stories', icon: <LanRoundedIcon />, path: '#saved' },
+  { text: 'Read later', icon: <AnalyticsRoundedIcon />, path: '#later' },
+  { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '#liked' },
 ];
 
 const secondaryListItems = [
@@ -39,7 +39,7 @@ export default function MenuContent() {
       <List dense>
         {mainListItems1.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={index === 0}>
+            <ListItemButton selected={index === 0} component="a" href={item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
@@ -50,7 +50,7 @@ export default function MenuContent() {
       <List dense>
         {mainListItems2.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={false}>
+            <ListItemButton selected={false} component="a" href={item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
