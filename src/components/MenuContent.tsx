@@ -15,6 +15,8 @@ import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import LanRoundedIcon from '@mui/icons-material/LanRounded';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import { useLocation, Link } from 'react-router-dom';
+
 
 const mainListItems1 = [
   { text: 'Home', icon: <AutoStoriesRoundedIcon />, path: '/' },
@@ -33,13 +35,15 @@ const secondaryListItems = [
 ];
 
 export default function MenuContent() {
+  const location = useLocation();
+  const { pathname, hash } = location;
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <Box>
       <List dense>
         {mainListItems1.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={index === 0} component="a" href={item.path}>
+            <ListItemButton selected={pathname == item.path} component={Link} to={item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
@@ -50,7 +54,7 @@ export default function MenuContent() {
       <List dense>
         {mainListItems2.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={false} component="a" href={item.path}>
+            <ListItemButton selected={hash == item.path} component={Link} to={item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
