@@ -37,6 +37,52 @@ const data: StatCardProps[] = [
       520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
     ],
   },
+  {
+    title: 'Event count',
+    value: '200k',
+    interval: 'Last 30 days',
+    trend: 'neutral',
+    data: [
+      500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
+      520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
+    ],
+  },  {
+    title: 'Event count',
+    value: '200k',
+    interval: 'Last 30 days',
+    trend: 'neutral',
+    data: [
+      500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
+      520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
+    ],
+  },  {
+    title: 'Event count',
+    value: '200k',
+    interval: 'Last 30 days',
+    trend: 'neutral',
+    data: [
+      500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
+      520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
+    ],
+  },  {
+    title: 'Event count',
+    value: '200k',
+    interval: 'Last 30 days',
+    trend: 'neutral',
+    data: [
+      500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
+      520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
+    ],
+  },  {
+    title: 'Event count',
+    value: '200k',
+    interval: 'Last 30 days',
+    trend: 'neutral',
+    data: [
+      500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
+      520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
+    ],
+  },
 ];
 
 export default function MainGrid() {
@@ -69,19 +115,6 @@ export default function MainGrid() {
             {/* </Box> */}
           </Grid>
         ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <Box>
-            <HighlightedCard />
-            <Box sx={{p: 1}}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-                        Test User
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                        test@email.com
-                    </Typography>
-              </Box>
-            </Box>
-        </Grid>
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Readng now

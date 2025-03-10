@@ -9,6 +9,7 @@ import SideMenu from './components/SideMenu';
 import MainGrid from './components/MainGrid';
 import Page from './components/Page';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PageCreateOverview from './components/PageCreateOverview';
 
 
 
@@ -40,6 +41,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<MainGrid />}/>
                 <Route path="/page" element={<Page />}/>
+                <Route path="/create" element={<PageCreateOverview />}/>
               </Routes>    
             </Stack>
           </Box>

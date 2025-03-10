@@ -23,7 +23,7 @@ const mainListItems1 = [
   { text: 'Trending', icon: <AutoStoriesRoundedIcon />, path: '/page' },
 ];
 const mainListItems2 = [
-  { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '#history'},
+  { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '/create'},
   { text: 'Saved stories', icon: <LanRoundedIcon />, path: '#saved' },
   { text: 'Read later', icon: <AnalyticsRoundedIcon />, path: '#later' },
   { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '#liked' },

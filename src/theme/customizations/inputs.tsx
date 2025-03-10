@@ -6,7 +6,7 @@ import { toggleButtonClasses } from '@mui/material/ToggleButton';
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
-import { gray, brand } from '../themePrimitives';
+import { gray, brand, red } from '../themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const inputsCustomizations: Components<Theme> = {
@@ -216,6 +216,28 @@ export const inputsCustomizations: Components<Theme> = {
               }),
             },
           },
+          {
+            props: {
+              color: "info",
+            },
+            style: {
+              color: brand[300],
+              ...theme.applyStyles('dark', {
+                color: brand[200],
+              }),
+            }
+          },
+          {
+            props: {
+              color: "error",
+            },
+            style: {
+              color: red[300],
+              ...theme.applyStyles('dark', {
+                color: red[200],
+              }),
+            }
+          }
         ],
       }),
     },
