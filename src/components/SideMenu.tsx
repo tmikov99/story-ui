@@ -69,9 +69,11 @@ export default function SideMenu() {
         <Avatar
           sizes="small"
           alt="Test User"
-          src="src/assets/book-white.svg"
+          // src="src/assets/book-white.svg" //TODO add photo
           sx={{ width: 36, height: 36 }}
-        />
+        >
+          T
+        </Avatar>
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
             Test User
