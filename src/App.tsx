@@ -1,4 +1,3 @@
-import TextEditor from './textEditor/TextEditor';
 import Header from './components/Header';
 import AppTheme from './theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,6 +9,8 @@ import MainGrid from './components/MainGrid';
 import Page from './components/Page';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PageCreateOverview from './components/PageCreateOverview';
+import PageCreate from './components/PageCreate';
+import PageCreateLinks from './components/PageCreateLinks';
 
 
 
@@ -42,6 +43,8 @@ function App() {
                 <Route path="/" element={<MainGrid />}/>
                 <Route path="/page" element={<Page />}/>
                 <Route path="/create" element={<PageCreateOverview />}/>
+                <Route path="/createPage" element={<PageCreate />}/>
+                <Route path="createLinks" element={<PageCreateLinks />}/>
               </Routes>    
             </Stack>
           </Box>

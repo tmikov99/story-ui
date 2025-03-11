@@ -438,6 +438,14 @@ export const inputsCustomizations: Components<Theme> = {
               height: '2.5rem',
             },
           },
+          {
+            props: {
+              multiline: true,
+            },
+            style: {
+              height: 'auto',
+            }
+          }
         ],
       }),
       notchedOutline: {

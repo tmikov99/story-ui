@@ -14,7 +14,7 @@ testList.push(<br/>)
 testList.push(<Link href="#">You decide to make Decision B. Turn to page 253</Link>)
 
 
-export default function MainGrid() {
+export default function Page() {
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
         <Paper 
