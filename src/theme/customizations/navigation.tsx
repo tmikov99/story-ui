@@ -151,6 +151,7 @@ export const navigationCustomizations: Components<Theme> = {
     styleOverrides: {
       paper: ({ theme }) => ({
         backgroundColor: theme.palette.background.default,
+        border: 'none',
       }),
     },
   },
@@ -278,7 +279,9 @@ export const navigationCustomizations: Components<Theme> = {
   },
   MuiToolbar: {
     styleOverrides: {
-      regular: () => ({
+      regular: ({ theme }) => ({
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.paper,
         "@media (min-width: 600px)": {
             minHeight: "56px",
           },

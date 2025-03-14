@@ -42,7 +42,6 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
   borderRadius: theme.shape.borderRadius,
   border: `1px solid ${theme.palette.divider}`,
   transition: 'border 120ms ease-in',
@@ -141,7 +140,7 @@ export default function AppHeader() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        <IconButton size="large" aria-label="show 4 new mails">
           <Badge badgeContent={4} color="error">
             <MailIcon />
           </Badge>
@@ -152,7 +151,6 @@ export default function AppHeader() {
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
-          color="inherit"
         >
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
@@ -166,7 +164,6 @@ export default function AppHeader() {
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
-          color="inherit"
         >
           <AccountCircle />
         </IconButton>
@@ -177,12 +174,11 @@ export default function AppHeader() {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar position="fixed" elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <IconButton
             size="large"
             edge="start"
-            color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
@@ -208,7 +204,7 @@ export default function AppHeader() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+            <IconButton size="large" aria-label="show 4 new mails">
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
@@ -216,7 +212,6 @@ export default function AppHeader() {
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
-              color="inherit"
             >
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
@@ -229,7 +224,6 @@ export default function AppHeader() {
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
-              color="inherit"
               sx={{padding: 0, ml: 1}}
             >
               <Avatar>T</Avatar>
@@ -242,7 +236,6 @@ export default function AppHeader() {
               aria-controls={mobileMenuId}
               aria-haspopup="true"
               onClick={handleMobileMenuOpen}
-              color="inherit"
             >
               <MoreIcon />
             </IconButton>
