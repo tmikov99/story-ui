@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
+import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -15,14 +15,13 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import Avatar from '@mui/material/Avatar';
+import { brand, gray } from '../theme/themePrimitives';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
+  backgroundColor: theme.palette.background.default,
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: '100%',
@@ -44,16 +43,34 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
+  borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${theme.palette.divider}`,
+  transition: 'border 120ms ease-in',
+  '&:hover': {
+    borderColor: gray[400],
+  },
+  [`&.${inputBaseClasses.focused}`]: {
+    outline: `3px solid ${alpha(brand[500], 0.5)}`,
+    borderColor: brand[400],
+  },
+  ...theme.applyStyles('dark', {
+    '&:hover': {
+      borderColor: gray[500],
+    },
+   }),
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('xs')]: {
-        width: '30ch',
-    },    
+    width: '100%',  
+    [theme.breakpoints.up('sm')]: {
+        width: '25ch',
+    },
     [theme.breakpoints.up('md')]: {
+        width: '45ch',
+    },
+    [theme.breakpoints.up('lg')]: {
         width: '60ch',
     },
   },
@@ -213,8 +230,9 @@ export default function AppHeader() {
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               color="inherit"
+              sx={{padding: 0, ml: 1}}
             >
-              <AccountCircle />
+              <Avatar>T</Avatar>
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
