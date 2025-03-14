@@ -1,12 +1,10 @@
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-// import CustomizedTreeView from './CustomizedTreeView';
 import HighlightedCard from './HighlightedCard';
-import StatCard, { StatCardProps } from './StatCard';
 import StoryCard from './StoryCard';
 
-const data: StatCardProps[] = [
+const data = [
   {
     title: 'Users',
     value: '14k',
@@ -127,7 +125,7 @@ export default function MainGrid() {
       >
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -135,7 +133,7 @@ export default function MainGrid() {
         </Grid>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -143,7 +141,7 @@ export default function MainGrid() {
         </Grid>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -151,7 +149,7 @@ export default function MainGrid() {
         </Grid>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -159,7 +157,7 @@ export default function MainGrid() {
         </Grid>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
+            {/* <StatCard {...card} /> */}
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
