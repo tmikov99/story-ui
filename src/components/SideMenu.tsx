@@ -39,7 +39,7 @@ export default function SideMenu() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          paddingTop: 6,
+          paddingTop: 7,
         }}
       >
         <MenuContent />

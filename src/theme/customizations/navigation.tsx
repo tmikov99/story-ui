@@ -280,7 +280,7 @@ export const navigationCustomizations: Components<Theme> = {
     styleOverrides: {
       regular: () => ({
         "@media (min-width: 600px)": {
-            minHeight: "48px",
+            minHeight: "56px",
           },
       }),
     },
