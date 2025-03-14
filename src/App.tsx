@@ -37,7 +37,7 @@ function App() {
                   flexGrow: 1,
                   backgroundColor: alpha(theme.palette.background.default, 1),
                   overflow: 'auto',
-                  marginTop: 6, //TODO: Make responsive ASAP
+                  marginTop: 7, //TODO: Make responsive ASAP
                 })}>
               <Stack
                 spacing={2}
