@@ -13,6 +13,7 @@ import PageCreate from './components/PageCreate';
 import PageCreateLinks from './components/PageCreateLinks';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import AppHeader from './components/AppHeader';
 
 
 let signedIn = true;
@@ -28,6 +29,7 @@ function App() {
           </Routes> 
           : 
           <Box sx={{ display: 'flex' }}>
+            <AppHeader />
             <SideMenu />
             <Box 
               component="main"
@@ -35,6 +37,7 @@ function App() {
                   flexGrow: 1,
                   backgroundColor: alpha(theme.palette.background.default, 1),
                   overflow: 'auto',
+                  marginTop: 6, //TODO: Make responsive ASAP
                 })}>
               <Stack
                 spacing={2}
@@ -42,7 +45,6 @@ function App() {
                   alignItems: 'center',
                   mx: 3,
                   pb: 5,
-                  mt: { xs: 8, md: 0 },
                 }}
               >
                 <Header />

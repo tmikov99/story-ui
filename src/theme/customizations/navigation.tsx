@@ -276,4 +276,13 @@ export const navigationCustomizations: Components<Theme> = {
       }),
     },
   },
+  MuiToolbar: {
+    styleOverrides: {
+      regular: () => ({
+        "@media (min-width: 600px)": {
+            minHeight: "48px",
+          },
+      }),
+    },
+  },
 };
