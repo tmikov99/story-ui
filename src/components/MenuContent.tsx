@@ -25,7 +25,7 @@ const mainListItems2 = [
   { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '/create'},
   { text: 'Saved stories', icon: <LanRoundedIcon />, path: '/createPage' },
   { text: 'Read later', icon: <AnalyticsRoundedIcon />, path: '/createLinks' },
-  { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '#liked' },
+  { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '/home' },
 ];
 
 const secondaryListItems = [

@@ -14,6 +14,7 @@ import PageCreateLinks from './components/PageCreateLinks';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import AppHeader from './components/AppHeader';
+import HomePage from './components/HomePage';
 
 
 let signedIn = true;
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path="signIn" element={<SignIn />} />
             <Route path="signup" element={<SignUp />} />
+            <Route path="*" element={<HomePage />} />
           </Routes> 
           : 
           <Box sx={{ display: 'flex' }}>
@@ -54,6 +56,7 @@ function App() {
                   <Route path="/create" element={<PageCreateOverview />}/>
                   <Route path="/createPage" element={<PageCreate />}/>
                   <Route path="createLinks" element={<PageCreateLinks />}/>
+                  <Route path="/home" element={<HomePage />} />
                 </Routes>    
               </Stack>
             </Box>
