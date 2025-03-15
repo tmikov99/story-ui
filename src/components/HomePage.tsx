@@ -21,9 +21,10 @@ export default function HomePage() {
                 textAlign: 'center',
                 padding: 4,
                 background: 'rgba(0, 0, 0, 0.7)',
+                color: 'white!important',
             }}>
                 <Typography variant='h1'>Story Project</Typography>
-                <Button sx={{marginTop: 3}} variant='outlined'>Browse Stories</Button>
+                <Button sx={{ marginTop: 3 }} variant='contained' color='primary'>Browse Stories</Button>
             </Box>
     </Box>
   );
