@@ -15,6 +15,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import AppHeader from './components/AppHeader';
 import HomePage from './components/HomePage';
+import StoryPage from './components/StoryPage';
 
 
 let signedIn = true;
@@ -56,6 +57,7 @@ function App() {
                   <Route path="/create" element={<PageCreateOverview />}/>
                   <Route path="/createPage" element={<PageCreate />}/>
                   <Route path="createLinks" element={<PageCreateLinks />}/>
+                  <Route path="/story" element={<StoryPage />} />
                   <Route path="/home" element={<HomePage />} />
                 </Routes>    
               </Stack>
