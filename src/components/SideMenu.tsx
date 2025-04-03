@@ -10,8 +10,12 @@ import OptionsMenu from './OptionsMenu';
 
 const drawerWidth = 240;
 
+interface SideMenuProps { 
+  //TODO: Refactor when adding redux
+  open: boolean;
+}
+
 const Drawer = styled(MuiDrawer)({
-  width: drawerWidth,
   flexShrink: 0,
   boxSizing: 'border-box',
   mt: 10,
@@ -21,11 +25,15 @@ const Drawer = styled(MuiDrawer)({
   },
 });
 
-export default function SideMenu() {
+export default function SideMenu({ open }: SideMenuProps) {
   return (
     <Drawer
-      variant="permanent"
+      variant="persistent"
+      open={open}
+      anchor="left"
       sx={{
+        width: open ? drawerWidth : 0, //TODO: Refactor when adding redux
+        transition: 'width 0.2s',
         display: { xs: 'none', md: 'block' },
         [`& .${drawerClasses.paper}`]: {
           backgroundColor: 'background.paper',
