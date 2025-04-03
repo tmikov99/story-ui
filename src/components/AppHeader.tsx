@@ -75,7 +75,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  //TODO: Refactor when adding redux
+  handleDrawerToggle: () => void;
+}
+
+export default function AppHeader({ handleDrawerToggle }: AppHeaderProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -173,6 +178,7 @@ export default function AppHeader() {
             edge="start"
             aria-label="open drawer"
             sx={{ mr: 2 }}
+            onClick={handleDrawerToggle}
           >
             <MenuIcon />
           </IconButton>

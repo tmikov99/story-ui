@@ -16,10 +16,18 @@ import SignUp from './components/SignUp';
 import AppHeader from './components/AppHeader';
 import HomePage from './components/HomePage';
 import StoryPage from './components/StoryPage';
+import { useState } from 'react';
 
 
 let signedIn = true;
 function App() {
+  const [open, setOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    //TODO: Refactor when adding redux
+    setOpen(!open);
+  };
+
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
@@ -32,8 +40,8 @@ function App() {
           </Routes> 
           : 
           <Box sx={{ display: 'flex' }}>
-            <AppHeader />
-            <SideMenu />
+            <AppHeader handleDrawerToggle={handleDrawerToggle}/>
+            <SideMenu open={open} />
             <Box 
               component="main"
               sx={(theme) => ({
