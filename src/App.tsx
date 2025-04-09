@@ -17,62 +17,55 @@ import AppHeader from './components/AppHeader';
 import HomePage from './components/HomePage';
 import StoryPage from './components/StoryPage';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/store';
 
-
-let signedIn = true;
 function App() {
   const [open, setOpen] = useState(false);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const handleDrawerToggle = () => {
     //TODO: Refactor when adding redux
     setOpen(!open);
   };
 
+  const nonAuthContent = <>
+    <Box sx={{ display: 'flex' }}>
+      <AppHeader handleDrawerToggle={handleDrawerToggle}/>
+      <SideMenu open={open} />
+      <Box 
+        component="main"
+        sx={(theme) => ({
+            flexGrow: 1,
+            backgroundColor: alpha(theme.palette.background.default, 1),
+            overflow: 'auto',
+            marginTop: 7, //TODO: Make responsive ASAP
+          })}>
+        <Stack spacing={2} sx={{ alignItems: 'center', mx: 3, pb: 5, }}>
+          <Header />
+          <Routes>
+            <Route path="/" element={<MainGrid />}/>
+            <Route path="/page" element={<Page />}/>
+            <Route path="/story" element={<StoryPage />} />
+            <Route path="/home" element={<HomePage />} />
+            {isAuthenticated && <Route path="/create" element={<PageCreateOverview />}/>}
+            {isAuthenticated && <Route path="/createPage" element={<PageCreate />}/>}
+            {isAuthenticated && <Route path="/createLinks" element={<PageCreateLinks />}/>}
+          </Routes>    
+        </Stack>
+      </Box>
+    </Box>
+  </>
+
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
       <BrowserRouter>
-        {!signedIn ?
           <Routes>
-            <Route path="signIn" element={<SignIn />} />
-            <Route path="signup" element={<SignUp />} />
-            <Route path="*" element={<HomePage />} />
-          </Routes> 
-          : 
-          <Box sx={{ display: 'flex' }}>
-            <AppHeader handleDrawerToggle={handleDrawerToggle}/>
-            <SideMenu open={open} />
-            <Box 
-              component="main"
-              sx={(theme) => ({
-                  flexGrow: 1,
-                  backgroundColor: alpha(theme.palette.background.default, 1),
-                  overflow: 'auto',
-                  marginTop: 7, //TODO: Make responsive ASAP
-                })}>
-              <Stack
-                spacing={2}
-                sx={{
-                  alignItems: 'center',
-                  mx: 3,
-                  pb: 5,
-                }}
-              >
-                <Header />
-                <Routes>
-                  <Route path="/" element={<MainGrid />}/>
-                  <Route path="/page" element={<Page />}/>
-                  <Route path="/create" element={<PageCreateOverview />}/>
-                  <Route path="/createPage" element={<PageCreate />}/>
-                  <Route path="createLinks" element={<PageCreateLinks />}/>
-                  <Route path="/story" element={<StoryPage />} />
-                  <Route path="/home" element={<HomePage />} />
-                </Routes>    
-              </Stack>
-            </Box>
-          </Box>
-        }
-        
+            {!isAuthenticated && <Route path="/signIn" element={<SignIn />} />}
+            {!isAuthenticated && <Route path="/signUp" element={<SignUp />} />}
+            <Route path="*" element={nonAuthContent} />
+          </Routes>        
       </BrowserRouter>
     </AppTheme>
   )

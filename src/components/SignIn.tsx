@@ -15,7 +15,11 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { login } from '../api/auth';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../redux/authSlice';
+import { AppDispatch } from '../redux/store';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -60,6 +64,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -74,16 +80,28 @@ export default function SignIn() {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+
+    if (!email || !password) {
+      return;
+    }
+
+    try {
+      const token = await login(email, password);
+      console.log("Token: ", token)
+      dispatch(loginSuccess(token));
+      navigate('/home');
+      console.log()
+    } catch (err) {
+      // setError('Login failed. Please check your credentials.');
+    }
   };
 
   const validateInputs = () => {
@@ -92,7 +110,7 @@ export default function SignIn() {
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email.value || email.value.length < 4) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
