@@ -16,23 +16,16 @@ import SignUp from './components/SignUp';
 import AppHeader from './components/AppHeader';
 import HomePage from './components/HomePage';
 import StoryPage from './components/StoryPage';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
 
 function App() {
-  const [open, setOpen] = useState(false);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-
-  const handleDrawerToggle = () => {
-    //TODO: Refactor when adding redux
-    setOpen(!open);
-  };
 
   const nonAuthContent = <>
     <Box sx={{ display: 'flex' }}>
-      <AppHeader handleDrawerToggle={handleDrawerToggle}/>
-      <SideMenu open={open} />
+      <AppHeader />
+      <SideMenu />
       <Box 
         component="main"
         sx={(theme) => ({

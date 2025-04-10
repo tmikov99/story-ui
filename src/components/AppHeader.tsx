@@ -17,6 +17,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
 import { brand, gray } from '../theme/themePrimitives';
 import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
+import { useDispatch } from 'react-redux';
+import { toggleSidebar } from '../redux/sidebarSlice';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -75,12 +77,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-interface AppHeaderProps {
-  //TODO: Refactor when adding redux
-  handleDrawerToggle: () => void;
-}
 
-export default function AppHeader({ handleDrawerToggle }: AppHeaderProps) {
+export default function AppHeader() {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -178,7 +177,7 @@ export default function AppHeader({ handleDrawerToggle }: AppHeaderProps) {
             edge="start"
             aria-label="open drawer"
             sx={{ mr: 2 }}
-            onClick={handleDrawerToggle}
+            onClick={() => dispatch(toggleSidebar())}
           >
             <MenuIcon />
           </IconButton>

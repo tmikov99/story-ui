@@ -7,13 +7,10 @@ import Typography from '@mui/material/Typography';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
 import OptionsMenu from './OptionsMenu';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const drawerWidth = 240;
-
-interface SideMenuProps { 
-  //TODO: Refactor when adding redux
-  open: boolean;
-}
 
 const Drawer = styled(MuiDrawer)({
   flexShrink: 0,
@@ -25,14 +22,15 @@ const Drawer = styled(MuiDrawer)({
   },
 });
 
-export default function SideMenu({ open }: SideMenuProps) {
+export default function SideMenu() {
+  const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
   return (
     <Drawer
       variant="persistent"
-      open={open}
+      open={isOpen}
       anchor="left"
       sx={{
-        width: open ? drawerWidth : 0, //TODO: Refactor when adding redux
+        width: isOpen ? drawerWidth : 0, //TODO: Refactor when adding redux
         transition: 'width 0.2s',
         display: { xs: 'none', md: 'block' },
         [`& .${drawerClasses.paper}`]: {
