@@ -95,10 +95,8 @@ export default function SignIn() {
 
     try {
       const loginResponse = await login(email, password);
-      console.log("Token: ", loginResponse.token)
       dispatch(loginSuccess(loginResponse));
       navigate('/home');
-      console.log()
     } catch (err) {
       // setError('Login failed. Please check your credentials.');
     }

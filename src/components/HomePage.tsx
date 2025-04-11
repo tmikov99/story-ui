@@ -10,7 +10,7 @@ export default function HomePage() {
         right: 0,
         margin: "0!important",
         height: '100%', 
-        backgroundImage: "url('src/assets/pexels-helloaesthe-small.jpg')",
+        backgroundImage: "url('/assets/pexels-helloaesthe-small.jpg')",
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         }}>

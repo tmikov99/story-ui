@@ -65,7 +65,7 @@ export default function SideMenu() {
         <Avatar
           sizes="small"
           alt="Test User"
-          // src="src/assets/book-white.svg" //TODO add photo
+          // src="/assets/book-white.svg" //TODO add photo
           sx={{ width: 36, height: 36 }}
         >
           T

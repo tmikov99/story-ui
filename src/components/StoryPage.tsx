@@ -2,6 +2,7 @@ import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import { useParams } from 'react-router-dom';
 
 const testDescription = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
     incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco 
@@ -14,6 +15,8 @@ const testDescription = `Lorem ipsum dolor sit amet, consectetur adipiscing elit
     sunt in culpa qui officia deserunt mollit anim id est laborum.`;
 
 export default function MainGrid() {
+  const { id } = useParams();
+
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
@@ -42,7 +45,7 @@ export default function MainGrid() {
                         width: '100%',
                         transition: '0.3s',
                     }}
-                    src="src/assets/pexels-helloaesthe-small.jpg"
+                    src="/assets/pexels-helloaesthe-small.jpg"
                 />
                 <Typography className="startText" variant='h3' sx={{
                     position: "absolute",

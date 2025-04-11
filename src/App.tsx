@@ -39,7 +39,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainGrid />}/>
             <Route path="/page" element={<Page />}/>
-            <Route path="/story" element={<StoryPage />} />
+            <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
             {isAuthenticated && <Route path="/create" element={<PageCreateOverview />}/>}
             {isAuthenticated && <Route path="/createPage" element={<PageCreate />}/>}
