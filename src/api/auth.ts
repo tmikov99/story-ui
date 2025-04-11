@@ -1,9 +1,12 @@
 import axios from './axios';
 
-export const login = async (username: string, password: string) => {
+export interface AuthResponse {
+  username: string,
+  token: string
+}
+
+export const login = async (username: string, password: string):Promise<AuthResponse> => {
   const response = await axios.post('/auth/login', { username, password });
-  const accessToken = response.data.token;
-  sessionStorage.setItem('accessToken', accessToken);
   return response.data;
 };
 

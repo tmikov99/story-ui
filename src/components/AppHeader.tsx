@@ -11,14 +11,23 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import Avatar from '@mui/material/Avatar';
 import { brand, gray } from '../theme/themePrimitives';
 import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../redux/sidebarSlice';
+import Divider, { dividerClasses } from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import { listClasses } from '@mui/material/List';
+import { logout } from '../redux/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '../redux/store';
+import { Button, Stack } from '@mui/material';
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -80,36 +89,47 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function AppHeader() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const username = useSelector((state: RootState) => state.auth.username);
+  const initials = username?.charAt(0).toUpperCase();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  // const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
+  //   React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
+  // const handleMobileMenuClose = () => {
+  //   setMobileMoreAnchorEl(null);
+  // };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
+    // handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/home');
+    handleMenuClose();
+  }
+
+  // const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  //   setMobileMoreAnchorEl(event.currentTarget);
+  // };
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 'top',
+        vertical: 'bottom',
         horizontal: 'right',
       }}
       id={menuId}
@@ -120,53 +140,104 @@ export default function AppHeader() {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      sx={{
+        [`& .${listClasses.root}`]: {
+          padding: '8px',
+        },
+        [`& .${dividerClasses.root}`]: {
+          margin: '8px -8px',
+        },
+      }}
     >
+      <Stack
+        direction="row"
+        sx={{
+          p: 1,
+          gap: 1,
+          alignItems: 'center',
+          // borderTop: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Avatar
+          sizes="small"
+          alt="Test User"
+          // src="src/assets/book-white.svg" //TODO add photo
+          sx={{ width: 36, height: 36 }}
+        >
+          {initials}
+        </Avatar>
+        <Box sx={{ mr: 'auto' }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
+            {username}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            test@email.com
+          </Typography>
+        </Box>
+      </Stack>
+      <Divider />
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <Divider />
+      <MenuItem
+        onClick={handleLogout}
+        sx={{
+          [`& .${listItemIconClasses.root}`]: {
+            ml: 'auto',
+            minWidth: 0,
+          },
+        }}
+      >
+        <ListItemText>Logout</ListItemText>
+        <ListItemIcon>
+          <LogoutRoundedIcon fontSize="small" />
+        </ListItemIcon>
+      </MenuItem>
     </Menu>
   );
 
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
+  // const mobileMenuId = 'primary-search-account-menu-mobile';
+  // const renderMobileMenu = (
+  //   <Menu
+  //     anchorEl={mobileMoreAnchorEl}
+  //     anchorOrigin={{
+  //       vertical: 'top',
+  //       horizontal: 'right',
+  //     }}
+  //     id={mobileMenuId}
+  //     keepMounted
+  //     transformOrigin={{
+  //       vertical: 'top',
+  //       horizontal: 'right',
+  //     }}
+  //     open={isMobileMenuOpen}
+  //     onClose={handleMobileMenuClose}
+  //   >
+  //     <MenuItem>
+  //       <IconButton
+  //         size="large"
+  //         aria-label="show 17 new notifications"
+  //       >
+  //         <Badge badgeContent={17} color="error">
+  //           <NotificationsIcon />
+  //         </Badge>
+  //       </IconButton>
+  //       <p>Notifications</p>
+  //     </MenuItem>
+  //     <MenuItem onClick={handleProfileMenuOpen}>
+  //       <IconButton
+  //         size="large"
+  //         aria-label="account of current user"
+  //         aria-controls="primary-search-account-menu"
+  //         aria-haspopup="true"
+  //       >
+  //         <AccountCircle />
+  //       </IconButton>
+  //       <p>Profile</p>
+  //     </MenuItem>
+  //   </Menu>
+  // );
 
   return (
     <>
@@ -201,7 +272,8 @@ export default function AppHeader() {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <ColorModeIconDropdown />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          {isAuthenticated ? <Box sx={{ display: 'flex' }}>
+          {/* <Box sx={{ display: { xs: 'none', md: 'flex' } }}> */}
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
@@ -213,16 +285,26 @@ export default function AppHeader() {
             <IconButton
               size="large"
               edge="end"
+              disableRipple
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={handleProfileMenuOpen}
               sx={{padding: 0, ml: 1}}
             >
-              <Avatar>T</Avatar>
+              <Avatar>{initials?.charAt(0)}</Avatar>
             </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+          </Box> :
+          <Button 
+            variant='outlined' 
+            startIcon={<AccountCircleRoundedIcon />}
+            onClick={() => navigate('/signIn')}
+            sx={{ ml: 1}}
+          >
+            Sign In
+          </Button>
+          }
+          {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="show more"
@@ -232,11 +314,11 @@ export default function AppHeader() {
             >
               <MoreIcon />
             </IconButton>
-          </Box>
+          </Box> */}
         </Toolbar>
       </AppBar>
-    {renderMobileMenu}
-    {renderMenu}
+    {/* {renderMobileMenu} */}
+    {isAuthenticated && renderMenu}
     </>
   );
 }

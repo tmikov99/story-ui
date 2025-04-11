@@ -94,9 +94,9 @@ export default function SignIn() {
     }
 
     try {
-      const token = await login(email, password);
-      console.log("Token: ", token)
-      dispatch(loginSuccess(token));
+      const loginResponse = await login(email, password);
+      console.log("Token: ", loginResponse.token)
+      dispatch(loginSuccess(loginResponse));
       navigate('/home');
       console.log()
     } catch (err) {

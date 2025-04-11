@@ -52,7 +52,7 @@ export default function SideMenu() {
         <CardAlert />
       </Box>
       {/* <Divider /> */}
-      <Stack
+      {/* <Stack
         direction="row"
         sx={{
           p: 2,
@@ -79,7 +79,7 @@ export default function SideMenu() {
           </Typography>
         </Box>
         <OptionsMenu />
-      </Stack>
+      </Stack> */}
     </Drawer>
   );
 }
