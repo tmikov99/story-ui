@@ -54,8 +54,7 @@ export default function ColorModeIconDropdown(props: IconButtonOwnProps) {
       <IconButton
         data-screenshot="toggle-mode"
         onClick={handleClick}
-        disableRipple
-        size="small"
+        size="large"
         aria-controls={open ? 'color-scheme-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
@@ -79,7 +78,7 @@ export default function ColorModeIconDropdown(props: IconButtonOwnProps) {
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 36 }}
       >
         <MenuItem selected={mode === 'system'} onClick={handleMode('system')}>
           System
