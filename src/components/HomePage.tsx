@@ -1,7 +1,22 @@
 import { Button, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
+import { useNavigate } from 'react-router-dom';
+import { setSidebar } from '../redux/sidebarSlice';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setSidebar(false)); //Temp
+    return () => {
+      dispatch(setSidebar(true)); //Temp
+    }
+  }, [dispatch]);
+  
+
   return (
     <Box sx={{ 
         position: 'fixed', 
@@ -24,7 +39,14 @@ export default function HomePage() {
                 color: 'white!important',
             }}>
                 <Typography variant='h1'>Story Project</Typography>
-                <Button sx={{ marginTop: 3 }} variant='contained' color='primary'>Browse Stories</Button>
+                <Button 
+                  sx={{ marginTop: 3 }} 
+                  variant='contained' 
+                  color='primary'
+                  onClick={() => navigate("/")}
+                >
+                  Browse Stories
+                </Button>
             </Box>
     </Box>
   );

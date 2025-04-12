@@ -1,0 +1,16 @@
+import axios from './axios';
+
+export const fetchPlaythrough = async (id: number) => {
+    const response = await axios.get(`/playthrough/${id}`);
+    return response.data;
+};
+
+export const startPlaythrough = async (id: number) => {
+    const response = await axios.post(`/playthrough/${id}/start`);
+    return response.data;
+};
+
+export const updatePlaythrough = async (storyId: number, pageId: number) => {
+    const response = await axios.put(`/playthrough/${storyId}/choose/${pageId}`);
+    return response.data;
+}

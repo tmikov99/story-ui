@@ -1,12 +1,8 @@
 import { styled } from '@mui/material/styles';
-import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
-import OptionsMenu from './OptionsMenu';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -23,7 +19,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
-  const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
+  const isOpen = useSelector((state: RootState) => state.sidebar.open);
   return (
     <Drawer
       variant="persistent"
