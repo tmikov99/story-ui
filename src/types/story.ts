@@ -10,6 +10,7 @@ export interface StoryData {
     tags: string[];
     description: string;
     pageCount: number;
+    startPage: number;
     status: string;
     createdAt: string;
     updatedAt: string;

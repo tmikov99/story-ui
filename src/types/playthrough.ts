@@ -1,5 +1,6 @@
 export interface PlaythroughData {
     storyId: number;
-    path: string[];        
+    currentPageId: number;
+    path: number[];        
     lastVisited: string;
 }

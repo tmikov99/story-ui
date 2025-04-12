@@ -1,7 +1,6 @@
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import HighlightedCard from './HighlightedCard';
 import StoryCard from './StoryCard';
 import { useEffect, useState } from 'react';
 import { fetchStories } from '../api/story';
