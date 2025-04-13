@@ -18,7 +18,7 @@ export default function StoryPage() {
     return(<div>ERROR</div>)
   }
 
-  const { playthrough, savePage, resetPlaythrough } = useUserPlaythrough(storyId);
+  const { playthrough, savePage } = useUserPlaythrough(storyId);
 
   useEffect(() => {
     if (!id) return;
@@ -44,7 +44,7 @@ export default function StoryPage() {
       savePage(story.startPage)
       navigate(`/story/${id}/page/${story.startPage}`);
     } else {
-      navigate(`/story/${id}/page/${playthrough.currentPageId}`);
+      navigate(`/story/${id}/page/${playthrough.currentPage}`);
     }
     
   }

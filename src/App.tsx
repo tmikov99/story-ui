@@ -38,7 +38,7 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<MainGrid />}/>
-            <Route path="/story/:storyId/page/:pageId" element={<Page />}/>
+            <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
             {isAuthenticated && <Route path="/create" element={<PageCreateOverview />}/>}
