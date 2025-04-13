@@ -2,7 +2,7 @@ import { StoryData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
-  const response = await axios.get(`/story/${id}`);
+  const response = await axios.get(`/story/preview/${id}`);
   return response.data;
 };
 

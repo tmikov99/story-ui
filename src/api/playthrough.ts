@@ -10,7 +10,7 @@ export const startPlaythrough = async (id: number) => {
     return response.data;
 };
 
-export const updatePlaythrough = async (storyId: number, pageId: number) => {
-    const response = await axios.put(`/playthrough/${storyId}/choose/${pageId}`);
+export const updatePlaythrough = async (storyId: number, pageNumber: number) => {
+    const response = await axios.put(`/playthrough/${storyId}/choose/${pageNumber}`);
     return response.data;
 }

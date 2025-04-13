@@ -34,19 +34,19 @@ export const useUserPlaythrough = (storyId: number) => {
   }, [storyId]);
 
 
-  const savePage = (pageId: number) => {
+  const savePage = (pageNumber: number) => {
     if (!isAuthenticated) {
-      savePageLocal(pageId);
+      savePageLocal(pageNumber);
     } else {
-      savePageBackend(pageId);
+      savePageBackend(pageNumber);
     }
   };
 
-  const savePageLocal = (pageId: number) => {
-    const updatedPath = [...(playthrough?.path || []), pageId];
+  const savePageLocal = (pageNumber: number) => {
+    const updatedPath = [...(playthrough?.path || []), pageNumber];
     const newPlaythrough: PlaythroughData = {
       storyId,
-      currentPageId: pageId,
+      currentPage: pageNumber,
       path: updatedPath,
       lastVisited: new Date().toISOString(),
     };
@@ -54,10 +54,10 @@ export const useUserPlaythrough = (storyId: number) => {
     setLocalData(buildKey(storyId), newPlaythrough);
   }
 
-  const savePageBackend = async (pageId: number) => {
+  const savePageBackend = async (pageNumber: number) => {
     let newPlaythrough: PlaythroughData | null = null;
       try {
-        newPlaythrough = await (playthrough === null ? startPlaythrough(storyId) : updatePlaythrough(storyId, pageId));
+        newPlaythrough = await (playthrough === null ? startPlaythrough(storyId) : updatePlaythrough(storyId, pageNumber));
       } catch (error) {
         console.error("Failed to fetch playthrough from API", error);
       }
