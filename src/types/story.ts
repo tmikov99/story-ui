@@ -15,3 +15,10 @@ export interface StoryData {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface StoryFormData {
+    title: string;
+    genres: string[];
+    tags: string[];
+    description: string;
+  }

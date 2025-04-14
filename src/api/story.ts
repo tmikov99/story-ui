@@ -1,4 +1,4 @@
-import { StoryData } from '../types/story';
+import { StoryData, StoryFormData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
@@ -11,7 +11,12 @@ export const fetchStories = async () => {
   return response.data;
 };
 
-export const createStory = async (storyData: StoryData) => {
+export const createStory = async (storyData: StoryFormData) => {
   const response = await axios.post('/story/create', storyData);
   return response.data;
 };
+
+export const fetchGenres = async () => {
+  const response = await axios.get('/story/genres');
+  return response.data;
+}
