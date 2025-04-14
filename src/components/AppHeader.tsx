@@ -280,7 +280,7 @@ export default function AppHeader() {
           {isAuthenticated && <Button 
             size='large' 
             variant='outlined' 
-            sx={{borderRadius:"24px"}} 
+            sx={{borderRadius:"24px", marginRight: 1}} 
             startIcon={<AddRoundedIcon/>}
             onClick={handleCreateStory}
           >
