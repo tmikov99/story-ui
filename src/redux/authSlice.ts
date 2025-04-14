@@ -19,12 +19,14 @@ const authSlice = createSlice({
   reducers: {
     loginSuccess: (state, action: PayloadAction<AuthResponse>) => {
       state.token = action.payload.token;
+      state.username = action.payload.username;
       state.isAuthenticated = true;
       sessionStorage.setItem('token', action.payload.token);
       sessionStorage.setItem("username", action.payload.username);
     },
     logout: (state) => {
       state.token = null;
+      state.username = null;
       state.isAuthenticated = false;
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('username');

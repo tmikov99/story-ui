@@ -8,7 +8,7 @@ export default function StoryCreate() {
   const navigate = useNavigate();
   const saveStory = async (story: StoryFormData) => {
     const savedStory = await createStory(story);
-    navigate(`/create/${savedStory.id}/overview`);
+    navigate(`/story/${savedStory.id}`);
   }
 
   return (

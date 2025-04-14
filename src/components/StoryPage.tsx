@@ -8,13 +8,17 @@ import { fetchStory } from '../api/story';
 import { StoryData } from '../types/story';
 import { useUserPlaythrough } from '../hooks/useUserPlaythrough';
 import { formatDateString } from '../utils/formatDate';
-import { Chip } from '@mui/material';
+import { Button, ButtonGroup, Chip } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 export default function StoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const storyId = Number(id)
   const [story, setStory] = useState<StoryData | null>(null);
+  const username = useSelector((state: RootState) => state.auth.username);
+  
 
   if (!id) {
     return(<div>ERROR</div>)
@@ -48,7 +52,14 @@ export default function StoryPage() {
     } else {
       navigate(`/story/${id}/page/${playthrough.currentPage}`);
     }
-    
+  }
+
+  const handleEditPages = () => {
+    if (!story) {
+      console.log("Missing Story Error")
+      return;
+    }
+    navigate(`/create/${id}/overview`);
   }
 
   return (
@@ -101,14 +112,21 @@ export default function StoryPage() {
         </Grid>
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack>
-              <Typography variant='h4'>{story?.title}</Typography>
-              <Typography variant='h6'>By: {story?.user.username}</Typography>
-              <Typography>Pages: {story?.pageCount}</Typography>
-              <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
-              <Typography>Genres: {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}</Typography>
-              <Typography>Tags: {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}</Typography>
-              <Typography>Description: {story?.description}
-              </Typography>
+            {username === story?.user.username && 
+              <ButtonGroup aria-label="Basic button group">
+                <Button color='secondary'>Edit Properties</Button>
+                <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
+                <Button color='error'>Delete Story</Button>
+              </ButtonGroup>
+            }
+            <Typography variant='h4'>{story?.title}</Typography>
+            <Typography variant='h6'>By: {story?.user.username}</Typography>
+            <Typography>Pages: {story?.pageCount}</Typography>
+            <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
+            <Typography>Genres: {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}</Typography>
+            <Typography>Tags: {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}</Typography>
+            <Typography>Description: {story?.description}
+            </Typography>
           </Stack>
         </Grid>
       </Grid>
