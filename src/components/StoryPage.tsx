@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import { fetchStory } from '../api/story';
 import { StoryData } from '../types/story';
 import { useUserPlaythrough } from '../hooks/useUserPlaythrough';
+import { formatDateString } from '../utils/formatDate';
+import { Chip } from '@mui/material';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -102,8 +104,9 @@ export default function StoryPage() {
               <Typography variant='h4'>{story?.title}</Typography>
               <Typography variant='h6'>By: {story?.user.username}</Typography>
               <Typography>Pages: {story?.pageCount}</Typography>
-              <Typography>Created: 12 May 2028</Typography>
-              <Typography>Tags: {story?.tags.join(" ")}</Typography>
+              <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
+              <Typography>Genres: {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}</Typography>
+              <Typography>Tags: {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}</Typography>
               <Typography>Description: {story?.description}
               </Typography>
           </Stack>

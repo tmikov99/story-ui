@@ -7,7 +7,7 @@ import PageCard from './PageCard';
 const data = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
 
 
-export default function PageCreateOverview() {
+export default function StoryPagesOverview() {
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>

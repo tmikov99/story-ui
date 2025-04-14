@@ -22,6 +22,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { listClasses } from '@mui/material/List';
 import { logout } from '../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -113,6 +114,10 @@ export default function AppHeader() {
     setAnchorEl(null);
     // handleMobileMenuClose();
   };
+
+  const handleCreateStory = () => {
+    navigate('/create');
+  }
 
   const handleLogout = () => {
     dispatch(logout());
@@ -272,6 +277,15 @@ export default function AppHeader() {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
+          {isAuthenticated && <Button 
+            size='large' 
+            variant='outlined' 
+            sx={{borderRadius:"24px"}} 
+            startIcon={<AddRoundedIcon/>}
+            onClick={handleCreateStory}
+          >
+            Create
+          </Button>}
           <ColorModeIconDropdown />
           {isAuthenticated ? <Box sx={{ display: 'flex' }}>
           {/* <Box sx={{ display: { xs: 'none', md: 'flex' } }}> */}

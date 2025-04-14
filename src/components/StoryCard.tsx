@@ -14,6 +14,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { StoryData } from '../types/story';
+import { formatDateString } from '../utils/formatDate';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -80,7 +81,7 @@ const SyledCard = styled(Card)(({ theme }) => ({
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    maxHeight: '6em',
+    height: '6em',
     lineHeight: '1.5em'
   }));
 
@@ -133,7 +134,7 @@ export default function StoryCard({ story, onClick }: StoryCardProps) {
           </IconButton>
         }
         title={story.title}
-        subheader="September 14, 2016" //TODO: manage dates
+        subheader={formatDateString(story.createdAt)}
       />
       <CardMedia
         component="img"

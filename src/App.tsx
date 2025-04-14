@@ -8,7 +8,7 @@ import SideMenu from './components/SideMenu';
 import MainGrid from './components/MainGrid';
 import Page from './components/Page';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import PageCreateOverview from './components/PageCreateOverview';
+import StoryPagesOverview from './components/StoryPagesOverview';
 import PageCreate from './components/PageCreate';
 import PageCreateLinks from './components/PageCreateLinks';
 import SignIn from './components/SignIn';
@@ -18,6 +18,7 @@ import HomePage from './components/HomePage';
 import StoryPage from './components/StoryPage';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
+import StoryCreate from './components/StoryCreate';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -41,9 +42,10 @@ function App() {
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
-            {isAuthenticated && <Route path="/create" element={<PageCreateOverview />}/>}
-            {isAuthenticated && <Route path="/createPage" element={<PageCreate />}/>}
-            {isAuthenticated && <Route path="/createLinks" element={<PageCreateLinks />}/>}
+            {isAuthenticated && <Route path="/create" element={<StoryCreate />}/>}
+            {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
+            {isAuthenticated && <Route path="/create/:storyId/page" element={<PageCreate />}/>}
+            {isAuthenticated && <Route path="/create/:storyId/page/:pageNumber/links" element={<PageCreateLinks />}/>}
           </Routes>    
         </Stack>
       </Box>
