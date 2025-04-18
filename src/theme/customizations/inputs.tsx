@@ -443,6 +443,7 @@ export const inputsCustomizations: Components<Theme> = {
               multiline: true,
             },
             style: {
+              minHeight: '3.4rem',
               height: 'auto',
             }
           }

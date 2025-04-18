@@ -39,7 +39,7 @@ export default function Page() {
                 position: "relative",
             }}
         >
-            <Typography variant="h2" gutterBottom style={{textAlign: "center"}}>Page Number</Typography>
+            <Typography variant="h2" gutterBottom style={{textAlign: "center"}}>{page?.pageNumber}</Typography>
             <br></br>
             {page?.paragraphs.map((paragraph, index) => <Typography variant="body1" key={index} gutterBottom >{paragraph}</Typography>)}
             {page?.choices.map((choice, index) => <>

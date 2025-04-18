@@ -4,7 +4,9 @@ export interface ChoiceData {
 }
 
 export interface PageData {
-    id: number;
+    id?: number;
+    storyId: number;
+    title: string;
     pageNumber: number;
     paragraphs: string[];
     choices: ChoiceData[];

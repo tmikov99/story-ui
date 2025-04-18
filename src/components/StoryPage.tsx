@@ -19,7 +19,6 @@ export default function StoryPage() {
   const [story, setStory] = useState<StoryData | null>(null);
   const username = useSelector((state: RootState) => state.auth.username);
   
-
   if (!id) {
     return(<div>ERROR</div>)
   }
@@ -113,18 +112,26 @@ export default function StoryPage() {
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack>
             {username === story?.user.username && 
-              <ButtonGroup aria-label="Basic button group">
+              <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
                 <Button color='secondary'>Edit Properties</Button>
                 <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
                 <Button color='error'>Delete Story</Button>
               </ButtonGroup>
+              <Typography>Status: {story?.status}</Typography>
+              </>
             }
             <Typography variant='h4'>{story?.title}</Typography>
             <Typography variant='h6'>By: {story?.user.username}</Typography>
             <Typography>Pages: {story?.pageCount}</Typography>
             <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
-            <Typography>Genres: {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}</Typography>
-            <Typography>Tags: {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}</Typography>
+            <Box sx={{display: "flex", alignItems: "center"}}>
+              <Typography>Genres:&nbsp;</Typography>
+              {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}
+            </Box>
+            <Box sx={{display: "flex", alignItems: "center"}}>
+              <Typography>Tags:&nbsp;</Typography>
+              {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}
+            </Box>
             <Typography>Description: {story?.description}
             </Typography>
           </Stack>

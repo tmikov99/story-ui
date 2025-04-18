@@ -16,6 +16,11 @@ export const createStory = async (storyData: StoryFormData) => {
   return response.data;
 };
 
+export const deleteStory = async (id: number) => {
+  const response = await axios.delete(`/story/${id}`);
+  return response;
+}
+
 export const fetchGenres = async () => {
   const response = await axios.get('/story/genres');
   return response.data;

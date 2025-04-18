@@ -23,6 +23,7 @@ export default function StoryForm({ onSubmit }: Props) {
     genres: [],
     tags: [],
     description: "",
+    status: "DRAFT",
   });
   const [availableGenres, setAvailableGenres] = useState([]);
 
