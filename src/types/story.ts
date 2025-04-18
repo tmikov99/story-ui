@@ -21,4 +21,5 @@ export interface StoryFormData {
     genres: string[];
     tags: string[];
     description: string;
+    status: string;
   }
