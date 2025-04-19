@@ -12,3 +12,8 @@ export interface PageData {
     choices: ChoiceData[];
     endPage: boolean;
 }
+
+export interface PageDataNode extends PageData {
+    positionX: number;
+    positionY: number;
+}

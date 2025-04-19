@@ -30,7 +30,7 @@ export default function MainGrid() {
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
         {stories.map((story, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+          <Grid key={index} size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
               <StoryCard story={story} onClick={(story) => navigate(`/story/${story.id}`)}/>
           </Grid>
         ))}
