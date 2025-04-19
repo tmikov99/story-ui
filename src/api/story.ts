@@ -1,4 +1,5 @@
-import { StoryData, StoryFormData } from '../types/story';
+import { PageDataNode } from '../types/page';
+import { StoryFormData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
@@ -15,6 +16,11 @@ export const createStory = async (storyData: StoryFormData) => {
   const response = await axios.post('/story/create', storyData);
   return response.data;
 };
+
+export const updateStoryPages = async (storyId: number, pages: PageDataNode[]) => {
+  const response = await axios.put(`/story/pages/${storyId}`, pages);
+  return response.data;
+}
 
 export const deleteStory = async (id: number) => {
   const response = await axios.delete(`/story/${id}`);

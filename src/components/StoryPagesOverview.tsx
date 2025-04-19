@@ -55,7 +55,7 @@ export default function StoryPagesOverview() {
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
         {pages.map((page, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+          <Grid key={index} size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
               <PageCard
                 page={page}
                 onClick={(currentPage) => navigate(`/edit/${storyId}/page/${currentPage.id}`)}

@@ -16,6 +16,11 @@ export const fetchPagesByStory = async (storyId: number) => {
     return response.data;
 }
 
+export const fetchPagesMapByStory = async (storyId: number) => {
+    const response = await axios.get(`/page/story/${storyId}/map`);
+    return response.data;
+}
+
 export const createPage = async (pageData: PageData) => {
     const response = await axios.post('/page/create', pageData);
     return response.data;

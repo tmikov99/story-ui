@@ -85,7 +85,7 @@ export default function PageCard({ page, onClick }: PageCardProps) {
       />
       <SyledCardContent>
         <StyledTypographyLarge variant="body2" sx={{ color: 'text.secondary' }}>
-          {page?.paragraphs[0]}
+          {page?.paragraphs && page.paragraphs[0]}
         </StyledTypographyLarge>
       </SyledCardContent>
       <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
