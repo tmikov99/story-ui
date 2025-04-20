@@ -1,4 +1,4 @@
-import { PageData } from "../types/page";
+import { PageDataNode } from "../types/page";
 import axios from "./axios";
 
 export const fetchPage = async (storyId: number, pageNumber: number) => {
@@ -21,12 +21,12 @@ export const fetchPagesMapByStory = async (storyId: number) => {
     return response.data;
 }
 
-export const createPage = async (pageData: PageData) => {
+export const createPage = async (pageData: PageDataNode) => {
     const response = await axios.post('/page/create', pageData);
     return response.data;
 }
 
-export const updatePage = async (pageId:number, pageData: PageData) => {
-    const response = await axios.put(`/page/${pageId}`, pageData);
+export const updatePage = async (pageData: PageDataNode) => {
+    const response = await axios.put(`/page/${pageData.id}`, pageData);
     return response.data;
 }
