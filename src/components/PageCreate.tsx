@@ -58,31 +58,31 @@ export default function PageCreate({ pageId }: PageFormProps) {
         setChoices(prev => prev.filter((_, i) => i !== index));
     };
     
-    const handleSubmit = async () => {
-        console.log(choices)
-        const storyIdNumber = Number(storyId);
-        const pageData: PageData = {
-          title,
-          storyId: storyIdNumber,
-          pageNumber: Number(pageNumber),
-          paragraphs: paragraphs.filter(p => p.trim() !== ''),
-          choices: choices.filter(choice => choice.text.trim() && choice.targetPage).map(choice => ({
-            text: choice.text,
-            targetPage: Number(choice.targetPage),
-          })),
-          endPage: false,
-        };
+    // const handleSubmit = async () => {
+    //     console.log(choices)
+    //     const storyIdNumber = Number(storyId);
+    //     const pageData: PageData = {
+    //       title,
+    //       storyId: storyIdNumber,
+    //       pageNumber: Number(pageNumber),
+    //       paragraphs: paragraphs.filter(p => p.trim() !== ''),
+    //       choices: choices.filter(choice => choice.text.trim() && choice.targetPage).map(choice => ({
+    //         text: choice.text,
+    //         targetPage: Number(choice.targetPage),
+    //       })),
+    //       endPage: false,
+    //     };
     
-        console.log("Submitting page:", pageData);
+    //     console.log("Submitting page:", pageData);
         
-        if (pageId) {
-            await updatePage(pageId, pageData);
-        } else {
-            await createPage(pageData);
-        }
+    //     if (pageId) {
+    //         // await updatePage(pageId, pageData);
+    //     } else {
+    //         await createPage(pageData);
+    //     }
 
-        navigate(`/create/${storyId}/overview`)
-    };
+    //     navigate(`/create/${storyId}/overview`)
+    // };
     
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
@@ -97,7 +97,7 @@ export default function PageCreate({ pageId }: PageFormProps) {
                 marginRight: {xs: 2, sm: 4, md: 8, lg: 12, xl: 16},
             }}
         >
-            <TextField
+            {/* <TextField
                 fullWidth
                 type="number"
                 label="Page Number"
@@ -160,7 +160,7 @@ export default function PageCreate({ pageId }: PageFormProps) {
             <Button variant="outlined" onClick={addChoice} sx={{ mb: 4 }}>Add Choice</Button>
             <Box sx={{ mt: 4, textAlign: 'center' }}>
                 <Button variant="contained" onClick={handleSubmit}>Submit Page</Button>
-            </Box>
+            </Box> */}
         </Paper>
       </Box>
     )

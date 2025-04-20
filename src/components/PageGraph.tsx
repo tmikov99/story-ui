@@ -15,21 +15,18 @@ import ReactFlow, {
   EdgeChange,
   applyNodeChanges,
   applyEdgeChanges,
+  NodePositionChange,
 } from "react-flow-renderer";
 import PageCard from "./PageCard";
 import { PageData, PageDataNode } from "../types/page";
-import { Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { updateStoryPages } from "../api/story";
+import { createPage, updatePage } from "../api/page";
 
 interface PageGraphProps {
   pages: PageDataNode[];
   storyId: number;
   rootPageNumber: number;
-}
-
-interface SavedPosition {
-  x: number;
-  y: number;
 }
 
 function PageCardNode({ data }: { data: { page: PageData } }) {
@@ -64,11 +61,6 @@ function buildEdges(pages: PageData[]): Edge[] {
   return edges;
 }
 
-function loadPositions(): Record<number, SavedPosition> {
-  const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-  return saved ? JSON.parse(saved) : {};
-}
-
 function savePositions(storyId: number, nodes: Node[]) {
   const pagesMap: PageDataNode[] = nodes.map(node => {
     const page: PageDataNode = {
@@ -84,18 +76,25 @@ function savePositions(storyId: number, nodes: Node[]) {
 }
 
 function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
-  const savedPositions = useMemo(loadPositions, []);
   const edges = useMemo(() => buildEdges(pages), [pages]);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const updateQueueRef = useRef<Map<number, PageDataNode>>(new Map());
 
-  const debouncedSave = useCallback((positions: Record<number, SavedPosition>) => {
+  const debouncedSave = useCallback(() => {
     if (saveTimeout.current) {
         clearTimeout(saveTimeout.current);
     }
 
-    saveTimeout.current = setTimeout(() => {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(positions));
-        saveTimeout.current = null;
+    saveTimeout.current = setTimeout(async () => {
+      const updates = Array.from(updateQueueRef.current.values());
+      if (updates.length > 0) {
+        try {
+          await Promise.all(updates.map((page) => updatePage(page)));
+        } catch (err) {
+          console.error("Failed to update page positions:", err);
+        }
+        updateQueueRef.current.clear();
+      }
     }, 500);
     }, []);
 
@@ -103,34 +102,90 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const initialNodes: Node[] = pages.map((page) => ({
     id: page.pageNumber.toString(),
     type: "pageNode",
-    position: savedPositions[page.pageNumber] || { x: page.positionX, y: page.positionY },
+    position: { x: page.positionX, y: page.positionY },
     data: { page },
   }));
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(edges);
 
-  // Save on drag/move
   const handleNodeChange: OnNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      const hasPositionChanged = changes.some(change => change.type === 'position');
+      const hasPositionChanged = changes.some(
+        (change): change is NodePositionChange => change.type === "position"
+      );
       if (!hasPositionChanged) return;
       
       const updatedNodes = applyNodeChanges(changes, nodes);
       setNodes(updatedNodes);
 
-      const positions: Record<number, SavedPosition> = {};
-      updatedNodes.forEach((node) => {
-        positions[parseInt(node.id)] = node.position;
-      });
-      debouncedSave(positions);
+      const updatedPages = changes
+        .filter((c): c is NodePositionChange => c.type === "position")
+        .map((change) => {
+          const updatedNode = updatedNodes.find((node) => node.id === change.id);
+          if (!updatedNode) return null;
+
+          const updatedPage = {
+            ...updatedNode.data.page,
+            positionX: updatedNode.position.x,
+            positionY: updatedNode.position.y,
+          };
+          return updatedPage;
+        })
+        .filter((p): p is PageDataNode => p !== null);
+
+      for (const page of updatedPages) {
+        updateQueueRef.current.set(page.id!, page);
+      }
+
+      debouncedSave();
     },
     [nodes, setNodes]
   );
 
+  const handleAddPage = async () => {
+    const newId = nodes.length > 0 
+      ? Math.max(...nodes.map((n) => parseInt(n.id))) + 1 
+      : 1;
+  
+    const newPage: PageDataNode = {
+      storyId: storyId,
+      pageNumber: newId,
+      title: `Untitled Page`,
+      paragraphs: [],
+      choices: [],
+      positionX: 100 + newId * 100,
+      positionY: 100,
+      endPage: false,
+    };
+
+    try {
+      const responsePage = await createPage(newPage);
+      const newNode: Node = {
+        id: responsePage.id.toString(),
+        type: "pageNode",
+        position: { x: responsePage.positionX, y: responsePage.positionY },
+        data: { page: responsePage },
+      };
+  
+      setNodes((prev) => [...prev, newNode]);
+    } catch (err) {
+      console.error("Failed to create page:", err);
+    }
+  };
+
+  //TODO: Take height from theme/calc
   return (
-    <div style={{ height: "90vh", width: "100%" }}>
-      <Button variant="outlined" onClick={() => savePositions(storyId, nodes)}>Save</Button>
+    <Box style={{ height: "84vh", width: "100%" }}>
+      <Stack direction={"row"} gap={1}>
+        <Button variant="outlined" onClick={() => savePositions(storyId, nodes)}>Save</Button>
+        <Button
+          variant="contained"
+          onClick={handleAddPage}
+        >
+          Add Page
+        </Button>
+      </Stack>
       <ReactFlow
         nodes={nodes}
         edges={edgeState}
@@ -142,7 +197,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         <Background />
         <Controls />
       </ReactFlow>
-    </div>
+    </Box>
   );
 }
 
