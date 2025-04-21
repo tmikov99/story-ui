@@ -1,6 +1,5 @@
-import { Handle, Position } from 'react-flow-renderer';
+import { Handle, Position, NodeTypes } from '@xyflow/react';
 import PageCard from '../components/PageCard';
-import { NodeTypes } from 'react-flow-renderer';
 import { PageData } from '../types/page';
 
 export function PageCardNode({ data }: { data: { page: PageData } }) {

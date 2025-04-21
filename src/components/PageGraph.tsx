@@ -1,20 +1,22 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import ReactFlow, {
-  Background,
+import {
+  ReactFlow,
   Controls,
-  Node,
-  Edge,
+  type Node,
+  type Edge,
   useNodesState,
   useEdgesState,
-  OnNodesChange,
-  NodeChange,
   applyNodeChanges,
-  NodePositionChange,
-  Connection,
-  OnConnect,
+  type OnNodesChange,
+  type NodeChange,
+  type NodePositionChange,
+  type Connection,
+  type OnConnect,
   addEdge,
-} from "react-flow-renderer";
-import { PageData, PageDataNode } from "../types/page";
+  Background,
+} from "@xyflow/react";
+import '@xyflow/react/dist/style.css';
+import { ChoiceData, PageData, PageDataNode } from "../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material";
 import { updateStoryPages } from "../api/story";
 import { createPage, updatePage } from "../api/page";
@@ -42,8 +44,9 @@ function buildEdges(pages: PageData[]): Edge[] {
 
 function savePositions(storyId: number, nodes: Node[]) {
   const pagesMap: PageDataNode[] = nodes.map(node => {
+    const existingPageData = (node.data.page as PageDataNode)
     const page: PageDataNode = {
-      ...node.data.page,
+      ...existingPageData,
       positionX: node.position.x,
       positionY: node.position.y,
     }
@@ -105,8 +108,9 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
           const updatedNode = updatedNodes.find((node) => node.id === change.id);
           if (!updatedNode) return null;
 
+          const existingPageData = (updatedNode.data.page as PageDataNode)
           const updatedPage = {
-            ...updatedNode.data.page,
+            ...existingPageData,
             positionX: updatedNode.position.x,
             positionY: updatedNode.position.y,
           };
@@ -169,11 +173,12 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
     setNodes((prevNodes) => {
       return prevNodes.map((node) => {
         if (parseInt(node.id) !== sourceId) return node;
+        const existingPageData = (node.data.page as PageDataNode)
   
         const page: PageDataNode = {
-          ...node.data.page,
+          ...existingPageData,
           choices: [
-            ...node.data.page.choices,
+            ...existingPageData.choices,
             {
               targetPage: targetId,
               text: choiceText || "Untitled Choice",
