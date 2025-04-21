@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -6,46 +6,25 @@ import ReactFlow, {
   Edge,
   useNodesState,
   useEdgesState,
-  Handle,
-  Position,
-  NodeTypes,
   OnNodesChange,
-  OnEdgesChange,
   NodeChange,
-  EdgeChange,
   applyNodeChanges,
-  applyEdgeChanges,
   NodePositionChange,
+  Connection,
+  OnConnect,
+  addEdge,
 } from "react-flow-renderer";
-import PageCard from "./PageCard";
 import { PageData, PageDataNode } from "../types/page";
 import { Box, Button, Stack } from "@mui/material";
 import { updateStoryPages } from "../api/story";
 import { createPage, updatePage } from "../api/page";
+import { nodeTypes } from "../utils/reactFlowUtil";
 
 interface PageGraphProps {
   pages: PageDataNode[];
   storyId: number;
   rootPageNumber: number;
 }
-
-function PageCardNode({ data }: { data: { page: PageData } }) {
-  return (
-    <div style={{ width: 300, position: "relative" }}>
-      <Handle type="target" position={Position.Left} style={{ background: "#555" }} />
-      <PageCard page={data.page} />
-      <Handle type="source" position={Position.Right} style={{ background: "#555" }} />
-    </div>
-  );
-}
-
-const nodeTypes: NodeTypes = {
-    pageNode: PageCardNode,
-};
-
-const LOCAL_STORAGE_KEY = "page_positions";
-
-
 
 function buildEdges(pages: PageData[]): Edge[] {
   const edges: Edge[] = [];
@@ -70,9 +49,7 @@ function savePositions(storyId: number, nodes: Node[]) {
     }
     return page;
   });
-  updateStoryPages(storyId, pagesMap).then(() => {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-  })
+  updateStoryPages(storyId, pagesMap);
 }
 
 function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
@@ -162,7 +139,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
     try {
       const responsePage = await createPage(newPage);
       const newNode: Node = {
-        id: responsePage.id.toString(),
+        id: responsePage.pageNumber.toString(),
         type: "pageNode",
         position: { x: responsePage.positionX, y: responsePage.positionY },
         data: { page: responsePage },
@@ -173,6 +150,37 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       console.error("Failed to create page:", err);
     }
   };
+
+  const handleConnect: OnConnect = useCallback((params: Connection) => {
+    const sourceId = parseInt(params.source!);
+    const targetId = parseInt(params.target!);
+  
+    setNodes((prevNodes) => {
+      return prevNodes.map((node) => {
+        if (parseInt(node.id) !== sourceId) return node;
+  
+        const page: PageDataNode = {
+          ...node.data.page,
+          choices: [
+            ...node.data.page.choices,
+            { targetPage: targetId },
+          ],
+        };
+  
+        updateQueueRef.current.set(page.id!, page);
+        debouncedSave();
+  
+        setEdges((prev) =>
+          addEdge({ ...params, id: `${sourceId}-${targetId}` }, prev)
+        );
+  
+        return {
+          ...node,
+          data: { ...node.data, page },
+        };
+      });
+    });
+  }, [debouncedSave]);
 
   //TODO: Take height from theme/calc
   return (
@@ -191,6 +199,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         edges={edgeState}
         onNodesChange={handleNodeChange}
         onEdgesChange={onEdgesChange}
+        onConnect={handleConnect}
         nodeTypes={nodeTypes}
         fitView
       >
