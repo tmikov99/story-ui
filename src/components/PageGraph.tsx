@@ -90,10 +90,11 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         updateQueueRef.current.clear();
       }
     }, 500);
-    }, []);
+  }, []);
 
   const handleNodeChange: OnNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      onNodesChange(changes);
       const hasPositionChanged = changes.some(
         (change): change is NodePositionChange => change.type === "position"
       );
@@ -204,6 +205,50 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
     setPendingConnection(null);
   };
 
+  const handleNodesDelete = useCallback((nodesToDelete: Node[]) => {
+    console.warn("Node deletion is disabled.");
+  }, []);
+
+  const handleEdgesDelete = useCallback((deleted: Edge[]) => {
+    setEdges((prevEdges) =>
+      prevEdges.filter((edge) => !deleted.some((d) => d.id === edge.id))
+    );
+  
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => {
+        const page = node.data.page as PageDataNode;
+  
+        const updatedChoices = page.choices.filter(
+          (choice) =>
+            !deleted.some(
+              (edge) =>
+                edge.source === node.id &&
+                edge.target === choice.targetPage.toString()
+            )
+        );
+  
+        if (updatedChoices.length !== page.choices.length) {
+          const updatedPage: PageDataNode = {
+            ...page,
+            choices: updatedChoices,
+          };
+          updateQueueRef.current.set(updatedPage.id!, updatedPage);
+          debouncedSave();
+  
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              page: updatedPage,
+            },
+          };
+        }
+  
+        return node;
+      })
+    );
+  }, [setEdges, setNodes, debouncedSave]);
+
   //TODO: Take height from theme/calc
   return (
     <Box style={{ height: "84vh", width: "100%" }}>
@@ -222,17 +267,20 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         onNodesChange={handleNodeChange}
         onEdgesChange={onEdgesChange}
         onConnect={handleConnect}
+        onNodesDelete={handleNodesDelete}
+        onEdgesDelete={handleEdgesDelete}
         nodeTypes={nodeTypes}
         fitView
       >
         <Background />
         <Controls />
       </ReactFlow>
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth maxWidth={'sm'}>
         <DialogTitle>Enter Choice Text</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
+            multiline
             placeholder="Choice Text"
             value={choiceText}
             onChange={(e) => setChoiceText(e.target.value)}
