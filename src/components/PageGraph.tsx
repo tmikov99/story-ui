@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -15,7 +15,7 @@ import ReactFlow, {
   addEdge,
 } from "react-flow-renderer";
 import { PageData, PageDataNode } from "../types/page";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material";
 import { updateStoryPages } from "../api/story";
 import { createPage, updatePage } from "../api/page";
 import { nodeTypes } from "../utils/reactFlowUtil";
@@ -52,10 +52,24 @@ function savePositions(storyId: number, nodes: Node[]) {
   updateStoryPages(storyId, pagesMap);
 }
 
+function getInitialNodes (pages: PageDataNode[]): Node[] {
+  return pages.map((page) => ({
+    id: page.pageNumber.toString(),
+    type: "pageNode",
+    position: { x: page.positionX, y: page.positionY },
+    data: { page },
+  }));
+}
+
 function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const edges = useMemo(() => buildEdges(pages), [pages]);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updateQueueRef = useRef<Map<number, PageDataNode>>(new Map());
+  const [nodes, setNodes, onNodesChange] = useNodesState(getInitialNodes(pages));
+  const [edgeState, setEdges, onEdgesChange] = useEdgesState(edges);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [choiceText, setChoiceText] = useState("");
+  const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
 
   const debouncedSave = useCallback(() => {
     if (saveTimeout.current) {
@@ -74,17 +88,6 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       }
     }, 500);
     }, []);
-
-
-  const initialNodes: Node[] = pages.map((page) => ({
-    id: page.pageNumber.toString(),
-    type: "pageNode",
-    position: { x: page.positionX, y: page.positionY },
-    data: { page },
-  }));
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edgeState, setEdges, onEdgesChange] = useEdgesState(edges);
 
   const handleNodeChange: OnNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -152,8 +155,16 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   };
 
   const handleConnect: OnConnect = useCallback((params: Connection) => {
-    const sourceId = parseInt(params.source!);
-    const targetId = parseInt(params.target!);
+    setPendingConnection(params);
+    setChoiceText("");
+    setIsModalOpen(true);
+  }, []);
+
+  const handleConfirmChoice = () => {
+    if (!pendingConnection) return;
+  
+    const sourceId = parseInt(pendingConnection.source!);
+    const targetId = parseInt(pendingConnection.target!);
   
     setNodes((prevNodes) => {
       return prevNodes.map((node) => {
@@ -163,7 +174,10 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
           ...node.data.page,
           choices: [
             ...node.data.page.choices,
-            { targetPage: targetId },
+            {
+              targetPage: targetId,
+              text: choiceText || "Untitled Choice",
+            },
           ],
         };
   
@@ -171,7 +185,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         debouncedSave();
   
         setEdges((prev) =>
-          addEdge({ ...params, id: `${sourceId}-${targetId}` }, prev)
+          addEdge({ ...pendingConnection, id: `${sourceId}-${targetId}` }, prev)
         );
   
         return {
@@ -180,7 +194,10 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         };
       });
     });
-  }, [debouncedSave]);
+  
+    setIsModalOpen(false);
+    setPendingConnection(null);
+  };
 
   //TODO: Take height from theme/calc
   return (
@@ -206,6 +223,21 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         <Background />
         <Controls />
       </ReactFlow>
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <DialogTitle>Enter Choice Text</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            placeholder="Choice Text"
+            value={choiceText}
+            onChange={(e) => setChoiceText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleConfirmChoice}>Add Choice</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
