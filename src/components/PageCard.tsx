@@ -25,6 +25,10 @@ const SyledCard = styled(Card)(({ theme }) => ({
     outlineColor: 'hsla(210, 98%, 48%, 0.5)',
     outlineOffset: '2px',
   },
+  '&[data-active]': {
+    outline: '3px solid',
+    outlineColor: 'hsla(210, 98%, 48%, 0.5)',
+  },
 }));
 
 const SyledCardContent = styled(CardContent)({
@@ -54,6 +58,7 @@ const StyledTypographyLarge = styled(StyledTypography)({
 interface PageCardProps {
   page: PageData;
   onClick?: (page: PageData) => void;
+  selected?: boolean;
 }
 
 
@@ -61,7 +66,7 @@ const handleButtonClickPlaceholder = (event: React.MouseEvent<HTMLButtonElement>
   event.stopPropagation();
 };
 
-export default function PageCard({ page, onClick }: PageCardProps) {
+export default function PageCard({ page, onClick, selected }: PageCardProps) {
   const handleCardClick = () => {
     if (onClick) {
       onClick(page);
@@ -69,7 +74,7 @@ export default function PageCard({ page, onClick }: PageCardProps) {
   }
 
   return (
-    <SyledCard onClick={handleCardClick}>
+    <SyledCard onClick={handleCardClick} data-active={selected ? '' : undefined}>
       <CardHeader
         sx={{paddingLeft: 2, paddingTop: 2, paddingRight: 2}}
         avatar={

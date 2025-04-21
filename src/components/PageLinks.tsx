@@ -13,7 +13,7 @@ import { PageDataNode } from '../types/page';
 export default function PageLinks() {
   const { storyId } = useParams();
   const navigate = useNavigate();
-  const [pages, setPages] = useState([]);
+  const [pages, setPages] = useState(null);
 
   const fetchPages = async () => {
     try {
@@ -32,7 +32,7 @@ export default function PageLinks() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      {pages.length > 0 && <PageGraph pages={pages} storyId={Number(storyId)} rootPageNumber={1} />}
+      {pages !== null && <PageGraph pages={pages} storyId={Number(storyId)} rootPageNumber={1} />}
     </Box>
   );
 }

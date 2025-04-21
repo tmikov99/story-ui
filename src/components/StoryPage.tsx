@@ -58,7 +58,7 @@ export default function StoryPage() {
       console.log("Missing Story Error")
       return;
     }
-    navigate(`/create/${id}/overview`);
+    navigate(`/pageLinks/${id}`);
   }
 
   return (
