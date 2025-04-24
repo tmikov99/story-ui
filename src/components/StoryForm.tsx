@@ -15,27 +15,34 @@ const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
 type Props = {
   onSubmit: (data: StoryFormData) => void;
+  initialData?: StoryFormData;
 };
 
-export default function StoryForm({ onSubmit }: Props) {
-  const [formData, setFormData] = useState<StoryFormData>({
-    title: "",
-    genres: [],
-    tags: [],
-    description: "",
-    status: "DRAFT",
-  });
-  const [availableGenres, setAvailableGenres] = useState([]);
+export default function StoryForm({ onSubmit, initialData }: Props) {
+  const [formData, setFormData] = useState<StoryFormData>(
+    initialData || {
+      title: "",
+      genres: [],
+      tags: [],
+      description: "",
+      status: "DRAFT",
+    }
+  );
+
+  const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchGenres().then(genres => {
-        setAvailableGenres(genres);
-    })
-
+    fetchGenres().then((genres) => {
+      setAvailableGenres(genres);
+    });
   }, []);
 
+  useEffect(() => {
+    if (initialData) setFormData(initialData);
+  }, [initialData]);
+
   const handleChange = (field: keyof StoryFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,7 +52,9 @@ export default function StoryForm({ onSubmit }: Props) {
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Typography variant="h4" gutterBottom>Create New Story</Typography>
+      <Typography variant="h4" gutterBottom>
+        {initialData ? "Edit Story" : "Create New Story"}
+      </Typography>
 
       <TextField
         label="Title"
@@ -102,7 +111,7 @@ export default function StoryForm({ onSubmit }: Props) {
 
       <Stack direction="row" justifyContent="flex-end">
         <Button variant="contained" type="submit">
-          Create Story
+          {initialData ? "Update Story" : "Create Story"}
         </Button>
       </Stack>
     </Box>
