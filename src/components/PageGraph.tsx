@@ -16,8 +16,8 @@ import {
   Background,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
-import { PageData, PageDataNode } from "../types/page";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material";
+import { ChoiceData, PageData, PageDataNode } from "../types/page";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
 import { updateStoryPages } from "../api/story";
 import { createPage, updatePage } from "../api/page";
 import { nodeTypes } from "../utils/reactFlowUtil";
@@ -71,15 +71,6 @@ function getFirstAvailablePageNumber (pages: PageDataNode[]): number {
   return length + 1;
 }
 
-function getInitialNodes (pages: PageDataNode[]): Node[] {
-  return pages.map((page) => ({
-    id: page.pageNumber.toString(),
-    type: "pageNode",
-    position: { x: page.positionX, y: page.positionY },
-    data: { page },
-  }));
-}
-
 function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const edges = useMemo(() => buildEdges(pages), [pages]);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -91,6 +82,37 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
   const [isAddPageDialogOpen, setIsAddPageDialogOpen] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState("");
+  const [newPageParagraphs, setNewPageParagraphs] = useState(['']);
+  const [newPageChoices, setNewPageChoices] = useState<ChoiceData[]>([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuTargetPage, setMenuTargetPage] = useState<PageData | null>(null);
+  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
+  const [editingPageNumber, setEditingPageNumber] = useState<number | null>(null);
+
+
+  function handleMenuOpen (event: React.MouseEvent<HTMLElement>, page: PageData) {
+    event.stopPropagation();
+    setMenuAnchorEl(event.currentTarget);
+    setMenuTargetPage(page);
+  };
+
+  function getInitialNodes (pages: PageDataNode[]): Node[] {
+    return pages.map((page) => ({
+      id: page.pageNumber.toString(),
+      type: "pageNode",
+      position: { x: page.positionX, y: page.positionY },
+      data: { 
+        page,
+        onMenuOpen: (event: React.MouseEvent<HTMLElement>, page: PageData) => handleMenuOpen(event, page)
+       },
+      
+    }));
+  }
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setMenuTargetPage(null);
+  };
 
   const debouncedSave = useCallback(() => {
     if (saveTimeout.current) {
@@ -147,38 +169,71 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   );
 
   const handleAddPage = async () => {
+    setDialogMode("add");
     setNewPageTitle("");
+    setNewPageParagraphs([""]);
+    setNewPageChoices([]);
     setIsAddPageDialogOpen(true);
   };
 
   const handleConfirmAddPage = async () => {
-    const pageNumber = getFirstAvailablePageNumber(nodes.map(node => node.data.page as PageDataNode))
-    console.log(pageNumber)
-    const newPage: PageDataNode = {
-      storyId: storyId,
-      pageNumber: pageNumber,
-      title: newPageTitle || `Untitled Page`,
-      paragraphs: [],
-      choices: [],
-      positionX: 100 + pageNumber * 100,
-      positionY: 100,
-      endPage: false,
-    };
-  
-    try {
-      const responsePage = await createPage(newPage);
-      const newNode: Node = {
-        id: responsePage.pageNumber.toString(),
-        type: "pageNode",
-        position: { x: responsePage.positionX, y: responsePage.positionY },
-        data: { page: responsePage },
+    if (dialogMode === "add") {
+      const pageNumber = getFirstAvailablePageNumber(nodes.map(node => node.data.page as PageDataNode));
+      const newPage: PageDataNode = {
+        storyId,
+        pageNumber,
+        title: newPageTitle || `Untitled Page`,
+        paragraphs: newPageParagraphs,
+        choices: newPageChoices,
+        positionX: 100 + pageNumber * 100,
+        positionY: 100,
+        endPage: false,
       };
   
-      setNodes((prev) => [...prev, newNode]);
+      try {
+        const responsePage = await createPage(newPage);
+        const newNode: Node = {
+          id: responsePage.pageNumber.toString(),
+          type: "pageNode",
+          position: { x: responsePage.positionX, y: responsePage.positionY },
+          data: { page: responsePage, onMenuOpen: handleMenuOpen },
+        };
+  
+        setNodes((prev) => [...prev, newNode]);
+        setIsAddPageDialogOpen(false);
+        setNewPageTitle("");
+      } catch (err) {
+        console.error("Failed to create page:", err);
+      }
+    } else if (dialogMode === "edit" && editingPageNumber !== null) {
+      setNodes((prevNodes) =>
+        prevNodes.map((node) => {
+          if (parseInt(node.id) !== editingPageNumber) return node;
+  
+          const page = {
+            ...node.data.page,
+            title: newPageTitle,
+            paragraphs: newPageParagraphs,
+            choices: newPageChoices
+          };
+  
+          updateQueueRef.current.set(page.id!, page);
+          debouncedSave();
+  
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              page,
+            },
+          };
+        })
+      );
+  
       setIsAddPageDialogOpen(false);
       setNewPageTitle("");
-    } catch (err) {
-      console.error("Failed to create page:", err);
+      setEditingPageNumber(null);
+      setDialogMode("add");
     }
   };
 
@@ -187,6 +242,18 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
     setChoiceText("");
     setIsModalOpen(true);
   }, []);
+
+  const handleEditPage = () => {
+    if (menuTargetPage) {
+      setDialogMode("edit");
+      setEditingPageNumber(menuTargetPage.pageNumber);
+      setNewPageTitle(menuTargetPage.title);
+      setNewPageParagraphs([...menuTargetPage.paragraphs]);
+      setNewPageChoices([...menuTargetPage.choices]);
+      setIsAddPageDialogOpen(true);
+    }
+    handleMenuClose();
+  }
 
   const handleConfirmChoice = () => {
     if (!pendingConnection) return;
@@ -324,12 +391,68 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
             value={newPageTitle}
             onChange={(e) => setNewPageTitle(e.target.value)}
           />
+          {newPageParagraphs.map((p, idx) => (
+            <TextField
+              key={idx}
+              fullWidth
+              multiline
+              placeholder={`Paragraph ${idx + 1}`}
+              value={p}
+              onChange={(e) => {
+                const updated = [...newPageParagraphs];
+                updated[idx] = e.target.value;
+                setNewPageParagraphs(updated);
+              }}
+              sx={{ mb: 1 }}
+            />
+          ))}
+          <Button onClick={() => setNewPageParagraphs([...newPageParagraphs, ''])}>
+            Add Paragraph
+          </Button>
+
+          {newPageChoices.map((choice, idx) => (
+            <Stack direction="row" spacing={1} alignItems="center" key={idx} sx={{ mt: 1 }}>
+              <TextField
+                fullWidth
+                placeholder="Choice Text"
+                value={choice.text}
+                onChange={(e) => {
+                  const updated = [...newPageChoices];
+                  updated[idx].text = e.target.value;
+                  setNewPageChoices(updated);
+                }}
+              />
+              <TextField
+                placeholder="Target Page"
+                value={choice.targetPage}
+                onChange={(e) => {
+                  const updated = [...newPageChoices];
+                  updated[idx].targetPage = Number(e.target.value);
+                  setNewPageChoices(updated);
+                }}
+                sx={{ width: 100 }}
+              />
+            </Stack>
+          ))}
+          <Button onClick={() => setNewPageChoices([...newPageChoices, { text: '', targetPage: 0 }])}>
+            Add Choice
+          </Button>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsAddPageDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleConfirmAddPage}>Add Page</Button>
+          <Button variant="contained" onClick={handleConfirmAddPage}>
+            {dialogMode === "add" ? "Add Page" : "Save Changes"}
+          </Button>
         </DialogActions>
       </Dialog>
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleEditPage}>Edit</MenuItem>
+        <MenuItem onClick={() => {/*TODO: Add delete logic */}}>Delete</MenuItem>
+      </Menu>
     </Box>
   );
 }

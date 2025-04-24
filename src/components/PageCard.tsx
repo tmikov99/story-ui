@@ -59,14 +59,19 @@ interface PageCardProps {
   page: PageData;
   onClick?: (page: PageData) => void;
   selected?: boolean;
+  onMenuOpen?: (e: React.MouseEvent<HTMLElement>, page: PageData) => void;
 }
-
 
 const handleButtonClickPlaceholder = (event: React.MouseEvent<HTMLButtonElement>) => {
   event.stopPropagation();
 };
 
-export default function PageCard({ page, onClick, selected }: PageCardProps) {
+
+export default function PageCard({ page, onClick, onMenuOpen, selected }: PageCardProps) {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onMenuOpen?.(event, page);
+  };
+
   const handleCardClick = () => {
     if (onClick) {
       onClick(page);
@@ -81,7 +86,7 @@ export default function PageCard({ page, onClick, selected }: PageCardProps) {
           <ArticleIcon />
         }
         action={
-          <IconButton onClick={handleButtonClickPlaceholder} aria-label="settings">
+          <IconButton onClick={handleMenuOpen} aria-label="settings">
             <MoreVertIcon />
           </IconButton>
         }
