@@ -21,6 +21,7 @@ import { RootState } from './redux/store';
 import StoryCreate from './components/StoryCreate';
 import PageEditWrapper from './components/PageEditWrapper';
 import PageLinks from './components/PageLinks';
+import StoryEdit from './components/StoryEdit';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -47,6 +48,7 @@ function App() {
             {isAuthenticated && <Route path="/create" element={<StoryCreate />}/>}
             {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
             {isAuthenticated && <Route path="/create/:storyId/page" element={<PageCreate />}/>}
+            {isAuthenticated && <Route path="/edit/:storyId" element={<StoryEdit />} />}
             {isAuthenticated && <Route path="/edit/:storyId/page/:pageId" element={<PageEditWrapper />}/>}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
             {isAuthenticated && <Route path="/create/:storyId/page/:pageNumber/links" element={<PageCreateLinks />}/>}

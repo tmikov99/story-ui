@@ -53,6 +53,14 @@ export default function StoryPage() {
     }
   }
 
+  const handleEditStory = () => {
+    if (!story) {
+      console.log("Missing Story Error")
+      return;
+    }
+    navigate(`/edit/${id}`);
+  }
+
   const handleEditPages = () => {
     if (!story) {
       console.log("Missing Story Error")
@@ -113,7 +121,7 @@ export default function StoryPage() {
           <Stack>
             {username === story?.user.username && 
               <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
-                <Button color='secondary'>Edit Properties</Button>
+                <Button color='secondary' onClick={handleEditStory}>Edit Properties</Button>
                 <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
                 <Button color='error'>Delete Story</Button>
               </ButtonGroup>
