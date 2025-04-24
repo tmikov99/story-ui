@@ -16,7 +16,7 @@ import {
   Background,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
-import { ChoiceData, PageData, PageDataNode } from "../types/page";
+import { PageData, PageDataNode } from "../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material";
 import { updateStoryPages } from "../api/story";
 import { createPage, updatePage } from "../api/page";
@@ -55,6 +55,22 @@ function savePositions(storyId: number, nodes: Node[]) {
   updateStoryPages(storyId, pagesMap);
 }
 
+function getFirstAvailablePageNumber (pages: PageDataNode[]): number {
+  const pageNumbers = pages.map(page => page.pageNumber);
+  if (!pageNumbers) return 1;
+  pageNumbers.sort();
+  if (pageNumbers[pageNumbers.length - 1] < 1) return 1;
+  const numbersSet = new Set(pageNumbers);
+  let length = numbersSet.size;
+  for (let i = 1; i <= length; i++) {
+    if (!numbersSet.has(i)) {
+      return i;
+    }
+  }
+
+  return length + 1;
+}
+
 function getInitialNodes (pages: PageDataNode[]): Node[] {
   return pages.map((page) => ({
     id: page.pageNumber.toString(),
@@ -73,6 +89,8 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [choiceText, setChoiceText] = useState("");
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
+  const [isAddPageDialogOpen, setIsAddPageDialogOpen] = useState(false);
+  const [newPageTitle, setNewPageTitle] = useState("");
 
   const debouncedSave = useCallback(() => {
     if (saveTimeout.current) {
@@ -129,21 +147,24 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   );
 
   const handleAddPage = async () => {
-    const newId = nodes.length > 0 
-      ? Math.max(...nodes.map((n) => parseInt(n.id))) + 1 
-      : 1;
-  
+    setNewPageTitle("");
+    setIsAddPageDialogOpen(true);
+  };
+
+  const handleConfirmAddPage = async () => {
+    const pageNumber = getFirstAvailablePageNumber(nodes.map(node => node.data.page as PageDataNode))
+    console.log(pageNumber)
     const newPage: PageDataNode = {
       storyId: storyId,
-      pageNumber: newId,
-      title: `Untitled Page`,
+      pageNumber: pageNumber,
+      title: newPageTitle || `Untitled Page`,
       paragraphs: [],
       choices: [],
-      positionX: 100 + newId * 100,
+      positionX: 100 + pageNumber * 100,
       positionY: 100,
       endPage: false,
     };
-
+  
     try {
       const responsePage = await createPage(newPage);
       const newNode: Node = {
@@ -154,6 +175,8 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       };
   
       setNodes((prev) => [...prev, newNode]);
+      setIsAddPageDialogOpen(false);
+      setNewPageTitle("");
     } catch (err) {
       console.error("Failed to create page:", err);
     }
@@ -206,7 +229,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   };
 
   const handleNodesDelete = useCallback((nodesToDelete: Node[]) => {
-    console.warn("Node deletion is disabled.");
+    console.warn("Node deletion is disabled.", nodesToDelete);
   }, []);
 
   const handleEdgesDelete = useCallback((deleted: Edge[]) => {
@@ -289,6 +312,22 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         <DialogActions>
           <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleConfirmChoice}>Add Choice</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isAddPageDialogOpen} onClose={() => setIsAddPageDialogOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>New Page</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            autoFocus
+            placeholder="Page Title"
+            value={newPageTitle}
+            onChange={(e) => setNewPageTitle(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsAddPageDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={handleConfirmAddPage}>Add Page</Button>
         </DialogActions>
       </Dialog>
     </Box>
