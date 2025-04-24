@@ -30,3 +30,8 @@ export const updatePage = async (pageData: PageDataNode) => {
     const response = await axios.put(`/page/${pageData.id}`, pageData);
     return response.data;
 }
+
+export const deletePage = async (pageId: number) => {
+    const response = await axios.delete(`/page/${pageId}`);
+    return response.data;
+}

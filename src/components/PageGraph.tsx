@@ -19,7 +19,7 @@ import '@xyflow/react/dist/style.css';
 import { ChoiceData, PageData, PageDataNode } from "../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
 import { updateStoryPages } from "../api/story";
-import { createPage, updatePage } from "../api/page";
+import { createPage, deletePage, updatePage } from "../api/page";
 import { nodeTypes } from "../utils/reactFlowUtil";
 
 interface PageGraphProps {
@@ -199,19 +199,26 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
           data: { page: responsePage, onMenuOpen: handleMenuOpen },
         };
   
-        setNodes((prev) => [...prev, newNode]);
+        setNodes((prev) => {
+          const updatedNodes = [...prev, newNode];
+          const updatedPages = updatedNodes.map(node => node.data.page as PageDataNode);
+          setEdges(buildEdges(updatedPages));
+          return updatedNodes;
+        });
+    
         setIsAddPageDialogOpen(false);
         setNewPageTitle("");
       } catch (err) {
         console.error("Failed to create page:", err);
       }
     } else if (dialogMode === "edit" && editingPageNumber !== null) {
-      setNodes((prevNodes) =>
-        prevNodes.map((node) => {
+      setNodes((prevNodes) => {
+        const updatedNodes = prevNodes.map((node) => {
           if (parseInt(node.id) !== editingPageNumber) return node;
-  
+          const pageData = (node.data.page  as PageDataNode);
+          
           const page = {
-            ...node.data.page,
+            ...pageData,
             title: newPageTitle,
             paragraphs: newPageParagraphs,
             choices: newPageChoices
@@ -227,8 +234,12 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
               page,
             },
           };
-        })
-      );
+        });
+        const updatedPages = updatedNodes.map((node) => node.data.page as PageDataNode);
+        setEdges(buildEdges(updatedPages));
+      
+        return updatedNodes;
+      });
   
       setIsAddPageDialogOpen(false);
       setNewPageTitle("");
@@ -252,6 +263,24 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       setNewPageChoices([...menuTargetPage.choices]);
       setIsAddPageDialogOpen(true);
     }
+    handleMenuClose();
+  }
+
+  const handleDeletePage = async () => {
+    if (!menuTargetPage || !menuTargetPage.id) return;
+
+    const pageIdToDelete = menuTargetPage.pageNumber.toString();
+
+    setNodes((prevNodes) => prevNodes.filter((node) => node.id !== pageIdToDelete));
+
+    setEdges((prevEdges) =>
+      prevEdges.filter(
+        (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
+      )
+    );
+
+    await deletePage(menuTargetPage.id);
+
     handleMenuClose();
   }
 
@@ -451,7 +480,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleEditPage}>Edit</MenuItem>
-        <MenuItem onClick={() => {/*TODO: Add delete logic */}}>Delete</MenuItem>
+        <MenuItem onClick={handleDeletePage}>Delete</MenuItem>
       </Menu>
     </Box>
   );
