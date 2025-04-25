@@ -31,3 +31,15 @@ export const fetchGenres = async () => {
   const response = await axios.get('/story/genres');
   return response.data;
 }
+
+export const createComment = async (storyId: number, commentText: string) => {
+  const response = await axios.post(`/comments/story/${storyId}`, commentText,
+    {headers: {'Content-Type': 'text/plain'}}
+  );
+  return response.data;
+}
+
+export const fetchComments = async (storyId: number) => {
+  const response = await axios.get(`/comments/story/${storyId}`);
+  return response.data;
+}

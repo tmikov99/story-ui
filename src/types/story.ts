@@ -23,3 +23,10 @@ export interface StoryFormData {
     description: string;
     status: string;
   }
+
+export interface StoryCommentData {
+    id: number;
+    username: string;
+    text: string;
+    createdAt: string;
+}
