@@ -4,20 +4,24 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { fetchStory } from '../api/story';
-import { StoryData } from '../types/story';
+import { createComment, fetchComments, fetchStory } from '../api/story';
+import { StoryCommentData, StoryData } from '../types/story';
 import { useUserPlaythrough } from '../hooks/useUserPlaythrough';
 import { formatDateString } from '../utils/formatDate';
-import { Button, ButtonGroup, Chip } from '@mui/material';
+import { Avatar, Button, ButtonGroup, Chip, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import CommentBlock from './CommentBlock';
 
 export default function StoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const storyId = Number(id)
   const [story, setStory] = useState<StoryData | null>(null);
+  const [comments, setComments] = useState<StoryCommentData[]>([]);
   const username = useSelector((state: RootState) => state.auth.username);
+  const [commentText, setCommentText] = useState<string>("");
+  const [commentFocus, setCommentFocus] = useState<boolean>(false);
   
   if (!id) {
     return(<div>ERROR</div>)
@@ -31,7 +35,9 @@ export default function StoryPage() {
     const loadData = async () => {
       try {
         const data = await fetchStory(storyId);
+        const commentsData = await fetchComments(storyId);
         setStory(data);
+        setComments(commentsData);
       } catch (error) {
         console.error("Error fetching story:", error);
       }
@@ -67,6 +73,23 @@ export default function StoryPage() {
       return;
     }
     navigate(`/pageLinks/${id}`);
+  }
+
+  const handleCommentFocus = () => {
+    if (!commentFocus) {
+      setCommentFocus(true);
+    }
+  }
+
+  const unfocusComment = () => {
+    setCommentText("");
+    setCommentFocus(false);
+  }
+
+  const handleCommentSend = async () => {
+    const newComment = await createComment(storyId, commentText);
+    setComments([newComment, ...comments]);
+    unfocusComment();
   }
 
   return (
@@ -146,10 +169,26 @@ export default function StoryPage() {
         </Grid>
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        0 Comments
+        {comments.length} {comments.length === 1 ? "Comment" : "Comments"}
       </Typography>
-      <Stack>
-        {/*comments placeholder*/}
+      <Stack gap={2}>
+        <Box>
+          <Box gap={2} sx={{display: "flex"}}>
+            <Avatar>{username?.[0]}</Avatar>
+            <TextField 
+              multiline fullWidth variant='standard' 
+              placeholder='Add a comment...' 
+              onFocus={handleCommentFocus}
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+          </Box>
+          {commentFocus && <Box sx={{float: "inline-end"}}>
+            <Button sx={{marginRight: "1rem"}} onClick={unfocusComment}>Cancel</Button>
+            <Button variant='outlined' disabled={!commentText.length} onClick={handleCommentSend}>Comment</Button>
+          </Box>}
+        </Box>
+        {comments.map(comment => <CommentBlock key={comment.id} comment={comment} />)}
       </Stack>
     </Box>
   );
