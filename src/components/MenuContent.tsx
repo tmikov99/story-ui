@@ -4,14 +4,11 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
-// import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-// import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
-// import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
-import LanRoundedIcon from '@mui/icons-material/LanRounded';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import { useLocation, Link } from 'react-router-dom';
@@ -23,8 +20,8 @@ const mainListItems1 = [
 ];
 const mainListItems2 = [
   { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '/create'},
-  { text: 'Saved stories', icon: <LanRoundedIcon />, path: '/createPage' },
-  { text: 'Read later', icon: <AnalyticsRoundedIcon />, path: '/createLinks' },
+  { text: 'Favotie stories', icon: <FavoriteRoundedIcon />, path: '/favorite' },
+  { text: 'Liked stories', icon: <ThumbUpAltRoundedIcon />, path: '/liked' },
   { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '/home' },
 ];
 
@@ -53,7 +50,7 @@ export default function MenuContent() {
       <List dense>
         {mainListItems2.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={hash == item.path} component={Link} to={item.path}>
+            <ListItemButton selected={pathname == item.path} component={Link} to={item.path}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
