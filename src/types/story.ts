@@ -14,6 +14,10 @@ export interface StoryData {
     status: string;
     createdAt: string;
     updatedAt: string;
+    liked?: boolean;
+    favorite?: boolean;
+    likes?: number;
+    favorites?: number;
 }
 
 export interface StoryFormData {
@@ -29,4 +33,9 @@ export interface StoryCommentData {
     username: string;
     text: string;
     createdAt: string;
+}
+
+export interface LikesResponse {
+    result: boolean;
+    likes: number;
 }

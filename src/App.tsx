@@ -22,6 +22,7 @@ import StoryCreate from './components/StoryCreate';
 import PageEditWrapper from './components/PageEditWrapper';
 import PageLinks from './components/PageLinks';
 import StoryEdit from './components/StoryEdit';
+import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -41,10 +42,16 @@ function App() {
         <Stack spacing={2} sx={{ alignItems: 'center', mx: 3, pb: 5, }}>
           <Header />
           <Routes>
-            <Route path="/" element={<MainGrid />}/>
+            <Route path="/" element={<MainGrid title="Browse" fetchMethod={fetchStories} showActions={true} />}/>
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
+            {isAuthenticated && <Route path="/favorite" element={
+              <MainGrid title="Favorite Stories" fetchMethod={fetchFavorite} showActions={false} />
+            }/>}
+            {isAuthenticated && <Route path="/liked" element={
+              <MainGrid title="Liked Stories" fetchMethod={fetchLiked} showActions={false} />
+            }/>}
             {isAuthenticated && <Route path="/create" element={<StoryCreate />}/>}
             {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
             {isAuthenticated && <Route path="/create/:storyId/page" element={<PageCreate />}/>}

@@ -6,44 +6,18 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { StoryData } from '../types/story';
 import { formatDateString } from '../utils/formatDate';
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme }) => ({
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-  variants: [
-    {
-      props: ({ expand }) => !expand,
-      style: {
-        transform: 'rotate(0deg)',
-      },
-    },
-    {
-      props: ({ expand }) => !!expand,
-      style: {
-        transform: 'rotate(180deg)',
-      },
-    },
-  ],
-}));
-
+import { toggleFavorite, toggleLike } from '../api/story';
+import { useEffect, useState } from 'react';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -86,16 +60,17 @@ const SyledCard = styled(Card)(({ theme }) => ({
   }));
 
 interface StoryCardProps {
-  story: StoryData;
+  storyData: StoryData;
   onClick?: (story: StoryData) => void;
+  showActions?: boolean;
 }
 
-export default function StoryCard({ story, onClick }: StoryCardProps) {
-  const [expanded, setExpanded] = React.useState(false);
+export default function StoryCard({ storyData, onClick, showActions = true }: StoryCardProps) {
+  const [story, setStory] = useState(storyData);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  useEffect(() => {
+    setStory(storyData);
+  }, [storyData]);
 
   const handleCardClick = () => {
     if (onClick) {
@@ -107,12 +82,16 @@ export default function StoryCard({ story, onClick }: StoryCardProps) {
     event.stopPropagation();
   };
 
-  const handleFavoriteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFavoriteClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    const result = await toggleFavorite(story.id);
+    setStory(prev => ({ ...prev, favorite: result }));
   };
 
-  const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLikeClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
+    const response = await toggleLike(story.id);
+    setStory(prev => ({ ...prev, liked: response.result, likes: response.likes }));
   };
 
   const handleOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -147,22 +126,15 @@ export default function StoryCard({ story, onClick }: StoryCardProps) {
           {story.description}
         </StyledTypography>
       </SyledCardContent>
-      <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
+      {showActions && <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
         <IconButton onClick={handleFavoriteClick} aria-label="add to favorites">
-          <FavoriteIcon />
+          {story.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </IconButton>
-        <IconButton onClick={handleShareClick} aria-label="share">
-          <ShareIcon />
+        <IconButton onClick={handleLikeClick} aria-label="share">
+          {story.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
         </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
+        {story.likes}
+      </CardActions>}
     </SyledCard>
   );
 }

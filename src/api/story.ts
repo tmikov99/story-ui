@@ -1,5 +1,5 @@
 import { PageDataNode } from '../types/page';
-import { StoryFormData } from '../types/story';
+import { LikesResponse, StoryFormData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
@@ -41,5 +41,25 @@ export const createComment = async (storyId: number, commentText: string) => {
 
 export const fetchComments = async (storyId: number) => {
   const response = await axios.get(`/comments/story/${storyId}`);
+  return response.data;
+}
+
+export const toggleFavorite = async (storyId: number) => {
+  const response = await axios.post(`/story/favorite/${storyId}`);
+  return response.data;
+}
+
+export const toggleLike = async (storyId: number):Promise<LikesResponse> => {
+  const response = await axios.post(`/story/like/${storyId}`);
+  return response.data;
+}
+
+export const fetchFavorite = async () => {
+  const response = await axios.get("/story/favorite");
+  return response.data;
+}
+
+export const fetchLiked = async () => {
+  const response = await axios.get("/story/liked");
   return response.data;
 }
