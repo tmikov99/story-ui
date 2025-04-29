@@ -28,6 +28,7 @@ import { logout } from '../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../redux/store';
 import { Button, Stack } from '@mui/material';
+import NotificationDropdown from './NotificationDropdown';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -288,15 +289,7 @@ export default function AppHeader() {
           </Button>}
           <ColorModeIconDropdown />
           {isAuthenticated ? <Box sx={{ display: 'flex' }}>
-          {/* <Box sx={{ display: { xs: 'none', md: 'flex' } }}> */}
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <NotificationDropdown />
             <IconButton
               size="large"
               edge="end"
