@@ -18,6 +18,7 @@ export interface StoryData {
     favorite?: boolean;
     likes?: number;
     favorites?: number;
+    coverImageUrl?: string;
 }
 
 export interface StoryFormData {
@@ -26,6 +27,7 @@ export interface StoryFormData {
     tags: string[];
     description: string;
     status: string;
+    coverImageUrl?: string;
   }
 
 export interface StoryCommentData {
