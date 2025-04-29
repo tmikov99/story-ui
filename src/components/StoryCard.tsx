@@ -118,7 +118,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
       <CardMedia
         component="img"
         height="194"
-        image="/assets/default-history-fiction.jpg"
+        image={story.coverImageUrl || "/assets/default-history-fiction.jpg"}
         alt="Paella dish"
       />
       <SyledCardContent>

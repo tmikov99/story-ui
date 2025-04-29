@@ -123,7 +123,7 @@ export default function StoryPage() {
                     width: '100%',
                     transition: '0.3s',
                 }}
-                src="/assets/pexels-helloaesthe-small.jpg"
+                src={story?.coverImageUrl || "/assets/pexels-helloaesthe-small.jpg"} //TODO: Add Loading...
             />
             <Typography className="startText" variant='h3' sx={{
                 position: "absolute",

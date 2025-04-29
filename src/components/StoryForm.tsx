@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 import { StoryFormData } from "../types/story";
 import { fetchGenres } from "../api/story";
+import UploadThumbnail from "./UploadThumbnail";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
@@ -28,7 +31,7 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
       status: "DRAFT",
     }
   );
-
+  const username = useSelector((state: RootState) => state.auth.username);
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
   useEffect(() => {
@@ -55,6 +58,8 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
       <Typography variant="h4" gutterBottom>
         {initialData ? "Edit Story" : "Create New Story"}
       </Typography>
+
+      <UploadThumbnail userId={username!} onUpload={(url) => setFormData({ ...formData, coverImageUrl: url })}/>
 
       <TextField
         label="Title"
