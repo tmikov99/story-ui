@@ -8,7 +8,7 @@ import { RootState } from "../redux/store";
 import { User } from "../types/user";
 
 export default function AccountSettings() {
-  const username = useSelector((state: RootState) => state.auth.username);
+  const username = useSelector((state: RootState) => state.auth.user?.username);
   const [user, setUser] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState(false);
   const [uploading, setUploading] = useState(false);

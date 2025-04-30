@@ -103,7 +103,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
       <CardHeader
         sx={{paddingLeft: 2, paddingTop: 2, paddingRight: 2}}
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} onClick={handleAvatarClick} aria-label="recipe">
+          <Avatar sx={{ bgcolor: red[500] }} src={story.user?.imageUrl} onClick={handleAvatarClick} aria-label="recipe">
             {story.user.username.charAt(0).toUpperCase()}
           </Avatar>
         }

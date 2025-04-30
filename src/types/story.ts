@@ -1,5 +1,6 @@
 export interface UserData {
     username: string;
+    imageUrl?: string;
 }
 
 export interface StoryData {
@@ -33,6 +34,7 @@ export interface StoryFormData {
 export interface StoryCommentData {
     id: number;
     username: string;
+    imageUrl?: string;
     text: string;
     createdAt: string;
 }
