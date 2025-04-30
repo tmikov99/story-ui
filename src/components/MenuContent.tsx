@@ -26,7 +26,7 @@ const mainListItems2 = [
 ];
 
 const secondaryListItems = [
-  { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/story/2' },
+  { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/account' },
   { text: 'Notes', icon: <AssignmentRoundedIcon />, path: '/notes' },
 ];
 

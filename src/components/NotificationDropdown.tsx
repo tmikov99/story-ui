@@ -42,8 +42,6 @@ export default function NotificationDropdown() {
     setAnchorEl(null);
   };
 
-  console.log("Notifications: ", notifications)
-
   return (
     <>
       <IconButton size="large" onClick={handleOpen}>

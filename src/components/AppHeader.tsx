@@ -95,23 +95,15 @@ export default function AppHeader() {
   const initials = username?.charAt(0).toUpperCase();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-  //   React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
-  // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // const handleMobileMenuClose = () => {
-  //   setMobileMoreAnchorEl(null);
-  // };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
-    // handleMobileMenuClose();
   };
 
   const handleCreateStory = () => {
@@ -124,9 +116,10 @@ export default function AppHeader() {
     handleMenuClose();
   }
 
-  // const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-  //   setMobileMoreAnchorEl(event.currentTarget);
-  // };
+  const handleMyAccountClick = () => {
+    navigate('/account');
+    handleMenuClose();
+  }
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -159,7 +152,6 @@ export default function AppHeader() {
           p: 1,
           gap: 1,
           alignItems: 'center',
-          // borderTop: '1px solid',
           borderColor: 'divider',
         }}
       >
@@ -182,7 +174,7 @@ export default function AppHeader() {
       </Stack>
       <Divider />
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
       <Divider />
       <MenuItem
         onClick={handleLogout}

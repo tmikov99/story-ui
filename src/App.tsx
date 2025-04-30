@@ -22,6 +22,7 @@ import StoryCreate from './components/StoryCreate';
 import PageEditWrapper from './components/PageEditWrapper';
 import PageLinks from './components/PageLinks';
 import StoryEdit from './components/StoryEdit';
+import AccountSettings from './components/AccountSettings';
 import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
             {isAuthenticated && <Route path="/edit/:storyId/page/:pageId" element={<PageEditWrapper />}/>}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
             {isAuthenticated && <Route path="/create/:storyId/page/:pageNumber/links" element={<PageCreateLinks />}/>}
+            {isAuthenticated && <Route path="/account" element={<AccountSettings />} />}
           </Routes>    
         </Stack>
       </Box>
