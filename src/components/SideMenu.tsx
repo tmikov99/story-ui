@@ -2,7 +2,6 @@ import { styled } from '@mui/material/styles';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import MenuContent from './MenuContent';
-import CardAlert from './CardAlert';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -45,37 +44,8 @@ export default function SideMenu() {
         }}
       >
         <MenuContent />
-        <CardAlert />
+        {/* <CardAlert /> */}
       </Box>
-      {/* <Divider /> */}
-      {/* <Stack
-        direction="row"
-        sx={{
-          p: 2,
-          gap: 1,
-          alignItems: 'center',
-          borderTop: '1px solid',
-          borderColor: 'divider',
-        }}
-      >
-        <Avatar
-          sizes="small"
-          alt="Test User"
-          // src="/assets/book-white.svg" //TODO add photo
-          sx={{ width: 36, height: 36 }}
-        >
-          T
-        </Avatar>
-        <Box sx={{ mr: 'auto' }}>
-          <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Test User
-          </Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            test@email.com
-          </Typography>
-        </Box>
-        <OptionsMenu />
-      </Stack> */}
     </Drawer>
   );
 }
