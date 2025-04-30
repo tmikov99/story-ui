@@ -31,7 +31,7 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
       status: "DRAFT",
     }
   );
-  const username = useSelector((state: RootState) => state.auth.username);
+  const username = useSelector((state: RootState) => state.auth.user?.username);
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
 
   useEffect(() => {

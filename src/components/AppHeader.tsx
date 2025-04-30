@@ -91,8 +91,8 @@ export default function AppHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const username = useSelector((state: RootState) => state.auth.username);
-  const initials = username?.charAt(0).toUpperCase();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const initials = user?.username.charAt(0).toUpperCase();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -158,17 +158,17 @@ export default function AppHeader() {
         <Avatar
           sizes="small"
           alt="Test User"
-          // src="/assets/book-white.svg" //TODO add photo
+          src={user?.imageUrl}
           sx={{ width: 36, height: 36 }}
         >
           {initials}
         </Avatar>
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            {username}
+            {user?.username}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            test@email.com
+            {user?.email}
           </Typography>
         </Box>
       </Stack>
@@ -192,48 +192,6 @@ export default function AppHeader() {
       </MenuItem>
     </Menu>
   );
-
-  // const mobileMenuId = 'primary-search-account-menu-mobile';
-  // const renderMobileMenu = (
-  //   <Menu
-  //     anchorEl={mobileMoreAnchorEl}
-  //     anchorOrigin={{
-  //       vertical: 'top',
-  //       horizontal: 'right',
-  //     }}
-  //     id={mobileMenuId}
-  //     keepMounted
-  //     transformOrigin={{
-  //       vertical: 'top',
-  //       horizontal: 'right',
-  //     }}
-  //     open={isMobileMenuOpen}
-  //     onClose={handleMobileMenuClose}
-  //   >
-  //     <MenuItem>
-  //       <IconButton
-  //         size="large"
-  //         aria-label="show 17 new notifications"
-  //       >
-  //         <Badge badgeContent={17} color="error">
-  //           <NotificationsIcon />
-  //         </Badge>
-  //       </IconButton>
-  //       <p>Notifications</p>
-  //     </MenuItem>
-  //     <MenuItem onClick={handleProfileMenuOpen}>
-  //       <IconButton
-  //         size="large"
-  //         aria-label="account of current user"
-  //         aria-controls="primary-search-account-menu"
-  //         aria-haspopup="true"
-  //       >
-  //         <AccountCircle />
-  //       </IconButton>
-  //       <p>Profile</p>
-  //     </MenuItem>
-  //   </Menu>
-  // );
 
   return (
     <>
@@ -290,7 +248,9 @@ export default function AppHeader() {
               onClick={handleProfileMenuOpen}
               sx={{padding: 0, ml: 1}}
             >
-              <Avatar>{initials?.charAt(0)}</Avatar>
+              <Avatar src={user?.imageUrl}>
+                {initials?.charAt(0)}
+              </Avatar>
             </IconButton>
           </Box> :
           <Button 

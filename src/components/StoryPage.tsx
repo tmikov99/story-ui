@@ -19,7 +19,7 @@ export default function StoryPage() {
   const storyId = Number(id)
   const [story, setStory] = useState<StoryData | null>(null);
   const [comments, setComments] = useState<StoryCommentData[]>([]);
-  const username = useSelector((state: RootState) => state.auth.username);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [commentText, setCommentText] = useState<string>("");
   const [commentFocus, setCommentFocus] = useState<boolean>(false);
   
@@ -142,7 +142,7 @@ export default function StoryPage() {
         </Grid>
         <Grid size={{ xs: 12, lg: 6 }}>
           <Stack>
-            {username === story?.user.username && 
+            {user?.username === story?.user.username && 
               <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
                 <Button color='secondary' onClick={handleEditStory}>Edit Properties</Button>
                 <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
@@ -174,7 +174,7 @@ export default function StoryPage() {
       <Stack gap={2}>
         <Box>
           <Box gap={2} sx={{display: "flex"}}>
-            <Avatar>{username?.[0]}</Avatar>
+            <Avatar src={user?.imageUrl}>{user?.username[0]}</Avatar>
             <TextField 
               multiline fullWidth variant='standard' 
               placeholder='Add a comment...' 

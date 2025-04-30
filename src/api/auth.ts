@@ -1,8 +1,10 @@
 import axios from './axios';
 
 export interface AuthResponse {
-  username: string,
-  token: string
+  token: string;
+  username: string;
+  email: string;
+  imageUrl?: string;
 }
 
 export const login = async (username: string, password: string):Promise<AuthResponse> => {

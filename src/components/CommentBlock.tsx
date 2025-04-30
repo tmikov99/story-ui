@@ -9,7 +9,7 @@ interface CommentBlockProps {
 export default function CommentBlock({ comment }:CommentBlockProps) {
   return (
     <Box gap={2} sx={{display: "flex"}}>
-      <Avatar>{comment.username[0]}</Avatar>
+      <Avatar src={comment.imageUrl}>{comment.username[0]}</Avatar>
       <Stack>
         <Box gap={1} sx={{display: "flex"}}>
           <Typography variant="body2">{comment.username}</Typography>
