@@ -24,6 +24,7 @@ import PageLinks from './components/PageLinks';
 import StoryEdit from './components/StoryEdit';
 import AccountSettings from './components/AccountSettings';
 import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
+import ProfilePage from './components/ProfilePage';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -40,8 +41,7 @@ function App() {
             overflow: 'auto',
             marginTop: 7, //TODO: Make responsive ASAP
           })}>
-        <Stack spacing={2} sx={{ alignItems: 'center', mx: 3, pb: 5, }}>
-          <Header />
+        <Stack spacing={2} sx={{ alignItems: 'center', m: 3, pb: 5, }}>
           <Routes>
             <Route path="/" element={<MainGrid title="Browse" fetchMethod={fetchStories} showActions={true} />}/>
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
@@ -61,6 +61,7 @@ function App() {
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
             {isAuthenticated && <Route path="/create/:storyId/page/:pageNumber/links" element={<PageCreateLinks />}/>}
             {isAuthenticated && <Route path="/account" element={<AccountSettings />} />}
+            <Route path="/user/:username" element={<ProfilePage />} />
           </Routes>    
         </Stack>
       </Box>

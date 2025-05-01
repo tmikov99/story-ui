@@ -116,6 +116,11 @@ export default function AppHeader() {
     handleMenuClose();
   }
 
+  const handleProfileClick = () => {
+    navigate(`/user/${user?.username}`);
+    handleMenuClose();
+  }
+
   const handleMyAccountClick = () => {
     navigate('/account');
     handleMenuClose();
@@ -173,7 +178,7 @@ export default function AppHeader() {
         </Box>
       </Stack>
       <Divider />
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
       <MenuItem onClick={handleMyAccountClick}>My account</MenuItem>
       <Divider />
       <MenuItem

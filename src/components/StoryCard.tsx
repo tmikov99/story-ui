@@ -18,6 +18,7 @@ import { StoryData } from '../types/story';
 import { formatDateString } from '../utils/formatDate';
 import { toggleFavorite, toggleLike } from '../api/story';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -67,6 +68,7 @@ interface StoryCardProps {
 
 export default function StoryCard({ storyData, onClick, showActions = true }: StoryCardProps) {
   const [story, setStory] = useState(storyData);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setStory(storyData);
@@ -80,6 +82,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+    navigate(`/user/${story.user.username}`);
   };
 
   const handleFavoriteClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
