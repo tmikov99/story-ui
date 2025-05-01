@@ -185,15 +185,7 @@ export const navigationCustomizations: Components<Theme> = {
   MuiTab: {
     styleOverrides: {
       root: ({ theme }) => ({
-        padding: '6px 8px',
-        marginBottom: '8px',
-        textTransform: 'none',
-        minWidth: 'fit-content',
-        minHeight: 'fit-content',
         color: theme.palette.text.secondary,
-        borderRadius: theme.shape.borderRadius,
-        border: '1px solid',
-        borderColor: 'transparent',
         ':hover': {
           color: theme.palette.text.primary,
           backgroundColor: gray[100],
