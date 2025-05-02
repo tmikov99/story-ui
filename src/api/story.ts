@@ -12,10 +12,23 @@ export const fetchStories = async () => {
   return response.data;
 };
 
-export const createStory = async (storyData: StoryFormData) => {
-  const response = await axios.post('/story/create', storyData);
+export const createStory = async (formData: FormData) => {
+  const response = await axios.post('/story/create', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };
+
+export const updateStory = async (formData: FormData, storyId: string) => {
+  const response = await axios.put(`/story/update/${storyId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+}
 
 export const updateStoryPages = async (storyId: number, pages: PageDataNode[]) => {
   const response = await axios.put(`/story/pages/${storyId}`, pages);
