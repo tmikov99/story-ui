@@ -1,0 +1,56 @@
+import { Typography, Card, CardContent, LinearProgress, Button, CardMedia } from "@mui/material";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchUserPlaythroughs } from "../api/playthrough";
+import Grid from '@mui/material/Grid2';
+
+export default function HistoryPage() {
+  const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUserPlaythroughs().then(setHistory).catch(console.error);
+  }, []);
+
+  const handleResume = (storyId: number, pageNumber: number) => {
+    navigate(`/story/${storyId}/page/${pageNumber}`);
+  };
+
+  return (
+    <div>
+      <Typography variant="h4" gutterBottom>Reading History</Typography>
+      {history.map((entry: any) => (
+        <Card key={entry.id} sx={{ mb: 2 }}>
+          <Grid container>
+            <Grid size={{xs:4}}>
+              <CardMedia
+                component="img"
+                height="140"
+                image={entry.story.coverImageUrl || "/assets/placeholder.jpg"}
+                alt="Story Cover"
+              />
+            </Grid>
+            <Grid size={{xs:8}}>
+              <CardContent sx={{ml: 2}}>
+                <Typography variant="h6">{entry.story.title}</Typography>
+                <Typography variant="body2">Last visited: {new Date(entry.lastVisited).toLocaleString()}</Typography>
+                <Typography variant="body2">Progress: Page {entry.currentPage}</Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={(entry.path.length / entry.story.pageCount) * 100}
+                  sx={{ mt: 1, mb: 1 }}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => handleResume(entry.story.id, entry.currentPage)}
+                >
+                  {entry.completed ? 'View Again' : 'Resume'}
+                </Button>
+              </CardContent>
+            </Grid>
+          </Grid>
+        </Card>
+      ))}
+    </div>
+  );
+}

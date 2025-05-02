@@ -19,7 +19,6 @@ export default function MainGrid({fetchMethod, title, showActions}: MainGridProp
   useEffect(() => {
     fetchMethod().then((response) => {
       setStories(response);
-      console.log("RESP:",response)
     });
   }, [fetchMethod])
 

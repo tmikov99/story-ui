@@ -25,6 +25,7 @@ import StoryEdit from './components/StoryEdit';
 import AccountSettings from './components/AccountSettings';
 import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
 import ProfilePage from './components/ProfilePage';
+import HistoryPage from './components/HistoryPage';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -47,6 +48,7 @@ function App() {
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
+            {isAuthenticated && <Route path="/history" element={<HistoryPage />} />}
             {isAuthenticated && <Route path="/favorite" element={
               <MainGrid title="Favorite Stories" fetchMethod={fetchFavorite} showActions={false} />
             }/>}
