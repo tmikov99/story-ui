@@ -11,13 +11,11 @@ import {
 import { StoryFormData } from "../types/story";
 import { fetchGenres } from "../api/story";
 import UploadThumbnail from "./UploadThumbnail";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
 
 const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
 type Props = {
-  onSubmit: (data: StoryFormData) => void;
+  onSubmit: (formData: FormData) => void;
   initialData?: StoryFormData;
 };
 
@@ -31,8 +29,9 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
       status: "DRAFT",
     }
   );
-  const username = useSelector((state: RootState) => state.auth.user?.username);
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+
 
   useEffect(() => {
     fetchGenres().then((genres) => {
@@ -50,7 +49,14 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    const formPayload = new FormData();
+    formPayload.append("story", new Blob([JSON.stringify({ ...formData })], { type: "application/json" }));
+    if (thumbnailFile) {
+      formPayload.append("file", thumbnailFile);
+    }
+  
+    onSubmit(formPayload);
   };
 
   return (
@@ -59,7 +65,7 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
         {initialData ? "Edit Story" : "Create New Story"}
       </Typography>
 
-      <UploadThumbnail userId={username!} onUpload={(url) => setFormData({ ...formData, coverImageUrl: url })}/>
+      <UploadThumbnail onFileSelect={(file) => setThumbnailFile(file)} />
 
       <TextField
         label="Title"
