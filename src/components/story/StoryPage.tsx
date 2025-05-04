@@ -8,7 +8,7 @@ import { createComment, fetchComments, fetchStory } from '../../api/story';
 import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
 import { formatDateString } from '../../utils/formatDate';
-import { Avatar, Button, ButtonGroup, Chip, TextField } from '@mui/material';
+import { Avatar, Button, ButtonGroup, Chip, Skeleton, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CommentBlock from './CommentBlock';
@@ -22,6 +22,7 @@ export default function StoryPage() {
   const user = useSelector((state: RootState) => state.auth.user);
   const [commentText, setCommentText] = useState<string>("");
   const [commentFocus, setCommentFocus] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   
   if (!id) {
     return(<div>ERROR</div>)
@@ -40,6 +41,8 @@ export default function StoryPage() {
         setComments(commentsData);
       } catch (error) {
         console.error("Error fetching story:", error);
+      } finally {
+        setLoading(false);
       }
     };
   
@@ -97,77 +100,101 @@ export default function StoryPage() {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Story Overview
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-      >
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <Box         
-            onClick={handleStartPlaythrough}
-            sx={{
-              position: "relative",
-              '&:hover .startText': {
-                  opacity: 1,
-                  cursor: 'pointer',
-              },
-              '&:hover img': {
-                  cursor: 'pointer',
-                  opacity: '0.7',
-              }
-            }}
+      {loading ? 
+        (
+          <Grid
+            container
+            spacing={2}
+            columns={12}
           >
-            <Box
-                component="img"
+            <Grid size={{ xs: 12, lg: 6 }}>
+              <Skeleton variant="rectangular" height={450} />
+            </Grid>
+            <Grid size={{ xs: 12, lg: 6 }}>
+              <Stack gap={1}>
+                <Skeleton variant="rectangular" height={46}/>
+                <Skeleton variant="rectangular" height={26}/>
+                <Skeleton variant="rectangular" height={20}/>
+                <Skeleton variant="rectangular" height={20}/>
+                <Skeleton variant="rectangular" height={20}/>
+                <Skeleton variant="rectangular" height={20}/>
+                <Skeleton variant="rectangular" height={250} />
+              </Stack>
+            </Grid>
+          </Grid>
+        ) : (
+          <Grid
+            container
+            spacing={2}
+            columns={12}
+          >
+            <Grid size={{ xs: 12, lg: 6 }}>
+              <Box         
+                onClick={handleStartPlaythrough}
                 sx={{
-                    width: '100%',
-                    transition: '0.3s',
+                  position: "relative",
+                  '&:hover .startText': {
+                      opacity: 1,
+                      cursor: 'pointer',
+                  },
+                  '&:hover img': {
+                      cursor: 'pointer',
+                      opacity: '0.7',
+                  }
                 }}
-                src={story?.coverImageUrl || "/assets/pexels-helloaesthe-small.jpg"} //TODO: Add Loading...
-            />
-            <Typography className="startText" variant='h3' sx={{
-                position: "absolute",
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%);',
-                padding: 2,
-                opacity: 0,
-                transition: '0.3s',
-                background: 'rgba(0, 0, 0, 0.7)',
-                color: 'white!important',
-            }}>
-                {playthrough ? `Continue Reading` : `Start Reading`}
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <Stack>
-            {user?.username === story?.user.username && 
-              <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
-                <Button color='secondary' onClick={handleEditStory}>Edit Properties</Button>
-                <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
-                <Button color='error'>Delete Story</Button>
-              </ButtonGroup>
-              <Typography>Status: {story?.status}</Typography>
-              </>
-            }
-            <Typography variant='h4'>{story?.title}</Typography>
-            <Typography variant='h6'>By: {story?.user.username}</Typography>
-            <Typography>Pages: {story?.pageCount}</Typography>
-            <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
-            <Box sx={{display: "flex", alignItems: "center"}}>
-              <Typography>Genres:&nbsp;</Typography>
-              {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}
-            </Box>
-            <Box sx={{display: "flex", alignItems: "center"}}>
-              <Typography>Tags:&nbsp;</Typography>
-              {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}
-            </Box>
-            <Typography>Description: {story?.description}
-            </Typography>
-          </Stack>
-        </Grid>
-      </Grid>
+              >
+                <Box
+                    component="img"
+                    sx={{
+                        width: '100%',
+                        transition: '0.3s',
+                    }}
+                    src={story?.coverImageUrl}
+                />
+                <Typography className="startText" variant='h3' sx={{
+                    position: "absolute",
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%);',
+                    padding: 2,
+                    opacity: 0,
+                    transition: '0.3s',
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    color: 'white!important',
+                }}>
+                    {playthrough ? `Continue Reading` : `Start Reading`}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, lg: 6 }}>
+              <Stack>
+                {user?.username === story?.user.username && 
+                  <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
+                    <Button color='secondary' onClick={handleEditStory}>Edit Properties</Button>
+                    <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
+                    <Button color='error'>Delete Story</Button>
+                  </ButtonGroup>
+                  <Typography>Status: {story?.status}</Typography>
+                  </>
+                }
+                <Typography variant='h4'>{story?.title}</Typography>
+                <Typography variant='h6'>By: {story?.user.username}</Typography>
+                <Typography>Pages: {story?.pageCount}</Typography>
+                <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
+                <Box sx={{display: "flex", alignItems: "center"}}>
+                  <Typography>Genres:&nbsp;</Typography>
+                  {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}
+                </Box>
+                <Box sx={{display: "flex", alignItems: "center"}}>
+                  <Typography>Tags:&nbsp;</Typography>
+                  {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}
+                </Box>
+                <Typography>Description: {story?.description}
+                </Typography>
+              </Stack>
+            </Grid>
+          </Grid>
+        )}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         {comments.length} {comments.length === 1 ? "Comment" : "Comments"}
       </Typography>
@@ -188,7 +215,13 @@ export default function StoryPage() {
             <Button variant='outlined' disabled={!commentText.length} onClick={handleCommentSend}>Comment</Button>
           </Box>}
         </Box>
-        {comments.map(comment => <CommentBlock key={comment.id} comment={comment} />)}
+        {loading ? 
+          (
+            <Skeleton variant='rectangular' height={52} />
+          ) : (
+            comments.map(comment => <CommentBlock key={comment.id} comment={comment} />)
+          )
+        }
       </Stack>
     </Box>
   );
