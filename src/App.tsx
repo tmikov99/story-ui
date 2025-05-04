@@ -31,7 +31,6 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const searchQuery = useSelector((state: RootState) => state.search.query);
 
   const nonAuthContent = <>
     <Box sx={{ display: 'flex' }}>
@@ -54,7 +53,6 @@ function App() {
                   title="Browse" 
                   fetchMethod={fetchStories} 
                   showActions={true}
-                  searchQuery={searchQuery}
                 />
               }
             />

@@ -27,8 +27,6 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
-import { setSearchQuery } from '../../redux/searchSlice';
-
 
 const Search = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -59,12 +57,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 2),
     // paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
-    width: '100%',  
-    [theme.breakpoints.up('sm')]: {
-        width: '25ch',
-    },
+    width: '100%',
     [theme.breakpoints.up('md')]: {
-        width: '45ch',
+        width: '35ch',
     },
     [theme.breakpoints.up('lg')]: {
         width: '60ch',
@@ -91,8 +86,10 @@ export default function AppHeader() {
   };
 
   const triggerSearch = () => {
-    dispatch(setSearchQuery(inputValue));
-    navigate("/");
+    navigate({
+      pathname: '/',
+      search: `?query=${encodeURIComponent(inputValue)}`,
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -254,7 +251,7 @@ export default function AppHeader() {
           {isAuthenticated && <Button 
             size='large' 
             variant='outlined' 
-            sx={{borderRadius:"24px", marginRight: 1}} 
+            sx={{borderRadius:"24px", marginRight: 1, minWidth: "fit-content"}} 
             startIcon={<AddRoundedIcon/>}
             onClick={handleCreateStory}
           >
