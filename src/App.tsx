@@ -46,7 +46,7 @@ function App() {
             <Route path="/" element={<MainGrid title="Browse" fetchMethod={fetchStories} showActions={true} />}/>
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/landing" element={<HomePage />} />
             <Route path="/history" element={ isAuthenticated ? <HistoryPage /> : <HistoryEmptyState /> }/>
             <Route 
               path="/favorite" 
@@ -72,7 +72,7 @@ function App() {
             {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
             {isAuthenticated && <Route path="/edit/:storyId" element={<StoryEdit />} />}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
-            {isAuthenticated && <Route path="/account" element={<AccountSettings />} />}
+            <Route path="/account" element={<AccountSettings />} />
             <Route path="/user/:username" element={<ProfilePage />} />
           </Routes>    
         </Stack>
