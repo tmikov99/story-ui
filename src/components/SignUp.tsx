@@ -14,7 +14,11 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { login, register } from '../api/auth';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../redux/store';
+import { loginSuccess } from '../redux/authSlice';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -60,6 +64,8 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -104,18 +110,29 @@ export default function SignUp() {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (nameError || emailError || passwordError) {
-      event.preventDefault();
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const username = data.get('name')?.toString();
+    const email = data.get('email')?.toString();
+    const password = data.get('password')?.toString();
+    
+    if (!username || !email || !password) {
+      return;
+    }
+
+    try {
+      const registerResponse = await register(username, email, password);
+      if (registerResponse.status !== 200) {
+        return;
+      }
+      const loginResponse = await login(username, password);
+      dispatch(loginSuccess(loginResponse));
+      navigate('/home');
+    } catch (err) {console.error(err)}
   };
 
   return (
