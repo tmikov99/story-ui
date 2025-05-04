@@ -24,8 +24,8 @@ export default function EmptyState({ title, message, Icon, loginRedirect }: Empt
       }}
     >
       {Icon && <Icon sx={{ fontSize: 150 }} />}
-      <Typography variant="h3">{title}</Typography>
-      <Typography variant="body2">{message}</Typography>
+      <Typography variant="h3" textAlign="center">{title}</Typography>
+      <Typography variant="body2" textAlign="center">{message}</Typography>
       {loginRedirect && <Button 
           variant='outlined' 
           startIcon={<AccountCircleRoundedIcon />}

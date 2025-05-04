@@ -26,6 +26,8 @@ import HistoryEmptyState from './components/emptyState/HistoryEmptyState';
 import FavoriteEmptyState from './components/emptyState/FavoriteEmptyState';
 import LikedEmptyState from './components/emptyState/LikedEmptyState';
 import UserEmptyState from './components/emptyState/UserEmptyState';
+import EmptyState from './components/emptyState/EmptyState';
+import ErrorIcon from '@mui/icons-material/Error';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -75,6 +77,16 @@ function App() {
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
             <Route path="/account" element={ isAuthenticated ? <AccountSettings /> : <UserEmptyState />} />
             <Route path="/user/:username" element={<ProfilePage />} />
+            <Route 
+              path="*" 
+              element={
+                <EmptyState 
+                  title="Page Not Found" 
+                  message="The page you are trying to access doesn't exist or you lack authorization" 
+                  Icon={ErrorIcon}
+                />
+              } 
+            />
           </Routes>    
         </Stack>
       </Box>
