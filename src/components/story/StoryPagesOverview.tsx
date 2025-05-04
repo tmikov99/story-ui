@@ -1,11 +1,11 @@
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import PageCard from './PageCard';
+import PageCard from '../page/PageCard';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useEffect, useState } from 'react';
-import { fetchPagesByStory } from '../api/page';
+import { fetchPagesByStory } from '../../api/page';
 import { Button } from '@mui/material';
 
 export default function StoryPagesOverview() {

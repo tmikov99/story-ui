@@ -3,9 +3,9 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { PageData } from "../types/page";
-import { fetchPage } from "../api/page";
-import { useUserPlaythrough } from "../hooks/useUserPlaythrough";
+import { PageData } from "../../types/page";
+import { fetchPage } from "../../api/page";
+import { useUserPlaythrough } from "../../hooks/useUserPlaythrough";
 
 
 export default function Page() {

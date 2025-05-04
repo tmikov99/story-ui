@@ -14,9 +14,9 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { StoryData } from '../types/story';
-import { formatDateString } from '../utils/formatDate';
-import { toggleFavorite, toggleLike } from '../api/story';
+import { StoryData } from '../../types/story';
+import { formatDateString } from '../../utils/formatDate';
+import { toggleFavorite, toggleLike } from '../../api/story';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

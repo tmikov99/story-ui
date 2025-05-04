@@ -1,8 +1,8 @@
 import { Avatar, Box, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getUserByUsername } from "../api/user";
+import { getUserByUsername } from "../../api/user";
 import { useParams } from "react-router-dom";
-import { UserData } from "../types/story";
+import { UserData } from "../../types/story";
 
 interface TabPanelProps {
   children?: React.ReactNode;

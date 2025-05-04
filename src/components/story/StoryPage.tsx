@@ -4,13 +4,13 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { createComment, fetchComments, fetchStory } from '../api/story';
-import { StoryCommentData, StoryData } from '../types/story';
-import { useUserPlaythrough } from '../hooks/useUserPlaythrough';
-import { formatDateString } from '../utils/formatDate';
+import { createComment, fetchComments, fetchStory } from '../../api/story';
+import { StoryCommentData, StoryData } from '../../types/story';
+import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
+import { formatDateString } from '../../utils/formatDate';
 import { Avatar, Button, ButtonGroup, Chip, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { RootState } from '../../redux/store';
 import CommentBlock from './CommentBlock';
 
 export default function StoryPage() {

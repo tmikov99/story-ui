@@ -1,18 +1,11 @@
-import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import PageCard from './PageCard';
-import { useNavigate, useParams } from 'react-router-dom';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { createPage, fetchPagesMapByStory, updatePage } from '../api/page';
-import { Button } from '@mui/material';
+import { fetchPagesMapByStory } from '../../api/page';
 import PageGraph from './PageGraph';
-import { PageDataNode } from '../types/page';
 
 export default function PageLinks() {
   const { storyId } = useParams();
-  const navigate = useNavigate();
   const [pages, setPages] = useState(null);
 
   const fetchPages = async () => {

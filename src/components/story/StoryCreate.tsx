@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import StoryForm from './StoryForm';
-import { createStory } from '../api/story';
+import { createStory } from '../../api/story';
 
 export default function StoryCreate() {
   const navigate = useNavigate();

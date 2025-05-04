@@ -1,5 +1,5 @@
 import { Handle, Position, NodeTypes } from '@xyflow/react';
-import PageCard from '../components/PageCard';
+import PageCard from '../components/page/PageCard';
 import { PageData } from '../types/page';
 
 interface PageCardNodeProps {

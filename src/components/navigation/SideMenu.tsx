@@ -3,7 +3,7 @@ import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import MenuContent from './MenuContent';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { RootState } from '../../redux/store';
 
 const drawerWidth = 240;
 

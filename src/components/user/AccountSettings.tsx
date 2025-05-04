@@ -1,11 +1,11 @@
 import { Avatar, Box, Button, CircularProgress, IconButton, Stack, TextField, Typography } from "@mui/material";
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 import { useEffect, useState } from "react";
-import { saveUserPicture } from "../api/images";
-import { getCurrentUser } from "../api/user";
+import { saveUserPicture } from "../../api/images";
+import { getCurrentUser } from "../../api/user";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { User } from "../types/user";
+import { RootState } from "../../redux/store";
+import { User } from "../../types/user";
 
 export default function AccountSettings() {
   const username = useSelector((state: RootState) => state.auth.user?.username);

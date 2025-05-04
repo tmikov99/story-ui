@@ -8,8 +8,8 @@ import {
   Stack,
   Autocomplete,
 } from "@mui/material";
-import { StoryFormData } from "../types/story";
-import { fetchGenres } from "../api/story";
+import { StoryFormData } from "../../types/story";
+import { fetchGenres } from "../../api/story";
 import UploadThumbnail from "./UploadThumbnail";
 
 const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
