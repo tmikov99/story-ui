@@ -12,6 +12,10 @@ export const login = async (username: string, password: string):Promise<AuthResp
   return response.data;
 };
 
+export const register = async (username: string, email: string, password: string) => {
+  return await axios.post('/auth/register', { username, email, password});
+}
+
 export const refreshToken = async () => {
   const response = await axios.get('/auth/refresh');
   return response.data;
