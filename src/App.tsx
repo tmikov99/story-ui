@@ -25,6 +25,7 @@ import HistoryPage from './components/story/HistoryPage';
 import HistoryEmptyState from './components/emptyState/HistoryEmptyState';
 import FavoriteEmptyState from './components/emptyState/FavoriteEmptyState';
 import LikedEmptyState from './components/emptyState/LikedEmptyState';
+import UserEmptyState from './components/emptyState/UserEmptyState';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -72,7 +73,7 @@ function App() {
             {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
             {isAuthenticated && <Route path="/edit/:storyId" element={<StoryEdit />} />}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
-            <Route path="/account" element={<AccountSettings />} />
+            <Route path="/account" element={ isAuthenticated ? <AccountSettings /> : <UserEmptyState />} />
             <Route path="/user/:username" element={<ProfilePage />} />
           </Routes>    
         </Stack>

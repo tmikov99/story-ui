@@ -53,7 +53,7 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
           {renderSkeletons(8)}
         </Grid>
       ) : stories.length === 0 ? (
-        <EmptyState title="No stories found" message="This list has no stories"/>
+        <EmptyState title={placeholderText || "No stories found"} message="This list has no stories"/>
       ) : (
         <Grid
           container
