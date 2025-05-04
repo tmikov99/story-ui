@@ -1,8 +1,9 @@
 import { Typography, Card, CardContent, LinearProgress, Button, CardMedia } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchUserPlaythroughs } from "../api/playthrough";
+import { fetchUserPlaythroughs } from "../../api/playthrough";
 import Grid from '@mui/material/Grid2';
+import EmptyState from "../emptyState/EmptyState";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
@@ -18,8 +19,10 @@ export default function HistoryPage() {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>Reading History</Typography>
-      {history.map((entry: any) => (
+      <Typography variant="h4" sx={{textAlign: 'center'}} gutterBottom>Reading History</Typography>
+      {history.length === 0 ? (
+        <EmptyState title="No stories found" message="This list has no stories"/>
+      ) : (history.map((entry: any) => (
         <Card key={entry.id} sx={{ mb: 2 }}>
           <Grid container>
             <Grid size={{xs:4}}>
@@ -50,7 +53,8 @@ export default function HistoryPage() {
             </Grid>
           </Grid>
         </Card>
-      ))}
+      ))
+    )}
     </div>
   );
 }

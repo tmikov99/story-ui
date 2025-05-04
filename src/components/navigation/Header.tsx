@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import MenuButton from './MenuButton';
-import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
+import MenuButton from './MenuButton.tsx';
+import ColorModeIconDropdown from '../../theme/ColorModeIconDropdown.tsx';
 import NavbarBreadcrumbs from './NavbarBreadcrumbs.tsx';
 
 

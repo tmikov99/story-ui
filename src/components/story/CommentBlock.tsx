@@ -1,6 +1,6 @@
 import { Avatar, Box, Stack, Typography } from "@mui/material";
-import { StoryCommentData } from "../types/story";
-import { getTimeAgo } from "../utils/formatDate";
+import { getTimeAgo } from "../../utils/formatDate";
+import { StoryCommentData } from "../../types/story";
 
 interface CommentBlockProps {
   comment: StoryCommentData;

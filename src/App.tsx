@@ -1,31 +1,30 @@
-import Header from './components/Header';
 import AppTheme from './theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import SideMenu from './components/SideMenu';
-import MainGrid from './components/MainGrid';
-import Page from './components/Page';
+import SideMenu from './components/navigation/SideMenu';
+import MainGrid from './components/story/MainGrid';
+import Page from './components/page/Page';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import StoryPagesOverview from './components/StoryPagesOverview';
-import PageCreate from './components/PageCreate';
-import PageCreateLinks from './components/PageCreateLinks';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import AppHeader from './components/AppHeader';
+import StoryPagesOverview from './components/story/StoryPagesOverview';
+import SignIn from './components/user/SignIn';
+import SignUp from './components/user/SignUp';
+import AppHeader from './components/navigation/AppHeader';
 import HomePage from './components/HomePage';
-import StoryPage from './components/StoryPage';
+import StoryPage from './components/story/StoryPage';
 import { useSelector } from 'react-redux';
 import { RootState } from './redux/store';
-import StoryCreate from './components/StoryCreate';
-import PageEditWrapper from './components/PageEditWrapper';
-import PageLinks from './components/PageLinks';
-import StoryEdit from './components/StoryEdit';
-import AccountSettings from './components/AccountSettings';
+import StoryCreate from './components/story/StoryCreate';
+import PageLinks from './components/page/PageLinks';
+import StoryEdit from './components/story/StoryEdit';
+import AccountSettings from './components/user/AccountSettings';
 import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
-import ProfilePage from './components/ProfilePage';
-import HistoryPage from './components/HistoryPage';
+import ProfilePage from './components/user/ProfilePage';
+import HistoryPage from './components/story/HistoryPage';
+import HistoryEmptyState from './components/emptyState/HistoryEmptyState';
+import FavoriteEmptyState from './components/emptyState/FavoriteEmptyState';
+import LikedEmptyState from './components/emptyState/LikedEmptyState';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -48,20 +47,31 @@ function App() {
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/home" element={<HomePage />} />
-            {isAuthenticated && <Route path="/history" element={<HistoryPage />} />}
-            {isAuthenticated && <Route path="/favorite" element={
-              <MainGrid title="Favorite Stories" fetchMethod={fetchFavorite} showActions={false} />
-            }/>}
-            {isAuthenticated && <Route path="/liked" element={
-              <MainGrid title="Liked Stories" fetchMethod={fetchLiked} showActions={false} />
-            }/>}
+            <Route path="/history" element={ isAuthenticated ? <HistoryPage /> : <HistoryEmptyState /> }/>
+            <Route 
+              path="/favorite" 
+              element={ 
+                isAuthenticated ? (
+                  <MainGrid title="Favorite Stories" fetchMethod={ fetchFavorite } showActions={false} /> 
+                ) : (
+                  <FavoriteEmptyState />
+                )
+              }
+            />
+            <Route 
+              path="/liked" 
+              element={
+                isAuthenticated ? (
+                  <MainGrid title="Liked Stories" fetchMethod={fetchLiked} showActions={false} />
+                ) : (
+                  <LikedEmptyState />
+                )
+              }
+            />
             {isAuthenticated && <Route path="/create" element={<StoryCreate />}/>}
             {isAuthenticated && <Route path="/create/:storyId/overview" element={<StoryPagesOverview />}/>}
-            {isAuthenticated && <Route path="/create/:storyId/page" element={<PageCreate />}/>}
             {isAuthenticated && <Route path="/edit/:storyId" element={<StoryEdit />} />}
-            {isAuthenticated && <Route path="/edit/:storyId/page/:pageId" element={<PageEditWrapper />}/>}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
-            {isAuthenticated && <Route path="/create/:storyId/page/:pageNumber/links" element={<PageCreateLinks />}/>}
             {isAuthenticated && <Route path="/account" element={<AccountSettings />} />}
             <Route path="/user/:username" element={<ProfilePage />} />
           </Routes>    

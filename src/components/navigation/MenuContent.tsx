@@ -9,6 +9,7 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import { useLocation, Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ const mainListItems1 = [
   { text: 'Trending', icon: <AutoStoriesRoundedIcon />, path: '/page' },
 ];
 const mainListItems2 = [
-  { text: 'History', icon: <AutoStoriesRoundedIcon />, path: '/history'},
+  { text: 'History', icon: <HistoryRoundedIcon />, path: '/history'},
   { text: 'Favotie stories', icon: <FavoriteRoundedIcon />, path: '/favorite' },
   { text: 'Liked stories', icon: <ThumbUpAltRoundedIcon />, path: '/liked' },
   { text: 'Liked stories', icon: <AutoStoriesRoundedIcon />, path: '/home' },

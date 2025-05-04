@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box';
 import { useNavigate, useParams } from 'react-router-dom';
-import { StoryFormData } from '../types/story';
+import { StoryFormData } from '../../types/story';
 import StoryForm from './StoryForm';
-import { fetchStory, updateStory } from '../api/story';
+import { fetchStory, updateStory } from '../../api/story';
 import { useEffect, useState } from 'react';
 
 export default function StoryEdit() {

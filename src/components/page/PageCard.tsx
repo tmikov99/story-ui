@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArticleIcon from '@mui/icons-material/Article';
 import Button from '@mui/material/Button';
-import { PageData } from '../types/page';
+import { PageData } from '../../types/page';
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',

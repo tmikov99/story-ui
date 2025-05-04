@@ -16,11 +16,11 @@ import {
   Background,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
-import { ChoiceData, PageData, PageDataNode } from "../types/page";
+import { ChoiceData, PageData, PageDataNode } from "../../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
-import { updateStoryPages } from "../api/story";
-import { createPage, deletePage, updatePage } from "../api/page";
-import { nodeTypes } from "../utils/reactFlowUtil";
+import { updateStoryPages } from "../../api/story";
+import { createPage, deletePage, updatePage } from "../../api/page";
+import { nodeTypes } from "../../utils/reactFlowUtil";
 
 interface PageGraphProps {
   pages: PageDataNode[];

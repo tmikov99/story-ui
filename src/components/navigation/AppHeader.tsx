@@ -11,10 +11,10 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
-import { brand, gray } from '../theme/themePrimitives';
-import ColorModeIconDropdown from '../theme/ColorModeIconDropdown';
+import { brand, gray } from '../../theme/themePrimitives';
+import ColorModeIconDropdown from '../../theme/ColorModeIconDropdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleSidebar } from '../redux/sidebarSlice';
+import { toggleSidebar } from '../../redux/sidebarSlice';
 import Divider, { dividerClasses } from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
@@ -22,11 +22,11 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { listClasses } from '@mui/material/List';
-import { logout } from '../redux/authSlice';
+import { logout } from '../../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../redux/store';
+import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
-import NotificationDropdown from './NotificationDropdown';
+import NotificationDropdown from '../NotificationDropdown';
 
 
 const Search = styled('div')(({ theme }) => ({
