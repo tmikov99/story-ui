@@ -3,13 +3,17 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import StoryCard from './StoryCard';
 import { useEffect, useState } from 'react';
-import { StoryData } from '../../types/story';
+import { PaginatedResponse, StoryData } from '../../types/story';
 import { useNavigate } from 'react-router-dom';
 import { Skeleton } from '@mui/material';
 import EmptyState from '../emptyState/EmptyState';
 
 interface MainGridProps {
-  fetchMethod: (query?: string) => Promise<StoryData[]>;
+  fetchMethod: (params?: {
+    query?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<PaginatedResponse<StoryData>>;
   title: string;
   showActions: boolean;
   searchQuery?: string;
@@ -22,9 +26,9 @@ export default function MainGrid({fetchMethod, title, showActions, searchQuery, 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchMethod(searchQuery)
+    fetchMethod({ query: searchQuery })
       .then((response) => {
-        setStories(response);
+        setStories(response.content);
       })
       .catch((err) => {
         console.error('Error fetching stories:', err);

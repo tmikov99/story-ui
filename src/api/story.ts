@@ -1,5 +1,5 @@
 import { PageDataNode } from '../types/page';
-import { LikesResponse, StoryData } from '../types/story';
+import { LikesResponse, PaginatedResponse, StoryData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
@@ -7,9 +7,47 @@ export const fetchStory = async (id: number) => {
   return response.data;
 };
 
-export const fetchStories = async (query?: string):Promise<StoryData[]> => {
-  const params = query ? { q: query } : undefined;
-  const response = await axios.get<StoryData[]>('/story', { params });
+export const fetchStories = async (
+  params?: { query?: string; page?: number; size?: number }
+): Promise<PaginatedResponse<StoryData>> => {
+  const { query, page = 0, size = 10 } = params || {};
+  const requestParams: Record<string, any> = { page, size };
+  if (query) {
+    requestParams.q = query;
+  }
+
+  const response = await axios.get<PaginatedResponse<StoryData>>('/story', { params: requestParams });
+  return response.data;
+};
+
+
+export const fetchFavorite = async (
+  params?: { query?: string; page?: number; size?: number }
+): Promise<PaginatedResponse<StoryData>> => {
+  const { query, page = 0, size = 10 } = params || {};
+  const requestParams: Record<string, any> = { page, size };
+  if (query) {
+    requestParams.q = query;
+  }
+
+  const response = await axios.get<PaginatedResponse<StoryData>>('/story/favorite', {
+    params: requestParams
+  });
+  return response.data;
+};
+
+export const fetchLiked = async (
+  params?: { query?: string; page?: number; size?: number }
+): Promise<PaginatedResponse<StoryData>> => {
+  const { query, page = 0, size = 10 } = params || {};
+  const requestParams: Record<string, any> = { page, size };
+  if (query) {
+    requestParams.q = query;
+  }
+
+  const response = await axios.get<PaginatedResponse<StoryData>>('/story/liked', {
+    params: requestParams
+  });
   return response.data;
 };
 
@@ -65,15 +103,5 @@ export const toggleFavorite = async (storyId: number) => {
 
 export const toggleLike = async (storyId: number):Promise<LikesResponse> => {
   const response = await axios.post(`/story/like/${storyId}`);
-  return response.data;
-}
-
-export const fetchFavorite = async () => {
-  const response = await axios.get("/story/favorite");
-  return response.data;
-}
-
-export const fetchLiked = async () => {
-  const response = await axios.get("/story/liked");
   return response.data;
 }
