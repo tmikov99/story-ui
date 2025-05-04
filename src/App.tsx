@@ -31,6 +31,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const searchQuery = useSelector((state: RootState) => state.search.query);
 
   const nonAuthContent = <>
     <Box sx={{ display: 'flex' }}>
@@ -46,7 +47,17 @@ function App() {
           })}>
         <Stack spacing={2} sx={{ alignItems: 'center', m: 3, pb: 5, }}>
           <Routes>
-            <Route path="/" element={<MainGrid title="Browse" fetchMethod={fetchStories} showActions={true} />}/>
+            <Route 
+              path="/" 
+              element={
+                <MainGrid 
+                  title="Browse" 
+                  fetchMethod={fetchStories} 
+                  showActions={true}
+                  searchQuery={searchQuery}
+                />
+              }
+            />
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/landing" element={<HomePage />} />

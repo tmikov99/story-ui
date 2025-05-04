@@ -9,19 +9,20 @@ import { Skeleton } from '@mui/material';
 import EmptyState from '../emptyState/EmptyState';
 
 interface MainGridProps {
-  fetchMethod: () => Promise<StoryData[]>;
+  fetchMethod: (query?: string) => Promise<StoryData[]>;
   title: string;
   showActions: boolean;
+  searchQuery?: string;
   placeholderText?: string;
 }
 
-export default function MainGrid({fetchMethod, title, showActions, placeholderText}: MainGridProps) {
+export default function MainGrid({fetchMethod, title, showActions, searchQuery, placeholderText}: MainGridProps) {
   const navigate = useNavigate();
   const [stories, setStories] = useState<StoryData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchMethod()
+    fetchMethod(searchQuery)
       .then((response) => {
         setStories(response);
       })
@@ -30,7 +31,7 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
         setStories([]);
       })
       .finally(() => setLoading(false));
-  }, [fetchMethod]);
+  }, [fetchMethod, searchQuery]);
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (

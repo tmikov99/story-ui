@@ -11,7 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
-import { brand, gray } from '../../theme/themePrimitives';
+import { brand } from '../../theme/themePrimitives';
 import ColorModeIconDropdown from '../../theme/ColorModeIconDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSidebar } from '../../redux/sidebarSlice';
@@ -27,9 +27,10 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
+import { setSearchQuery } from '../../redux/searchSlice';
 
 
-const Search = styled('div')(({ theme }) => ({
+const Search = styled(Box)(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: theme.palette.background.default,
@@ -40,38 +41,23 @@ const Search = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(3),
     width: 'auto',
   },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
+  borderEndEndRadius: '0',
+  borderEndStartRadius: theme.shape.borderRadius,
+  borderStartEndRadius: '0',
+  borderStartStartRadius: theme.shape.borderRadius,
   border: `1px solid ${theme.palette.divider}`,
   transition: 'border 120ms ease-in',
-  '&:hover': {
-    borderColor: gray[400],
-  },
   [`&.${inputBaseClasses.focused}`]: {
-    outline: `3px solid ${alpha(brand[500], 0.5)}`,
+    outline: `1px solid ${alpha(brand[500], 0.5)}`,
     borderColor: brand[400],
   },
-  ...theme.applyStyles('dark', {
-    '&:hover': {
-      borderColor: gray[500],
-    },
-   }),
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: theme.spacing(1, 2),
+    // paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',  
     [theme.breakpoints.up('sm')]: {
@@ -93,10 +79,26 @@ export default function AppHeader() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
   const initials = user?.username.charAt(0).toUpperCase();
+  const [inputValue, setInputValue] = React.useState('');
+
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const triggerSearch = () => {
+    dispatch(setSearchQuery(inputValue));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      triggerSearch();
+    }
+  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -112,7 +114,7 @@ export default function AppHeader() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/home');
+    navigate('/landing');
     handleMenuClose();
   }
 
@@ -222,13 +224,30 @@ export default function AppHeader() {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Search"
               inputProps={{ 'aria-label': 'search' }}
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
+            <IconButton
+              onClick={triggerSearch}
+              sx={(theme) => ({
+                backgroundColor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderEndEndRadius: theme.shape.borderRadius,
+                borderEndStartRadius: '0',
+                borderStartEndRadius: theme.shape.borderRadius,
+                borderStartStartRadius: '0',
+                '&:hover': {
+                  backgroundColor: alpha(brand[500], 0.1),
+                },
+              })}
+            >
+              <SearchIcon />
+            </IconButton>
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           {isAuthenticated && <Button 

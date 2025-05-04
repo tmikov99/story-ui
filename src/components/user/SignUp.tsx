@@ -131,7 +131,7 @@ export default function SignUp() {
       }
       const loginResponse = await login(username, password);
       dispatch(loginSuccess(loginResponse));
-      navigate('/home');
+      navigate('/landing');
     } catch (err) {console.error(err)}
   };
 
