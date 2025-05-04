@@ -5,8 +5,10 @@ import StoryCard from './StoryCard';
 import { useEffect, useState } from 'react';
 import { PaginatedResponse, StoryData } from '../../types/story';
 import { useNavigate } from 'react-router-dom';
-import { Skeleton } from '@mui/material';
+import { Pagination, Skeleton } from '@mui/material';
 import EmptyState from '../emptyState/EmptyState';
+import { useSearchParams } from 'react-router-dom';
+
 
 interface MainGridProps {
   fetchMethod: (params?: {
@@ -16,26 +18,33 @@ interface MainGridProps {
   }) => Promise<PaginatedResponse<StoryData>>;
   title: string;
   showActions: boolean;
-  searchQuery?: string;
   placeholderText?: string;
 }
 
-export default function MainGrid({fetchMethod, title, showActions, searchQuery, placeholderText}: MainGridProps) {
+export default function MainGrid({fetchMethod, title, showActions, placeholderText}: MainGridProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [stories, setStories] = useState<StoryData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageSize] = useState(12);
+  const queryParam = searchParams.get('query') || '';
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const page = pageParam - 1;
 
   useEffect(() => {
-    fetchMethod({ query: searchQuery })
+    fetchMethod({ query: queryParam, page: page, size: pageSize,  })
       .then((response) => {
         setStories(response.content);
+        setTotalPages(response.totalPages);
       })
       .catch((err) => {
         console.error('Error fetching stories:', err);
         setStories([]);
+        setTotalPages(0);
       })
       .finally(() => setLoading(false));
-  }, [fetchMethod, searchQuery]);
+  }, [fetchMethod, queryParam, page, pageSize]);
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (
@@ -72,6 +81,23 @@ export default function MainGrid({fetchMethod, title, showActions, searchQuery, 
             </Grid>
           ))}
         </Grid>
+      )}
+      {!loading && stories.length > 0 && totalPages > 1 && (
+        <Box display="flex" justifyContent="center" mt={2}>
+          <Pagination
+            count={totalPages}
+            page={page + 1}
+            onChange={(_, value) => {
+              setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('page', value.toString());
+                return newParams;
+              });
+            }}
+            siblingCount={2}
+            color="primary"
+          />
+        </Box>
       )}
     </Box>
   );
