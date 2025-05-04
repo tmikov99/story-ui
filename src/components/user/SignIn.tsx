@@ -96,7 +96,7 @@ export default function SignIn() {
     try {
       const loginResponse = await login(email, password);
       dispatch(loginSuccess(loginResponse));
-      navigate('/home');
+      navigate('/landing');
     } catch (err) {
       // setError('Login failed. Please check your credentials.');
     }

@@ -1,5 +1,5 @@
 import { PageDataNode } from '../types/page';
-import { LikesResponse, StoryFormData } from '../types/story';
+import { LikesResponse, StoryData } from '../types/story';
 import axios from './axios';
 
 export const fetchStory = async (id: number) => {
@@ -7,8 +7,9 @@ export const fetchStory = async (id: number) => {
   return response.data;
 };
 
-export const fetchStories = async () => {
-  const response = await axios.get('/story');
+export const fetchStories = async (query?: string):Promise<StoryData[]> => {
+  const params = query ? { q: query } : undefined;
+  const response = await axios.get<StoryData[]>('/story', { params });
   return response.data;
 };
 
