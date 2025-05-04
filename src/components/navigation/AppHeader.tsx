@@ -92,6 +92,7 @@ export default function AppHeader() {
 
   const triggerSearch = () => {
     dispatch(setSearchQuery(inputValue));
+    navigate("/");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

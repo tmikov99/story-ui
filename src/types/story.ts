@@ -3,6 +3,14 @@ export interface UserData {
     imageUrl?: string;
 }
 
+export interface PaginatedResponse<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+    size: number;
+  }
+
 export interface StoryData {
     id: number;
     title: string;
