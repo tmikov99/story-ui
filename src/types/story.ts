@@ -27,6 +27,7 @@ export interface StoryData {
     favorite?: boolean;
     likes?: number;
     favorites?: number;
+    reads?: number;
     coverImageUrl?: string;
 }
 
