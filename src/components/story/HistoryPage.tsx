@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchUserPlaythroughs } from "../../api/playthrough";
 import Grid from '@mui/material/Grid2';
 import EmptyState from "../emptyState/EmptyState";
+import HistoryIcon from '@mui/icons-material/History';
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
@@ -44,7 +45,11 @@ export default function HistoryPage() {
           renderSkeletons(4)
         ) : (
           history.length === 0 ? (
-            <EmptyState title="No stories found" message="This list has no stories"/>
+            <EmptyState 
+              title="No History Entries" 
+              message="There aren't any stories in your recent history" 
+              Icon={HistoryIcon}
+            />
           ) : (history.map((entry: any) => (
             <Card key={entry.id}>
               <Grid container>

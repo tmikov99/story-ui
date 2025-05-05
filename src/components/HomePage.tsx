@@ -29,20 +29,20 @@ export default function HomePage() {
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         }}>
-            <Box sx={{
+            <Box sx={(theme) => ({
                 position: 'absolute',
                 top: '30%',
                 width: '100%',
                 textAlign: 'center',
                 padding: 4,
-                background: 'rgba(0, 0, 0, 0.7)',
-                color: 'white!important',
-            }}>
+                background: theme.palette.mode === 'dark'
+                ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+              })}
+            >
                 <Typography variant='h1'>Story Project</Typography>
                 <Button 
                   sx={{ marginTop: 3 }} 
                   variant='contained' 
-                  color='primary'
                   onClick={() => navigate("/")}
                 >
                   Browse Stories
