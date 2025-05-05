@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { Pagination, Skeleton } from '@mui/material';
 import EmptyState from '../emptyState/EmptyState';
 import { useSearchParams } from 'react-router-dom';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 interface MainGridProps {
@@ -67,7 +68,11 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
           {renderSkeletons(8)}
         </Grid>
       ) : stories.length === 0 ? (
-        <EmptyState title={placeholderText || "No stories found"} message="This list has no stories"/>
+        <EmptyState 
+          title={placeholderText || "No stories found"} 
+          message="We couldn't find any relevant stories"
+          Icon={SearchIcon}
+        />
       ) : (
         <Grid
           container

@@ -19,7 +19,7 @@ import StoryCreate from './components/story/StoryCreate';
 import PageLinks from './components/page/PageLinks';
 import StoryEdit from './components/story/StoryEdit';
 import AccountSettings from './components/user/AccountSettings';
-import { fetchFavorite, fetchLiked, fetchStories, fetchTrending } from './api/story';
+import { fetchFavorite, fetchLiked, fetchStories, fetchTrending, fetchUserStories } from './api/story';
 import ProfilePage from './components/user/ProfilePage';
 import HistoryPage from './components/story/HistoryPage';
 import HistoryEmptyState from './components/emptyState/HistoryEmptyState';
@@ -28,6 +28,7 @@ import LikedEmptyState from './components/emptyState/LikedEmptyState';
 import UserEmptyState from './components/emptyState/UserEmptyState';
 import EmptyState from './components/emptyState/EmptyState';
 import ErrorIcon from '@mui/icons-material/Error';
+import OwnedEmptyState from './components/emptyState/OwnedEmptyState';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -71,13 +72,23 @@ function App() {
                 )
               }
             />
-            <Route 
+            <Route
               path="/liked" 
               element={
                 isAuthenticated ? (
                   <MainGrid title="Liked Stories" fetchMethod={fetchLiked} showActions={false} />
                 ) : (
                   <LikedEmptyState />
+                )
+              }
+            />
+            <Route
+              path="created"
+              element={
+                isAuthenticated ? (
+                  <MainGrid title="Created Stories" fetchMethod={fetchUserStories} showActions={true} />
+                ) : (
+                  <OwnedEmptyState />
                 )
               }
             />
