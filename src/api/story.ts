@@ -66,6 +66,12 @@ export const fetchTrending = async (
   return fetchStoriesData('/story/trending', params);
 };
 
+export const fetchUserStories = async (
+  params?: FetchParams
+): Promise<PaginatedResponse<StoryData>> => {
+  return fetchStoriesData('/story/mine', params);
+};
+
 export const createStory = async (formData: FormData) => {
   const response = await axios.post('/story/create', formData, {
     headers: {
