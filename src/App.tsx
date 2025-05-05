@@ -29,6 +29,8 @@ import UserEmptyState from './components/emptyState/UserEmptyState';
 import EmptyState from './components/emptyState/EmptyState';
 import ErrorIcon from '@mui/icons-material/Error';
 import OwnedEmptyState from './components/emptyState/OwnedEmptyState';
+import CommentHistoryPage from './components/comment/CommentHistoryPage';
+import CommentHistoryEmptyState from './components/emptyState/CommentHistoryEmptyState';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -89,6 +91,16 @@ function App() {
                   <MainGrid title="Created Stories" fetchMethod={fetchUserStories} showActions={true} />
                 ) : (
                   <OwnedEmptyState />
+                )
+              }
+            />
+            <Route
+              path="comments"
+              element={
+                isAuthenticated ? (
+                  <CommentHistoryPage />
+                ) : (
+                  <CommentHistoryEmptyState />
                 )
               }
             />

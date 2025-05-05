@@ -11,7 +11,7 @@ import { formatDateString } from '../../utils/formatDate';
 import { Avatar, Button, ButtonGroup, Chip, Skeleton, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import CommentBlock from './CommentBlock';
+import CommentBlock from '../comment/CommentBlock';
 
 export default function StoryPage() {
   const { id } = useParams();

@@ -46,6 +46,7 @@ export interface StoryCommentData {
     imageUrl?: string;
     text: string;
     createdAt: string;
+    story?: StoryData;
 }
 
 export interface LikesResponse {

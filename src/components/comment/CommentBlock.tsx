@@ -4,12 +4,13 @@ import { StoryCommentData } from "../../types/story";
 
 interface CommentBlockProps {
   comment: StoryCommentData;
+  showAvatar?: boolean;
 }
 
-export default function CommentBlock({ comment }:CommentBlockProps) {
+export default function CommentBlock({ comment, showAvatar = true }:CommentBlockProps) {
   return (
     <Box gap={2} sx={{display: "flex"}}>
-      <Avatar src={comment.imageUrl}>{comment.username[0]}</Avatar>
+      {showAvatar && <Avatar src={comment.imageUrl}>{comment.username[0]}</Avatar>}
       <Stack>
         <Box gap={1} sx={{display: "flex"}}>
           <Typography variant="body2">{comment.username}</Typography>
