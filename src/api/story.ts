@@ -8,10 +8,27 @@ export const fetchStory = async (id: number) => {
 };
 
 export const fetchStories = async (
-  params?: { query?: string; page?: number; size?: number }
+  params?: { query?: string;
+    page?: number;
+    size?: number;
+    sortField?: 'createdAt' | 'likes' | 'favorites';
+    sortOrder?: 'asc' | 'desc';
+ }
 ): Promise<PaginatedResponse<StoryData>> => {
-  const { query, page = 0, size = 10 } = params || {};
-  const requestParams: Record<string, any> = { page, size };
+  const {
+    query,
+    page = 0,
+    size = 10,
+    sortField = 'createdAt',
+    sortOrder = 'desc',
+  } = params || {};
+
+  const requestParams: Record<string, any> = {
+    page,
+    size,
+    sort: `${sortField},${sortOrder}`,
+  };
+
   if (query) {
     requestParams.q = query;
   }
@@ -22,13 +39,28 @@ export const fetchStories = async (
 
 
 export const fetchFavorite = async (
-  params?: { query?: string; page?: number; size?: number }
-): Promise<PaginatedResponse<StoryData>> => {
-  const { query, page = 0, size = 10 } = params || {};
-  const requestParams: Record<string, any> = { page, size };
-  if (query) {
-    requestParams.q = query;
+  params?: {
+    query?: string;
+    page?: number;
+    size?: number;
+    sortField?: 'createdAt' | 'likes' | 'favorites';
+    sortOrder?: 'asc' | 'desc';
   }
+): Promise<PaginatedResponse<StoryData>> => {
+  const {
+    query,
+    page = 0,
+    size = 10,
+    sortField = 'createdAt',
+    sortOrder = 'desc'
+  } = params || {};
+
+  const requestParams: Record<string, any> = {
+    page,
+    size,
+    sort: `${sortField},${sortOrder}`
+  };
+  if (query) requestParams.q = query;
 
   const response = await axios.get<PaginatedResponse<StoryData>>('/story/favorite', {
     params: requestParams
@@ -37,13 +69,28 @@ export const fetchFavorite = async (
 };
 
 export const fetchLiked = async (
-  params?: { query?: string; page?: number; size?: number }
-): Promise<PaginatedResponse<StoryData>> => {
-  const { query, page = 0, size = 10 } = params || {};
-  const requestParams: Record<string, any> = { page, size };
-  if (query) {
-    requestParams.q = query;
+  params?: {
+    query?: string;
+    page?: number;
+    size?: number;
+    sortField?: 'createdAt' | 'likes' | 'favorites';
+    sortOrder?: 'asc' | 'desc';
   }
+): Promise<PaginatedResponse<StoryData>> => {
+  const {
+    query,
+    page = 0,
+    size = 10,
+    sortField = 'createdAt',
+    sortOrder = 'desc'
+  } = params || {};
+
+  const requestParams: Record<string, any> = {
+    page,
+    size,
+    sort: `${sortField},${sortOrder}`
+  };
+  if (query) requestParams.q = query;
 
   const response = await axios.get<PaginatedResponse<StoryData>>('/story/liked', {
     params: requestParams
