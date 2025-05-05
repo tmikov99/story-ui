@@ -95,7 +95,7 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
               });
             }}
             siblingCount={2}
-            color="primary"
+            shape="rounded"
           />
         </Box>
       )}
