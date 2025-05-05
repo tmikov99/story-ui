@@ -28,7 +28,7 @@ interface OptionsListItem {
 
 const mainListItems1 = [
   { text: 'Home', icon: HomeRoundedIcon, path: '/' },
-  { text: 'Trending', icon: StarRoundedIcon, path: '/page' },
+  { text: 'Trending', icon: StarRoundedIcon, path: '/trending' },
 ];
 const mainListItems2 = [
   { text: 'History', icon: HistoryRoundedIcon, path: '/history'},
