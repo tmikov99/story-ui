@@ -2,18 +2,17 @@ import { PageDataNode } from '../types/page';
 import { LikesResponse, PaginatedResponse, StoryData } from '../types/story';
 import axios from './axios';
 
-export const fetchStory = async (id: number) => {
-  const response = await axios.get(`/story/preview/${id}`);
-  return response.data;
+type FetchParams = {
+  query?: string;
+  page?: number;
+  size?: number;
+  sortField?: 'createdAt' | 'likes' | 'favorites';
+  sortOrder?: 'asc' | 'desc';
 };
 
-export const fetchStories = async (
-  params?: { query?: string;
-    page?: number;
-    size?: number;
-    sortField?: 'createdAt' | 'likes' | 'favorites';
-    sortOrder?: 'asc' | 'desc';
- }
+const fetchStoriesData = async (
+  endpoint: string,
+  params?: FetchParams
 ): Promise<PaginatedResponse<StoryData>> => {
   const {
     query,
@@ -29,73 +28,36 @@ export const fetchStories = async (
     sort: `${sortField},${sortOrder}`,
   };
 
-  if (query) {
-    requestParams.q = query;
-  }
+  if (query) requestParams.q = query;
 
-  const response = await axios.get<PaginatedResponse<StoryData>>('/story', { params: requestParams });
+  const response = await axios.get<PaginatedResponse<StoryData>>(endpoint, {
+    params: requestParams,
+  });
+
   return response.data;
 };
 
+export const fetchStory = async (id: number) => {
+  const response = await axios.get(`/story/preview/${id}`);
+  return response.data;
+};
+
+export const fetchStories = async (
+  params?: FetchParams
+): Promise<PaginatedResponse<StoryData>> => {
+  return fetchStoriesData('/story', params);
+};
 
 export const fetchFavorite = async (
-  params?: {
-    query?: string;
-    page?: number;
-    size?: number;
-    sortField?: 'createdAt' | 'likes' | 'favorites';
-    sortOrder?: 'asc' | 'desc';
-  }
+  params?: FetchParams
 ): Promise<PaginatedResponse<StoryData>> => {
-  const {
-    query,
-    page = 0,
-    size = 10,
-    sortField = 'createdAt',
-    sortOrder = 'desc'
-  } = params || {};
-
-  const requestParams: Record<string, any> = {
-    page,
-    size,
-    sort: `${sortField},${sortOrder}`
-  };
-  if (query) requestParams.q = query;
-
-  const response = await axios.get<PaginatedResponse<StoryData>>('/story/favorite', {
-    params: requestParams
-  });
-  return response.data;
+  return fetchStoriesData('/story/favorite', params);
 };
 
 export const fetchLiked = async (
-  params?: {
-    query?: string;
-    page?: number;
-    size?: number;
-    sortField?: 'createdAt' | 'likes' | 'favorites';
-    sortOrder?: 'asc' | 'desc';
-  }
+  params?: FetchParams
 ): Promise<PaginatedResponse<StoryData>> => {
-  const {
-    query,
-    page = 0,
-    size = 10,
-    sortField = 'createdAt',
-    sortOrder = 'desc'
-  } = params || {};
-
-  const requestParams: Record<string, any> = {
-    page,
-    size,
-    sort: `${sortField},${sortOrder}`
-  };
-  if (query) requestParams.q = query;
-
-  const response = await axios.get<PaginatedResponse<StoryData>>('/story/liked', {
-    params: requestParams
-  });
-  return response.data;
+  return fetchStoriesData('/story/liked', params);
 };
 
 export const createStory = async (formData: FormData) => {
