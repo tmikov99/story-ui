@@ -91,7 +91,7 @@ function App() {
               element={
                 <EmptyState 
                   title="Page Not Found" 
-                  message="The page you are trying to access doesn't exist or you lack authorization" 
+                  message="The page you are trying to access doesn't exist or requires authorization" 
                   Icon={ErrorIcon}
                 />
               } 

@@ -15,10 +15,11 @@ import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { StoryData } from '../../types/story';
-import { formatDateString } from '../../utils/formatDate';
+import { getTimeAgo } from '../../utils/formatDate';
 import { toggleFavorite, toggleLike } from '../../api/story';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatStoryReads } from '../../utils/formatStory';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -116,7 +117,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
           </IconButton>
         }
         title={story.title}
-        subheader={formatDateString(story.createdAt)}
+        subheader={`${formatStoryReads(story.reads)} • ${getTimeAgo(story.createdAt)}`}
       />
       <CardMedia
         component="img"
