@@ -19,7 +19,7 @@ import StoryCreate from './components/story/StoryCreate';
 import PageLinks from './components/page/PageLinks';
 import StoryEdit from './components/story/StoryEdit';
 import AccountSettings from './components/user/AccountSettings';
-import { fetchFavorite, fetchLiked, fetchStories } from './api/story';
+import { fetchFavorite, fetchLiked, fetchStories, fetchTrending } from './api/story';
 import ProfilePage from './components/user/ProfilePage';
 import HistoryPage from './components/story/HistoryPage';
 import HistoryEmptyState from './components/emptyState/HistoryEmptyState';
@@ -56,6 +56,7 @@ function App() {
                 />
               }
             />
+            <Route path="/trending" element={<MainGrid title="Trending" fetchMethod={fetchTrending} showActions={true} />} /> 
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/landing" element={<HomePage />} />
