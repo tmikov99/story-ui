@@ -23,7 +23,7 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { listClasses } from '@mui/material/List';
 import { logout } from '../../redux/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
@@ -74,12 +74,18 @@ export default function AppHeader() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
   const initials = user?.username.charAt(0).toUpperCase();
-  const [inputValue, setInputValue] = React.useState('');
+  const [searchParams] = useSearchParams();
+  const [inputValue, setInputValue] = React.useState(() => searchParams.get('query') || '');
 
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
+
+  React.useEffect(() => {
+    const currentQuery = searchParams.get('query') || '';
+    setInputValue(currentQuery);
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

@@ -59,7 +59,7 @@ function App() {
                 />
               }
             />
-            <Route path="/trending" element={<MainGrid title="Trending" fetchMethod={fetchTrending} showActions={true} />} /> 
+            <Route path="/trending" element={<MainGrid title="Trending" fetchMethod={fetchTrending} showActions={true} showSort={false} />} /> 
             <Route path="/story/:storyId/page/:pageNumber" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/landing" element={<HomePage />} />
