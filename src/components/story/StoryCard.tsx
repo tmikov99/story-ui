@@ -16,10 +16,12 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { StoryData } from '../../types/story';
 import { getTimeAgo } from '../../utils/formatDate';
-import { toggleFavorite, toggleLike } from '../../api/story';
+import { publishStory, toggleFavorite, toggleLike } from '../../api/story';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatStoryReads } from '../../utils/formatStory';
+import { Box, Button } from '@mui/material';
+import ModeIcon from '@mui/icons-material/Mode';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -102,6 +104,12 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
     event.stopPropagation();
   };
 
+  const handlePublish = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    const publishResponse = await publishStory(story.id);
+    setStory(publishResponse);
+  }
+
   return (
     <SyledCard sx={{}} onClick={handleCardClick}>
       <CardHeader
@@ -131,13 +139,24 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
         </StyledTypography>
       </SyledCardContent>
       {showActions && <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
-        <IconButton onClick={handleFavoriteClick} aria-label="add to favorites">
-          {story.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <IconButton onClick={handleLikeClick} aria-label="share">
-          {story.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
-        </IconButton>
-        {story.likes}
+        {story.status ==="DRAFT" 
+          ? <Box sx={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Box gap={1} sx={{display: 'flex'}}>
+                <ModeIcon />
+                <Typography>DRAFT</Typography>
+              </Box>
+              <Button variant='contained' onClick={handlePublish}>PUBLISH</Button>
+            </Box>
+          : <>
+            <IconButton onClick={handleFavoriteClick} aria-label="add to favorites">
+              {story.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+            <IconButton onClick={handleLikeClick} aria-label="share">
+              {story.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
+            </IconButton>
+            {story.likes}
+          </>
+        }
       </CardActions>}
     </SyledCard>
   );
