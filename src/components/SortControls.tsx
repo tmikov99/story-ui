@@ -17,23 +17,23 @@ export default function SortControls({ sortField, sortOrder, onSortFieldChange, 
 
   return (
     <Box display="flex" gap={2} mb={2}>
-      <FormControl size="small" sx={{ minWidth: 140 }}>
+      <FormControl size="small" sx={{ minWidth: 186 }}>
         <Select
           value={sortField}
           onChange={(e) => onSortFieldChange(e.target.value)}
           renderValue={(selected) => {
             const iconMap: Record<string, JSX.Element> = {
               createdAt: <AccessTimeIcon fontSize="small" />,
-              title: <TitleIcon fontSize="small" />,
               reads: <VisibilityIcon fontSize="small" />,
               likes: <ThumbUpAltIcon fontSize="small" />,
+              title: <TitleIcon fontSize="small" />,
             };
         
             const labelMap: Record<string, string> = {
-              createdAt: "Date",
-              title: "Title",
-              reads: "Reads",
-              likes: "Likes",
+              createdAt: isAscending ? "Oldest" : "Latest",
+              reads: isAscending ? "Least Read" : "Most Read",
+              likes: isAscending ? "Least Liked" : "Most Liked",
+              title: "Alphabetical",
             };
         
             return (
@@ -48,25 +48,25 @@ export default function SortControls({ sortField, sortOrder, onSortFieldChange, 
             <ListItemIcon>
               <AccessTimeIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Date" />
-          </MenuItem>
-          <MenuItem value="title">
-            <ListItemIcon>
-              <TitleIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary="Title" />
+            <ListItemText primary={isAscending ? "Oldest" : "Latest"} />
           </MenuItem>
           <MenuItem value="reads">
             <ListItemIcon>
               <VisibilityIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Reads" />
+            <ListItemText primary={isAscending ? "Least Read" : "Most Read"} />
           </MenuItem>
           <MenuItem value="likes">
             <ListItemIcon>
               <ThumbUpAltIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Likes" />
+            <ListItemText primary={isAscending ? "Least Liked" : "Most Liked"} />
+          </MenuItem>
+          <MenuItem value="title">
+            <ListItemIcon>
+              <TitleIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Alphabetical" />
           </MenuItem>
         </Select>
       </FormControl>
