@@ -9,20 +9,22 @@ import { Pagination, Skeleton } from '@mui/material';
 import EmptyState from '../emptyState/EmptyState';
 import { useSearchParams } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
+import SortControls from '../SortControls';
+import { FetchParams } from '../../api/story';
 
 
 interface MainGridProps {
-  fetchMethod: (params?: {
-    query?: string;
-    page?: number;
-    size?: number;
-  }) => Promise<PaginatedResponse<StoryData>>;
+  fetchMethod: (params?: FetchParams) => Promise<PaginatedResponse<StoryData>>;
   title: string;
   showActions: boolean;
+  showSort?: boolean;
   placeholderText?: string;
 }
 
-export default function MainGrid({fetchMethod, title, showActions, placeholderText}: MainGridProps) {
+const allowedSortFields = ['createdAt', 'likes', 'favorites', 'title', 'reads'] as const;
+export type SortField = typeof allowedSortFields[number];
+
+export default function MainGrid({fetchMethod, title, showActions, showSort = true, placeholderText}: MainGridProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [stories, setStories] = useState<StoryData[]>([]);
@@ -31,10 +33,27 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
   const [pageSize] = useState(12);
   const queryParam = searchParams.get('query') || '';
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const rawSortField = searchParams.get('sortField');
+
+  const isValidSortField = (value: string): value is SortField =>
+    allowedSortFields.includes(value as SortField);
+  
+  const sortFieldParam = isValidSortField(rawSortField ?? '')
+    ? (rawSortField as SortField)
+    : 'createdAt';
+  const sortOrderParam = ['asc', 'desc'].includes(searchParams.get('sortOrder') || '')
+    ? (searchParams.get('sortOrder') as 'asc' | 'desc')
+    : 'desc';
   const page = pageParam - 1;
 
   useEffect(() => {
-    fetchMethod({ query: queryParam, page: page, size: pageSize,  })
+    fetchMethod({
+      query: queryParam,
+      page: page,
+      size: pageSize,
+      sortField: sortFieldParam,
+      sortOrder: sortOrderParam
+    })
       .then((response) => {
         setStories(response.content);
         setTotalPages(response.totalPages);
@@ -45,7 +64,7 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
         setTotalPages(0);
       })
       .finally(() => setLoading(false));
-  }, [fetchMethod, queryParam, page, pageSize]);
+  }, [fetchMethod, queryParam, page, pageSize, sortFieldParam, sortOrderParam]);
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (
@@ -59,10 +78,31 @@ export default function MainGrid({fetchMethod, title, showActions, placeholderTe
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        {title}
-      </Typography>
-
+      <Box sx={{display: 'flex', justifyContent: 'space-between' }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+          {title}
+        </Typography>
+        {showSort && 
+          <SortControls
+            sortField={sortFieldParam}
+            sortOrder={sortOrderParam}
+            onSortFieldChange={(value) => {
+              setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('sortField', value);
+                return newParams;
+              });
+            }}
+            onSortOrderChange={(value) => {
+              setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev);
+                newParams.set('sortOrder', value);
+                return newParams;
+              });
+            }}
+          />
+        }
+      </Box>
       {loading ? (
         <Grid container spacing={2} columns={12}>
           {renderSkeletons(8)}

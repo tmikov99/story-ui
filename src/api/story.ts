@@ -2,11 +2,11 @@ import { PageDataNode } from '../types/page';
 import { LikesResponse, PaginatedResponse, StoryData } from '../types/story';
 import axios from './axios';
 
-type FetchParams = {
+export type FetchParams = {
   query?: string;
   page?: number;
   size?: number;
-  sortField?: 'createdAt' | 'likes' | 'favorites';
+  sortField?: 'createdAt' | 'likes' | 'favorites' | 'title' | 'reads';
   sortOrder?: 'asc' | 'desc';
 };
 
