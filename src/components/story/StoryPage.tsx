@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { createComment, fetchComments, fetchStory } from '../../api/story';
+import { archiveStory, createComment, fetchComments, fetchStory, publishStory } from '../../api/story';
 import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
 import { formatDateString } from '../../utils/formatDate';
@@ -95,6 +95,16 @@ export default function StoryPage() {
     unfocusComment();
   }
 
+  const handleArchive = async () => {
+    const archiveResponse = await archiveStory(storyId);
+    setStory(archiveResponse);
+  }
+
+  const handlePublish = async () => {
+    const publishResponse = await publishStory(storyId);
+    setStory(publishResponse);
+  }
+
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
@@ -174,7 +184,13 @@ export default function StoryPage() {
                     <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
                     <Button color='error'>Delete Story</Button>
                   </ButtonGroup>
-                  <Typography>Status: {story?.status}</Typography>
+                  <Box mb={1}>
+                    <Typography>Status: {story?.status}</Typography>
+                    {story?.status === "PUBLISHED" 
+                      ? <Button variant="contained" onClick={handleArchive}>ARCHIVE</Button> 
+                      : <Button variant="contained" onClick={handlePublish}>PUBLISH</Button>
+                    }
+                  </Box>
                   </>
                 }
                 <Typography variant='h4'>{story?.title}</Typography>

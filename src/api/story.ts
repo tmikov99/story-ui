@@ -100,6 +100,16 @@ export const deleteStory = async (id: number) => {
   return response;
 }
 
+export const archiveStory = async (id: number) => {
+  const response = await axios.put(`/story/archive/${id}`);
+  return response.data;
+}
+
+export const publishStory = async (id: number) => {
+  const response = await axios.put(`/story/publish/${id}`);
+  return response.data;
+}
+
 export const fetchGenres = async () => {
   const response = await axios.get('/story/genres');
   return response.data;
