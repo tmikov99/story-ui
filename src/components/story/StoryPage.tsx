@@ -12,6 +12,7 @@ import { Avatar, Button, ButtonGroup, Chip, Skeleton, TextField } from '@mui/mat
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CommentBlock from '../comment/CommentBlock';
+import { stringToHslColor } from '../../utils/userColors';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -217,7 +218,12 @@ export default function StoryPage() {
       <Stack gap={2}>
         <Box>
           <Box gap={2} sx={{display: "flex"}}>
-            <Avatar src={user?.imageUrl}>{user?.username[0]}</Avatar>
+            <Avatar 
+              src={user?.imageUrl}
+              sx={{ bgcolor: stringToHslColor(user?.username) }}
+            >
+              {user?.username[0]}
+            </Avatar>
             <TextField 
               multiline fullWidth variant='standard' 
               placeholder='Add a comment...' 

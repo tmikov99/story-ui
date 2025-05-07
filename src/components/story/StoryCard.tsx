@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatStoryReads } from '../../utils/formatStory';
 import { Box, Button } from '@mui/material';
 import ModeIcon from '@mui/icons-material/Mode';
+import { stringToHslColor } from '../../utils/userColors';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -115,7 +116,12 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
       <CardHeader
         sx={{paddingLeft: 2, paddingTop: 2, paddingRight: 2}}
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} src={story.user?.imageUrl} onClick={handleAvatarClick} aria-label="recipe">
+          <Avatar 
+            sx={{ bgcolor: stringToHslColor(story.user.username) }} 
+            src={story.user?.imageUrl} 
+            onClick={handleAvatarClick} 
+            aria-label="user"
+          >
             {story.user.username.charAt(0).toUpperCase()}
           </Avatar>
         }

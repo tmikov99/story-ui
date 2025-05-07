@@ -28,6 +28,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
+import { stringToHslColor } from '../../utils/userColors';
 
 const Search = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -168,9 +169,9 @@ export default function AppHeader() {
       >
         <Avatar
           sizes="small"
-          alt="Test User"
+          alt="User Picture"
           src={user?.imageUrl}
-          sx={{ width: 36, height: 36 }}
+          sx={{ width: 36, height: 36, bgcolor: stringToHslColor(user?.username) }}
         >
           {initials}
         </Avatar>
@@ -291,7 +292,10 @@ export default function AppHeader() {
               onClick={handleProfileMenuOpen}
               sx={{padding: 0, ml: 1}}
             >
-              <Avatar src={user?.imageUrl}>
+              <Avatar 
+                sx={{ bgcolor: stringToHslColor(user?.username) }}
+                src={user?.imageUrl}
+              >
                 {initials?.charAt(0)}
               </Avatar>
             </IconButton>

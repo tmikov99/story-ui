@@ -6,6 +6,7 @@ import { getCurrentUser } from "../../api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { User } from "../../types/user";
+import { stringToHslColor } from "../../utils/userColors";
 
 export default function AccountSettings() {
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -68,7 +69,8 @@ export default function AccountSettings() {
             sx={{
               width: '100%',   
               height: '100%', 
-              fontSize: 100
+              fontSize: 100,
+              bgcolor: stringToHslColor(user?.username),
           }}>
             <Typography className="offHover" sx={{fontSize: 100}}>{user?.username[0]}</Typography>
           </Avatar>
