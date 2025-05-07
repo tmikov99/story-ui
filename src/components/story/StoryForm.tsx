@@ -31,6 +31,22 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
   );
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialData?.coverImageUrl) {
+      setImagePreview(initialData.coverImageUrl);
+    }
+  }, [initialData]);
+
+  useEffect(() => {
+    if (thumbnailFile) {
+      const objectUrl = URL.createObjectURL(thumbnailFile);
+      setImagePreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl); // Cleanup
+    }
+  }, [thumbnailFile]);
 
 
   useEffect(() => {
@@ -66,6 +82,11 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
       </Typography>
 
       <UploadThumbnail onFileSelect={(file) => setThumbnailFile(file)} />
+      {imagePreview && (
+        <Box mb={2}>
+          <img src={imagePreview} alt="Thumbnail preview" style={{ maxWidth: "100%", borderRadius: 8 }} />
+        </Box>
+      )}
 
       <TextField
         label="Title"

@@ -29,6 +29,7 @@ export default function StoryEdit() {
       genres: originalStory.genres,
       tags: originalStory.tags,
       description: originalStory.description,
+      coverImageUrl: originalStory.coverImageUrl,
       status: originalStory.status,
     });
   }

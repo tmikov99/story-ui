@@ -8,6 +8,7 @@ export type FetchParams = {
   size?: number;
   sortField?: 'createdAt' | 'likes' | 'favorites' | 'title' | 'reads';
   sortOrder?: 'asc' | 'desc';
+  sort?: 'latest' | 'oldest' | 'most_read';
 };
 
 const fetchStoriesData = async (
@@ -20,6 +21,7 @@ const fetchStoriesData = async (
     size = 10,
     sortField = 'createdAt',
     sortOrder = 'desc',
+    sort,
   } = params || {};
 
   const requestParams: Record<string, any> = {
@@ -29,6 +31,7 @@ const fetchStoriesData = async (
   };
 
   if (query) requestParams.q = query;
+  if (sort) requestParams.sort = sort;
 
   const response = await axios.get<PaginatedResponse<StoryData>>(endpoint, {
     params: requestParams,
@@ -70,6 +73,29 @@ export const fetchUserStories = async (
   params?: FetchParams
 ): Promise<PaginatedResponse<StoryData>> => {
   return fetchStoriesData('/story/mine', params);
+};
+
+export const fetchLatestPublishedByUser = async (username: string) => {
+  return fetchStoriesData(`/story/user/${username}/stories`, {
+    sort: 'latest',
+    page: 0,
+    size: 4,
+  });
+};
+
+export const fetchMostReadByUser = async (username: string) => {
+  return fetchStoriesData(`/story/user/${username}/stories`, {
+    sort: 'most_read',
+    page: 0,
+    size: 4,
+  });
+};
+
+export const fetchPublishedByUser = async (
+  username: string,
+  params?: FetchParams
+): Promise<PaginatedResponse<StoryData>> => {
+  return fetchStoriesData(`/story/user/${username}/stories`, params);
 };
 
 export const createStory = async (formData: FormData) => {
