@@ -21,6 +21,7 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import CloseIcon from '@mui/icons-material/Close';
 import { listClasses } from '@mui/material/List';
 import { logout } from '../../redux/authSlice';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -54,15 +55,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     borderColor: brand[400],
   },
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 2),
-    // paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: theme.spacing(1, 5, 1, 2),
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('md')]: {
-        width: '35ch',
+        width: '32ch',
     },
     [theme.breakpoints.up('lg')]: {
-        width: '60ch',
+        width: '52ch',
     },
   },
 }));
@@ -221,7 +221,7 @@ export default function AppHeader() {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block', cursor: "pointer" } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, cursor: "pointer", width: 200 }}
             onClick={() => navigate('/')}
           >
             Story
@@ -235,6 +235,21 @@ export default function AppHeader() {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
+            {inputValue && (
+              <IconButton
+                onClick={() => setInputValue('')}
+                size="small"
+                sx={{
+                  position: 'absolute',
+                  right: 46,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  padding: '8px',
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            )}
             <IconButton
               onClick={triggerSearch}
               sx={(theme) => ({
