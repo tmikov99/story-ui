@@ -21,6 +21,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, M
 import { updateStoryPages } from "../../api/story";
 import { createPage, deletePage, updatePage } from "../../api/page";
 import { nodeTypes } from "../../utils/reactFlowUtil";
+import { useNavigate } from "react-router-dom";
 
 interface PageGraphProps {
   pages: PageDataNode[];
@@ -88,6 +89,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const [menuTargetPage, setMenuTargetPage] = useState<PageData | null>(null);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [editingPageNumber, setEditingPageNumber] = useState<number | null>(null);
+  const navigate = useNavigate();
 
 
   function handleMenuOpen (event: React.MouseEvent<HTMLElement>, page: PageData) {
@@ -372,7 +374,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   return (
     <Box style={{ height: "84vh", width: "100%" }}>
       <Stack direction={"row"} gap={1}>
-        <Button variant="outlined" onClick={() => savePositions(storyId, nodes)}>Save</Button>
+        <Button variant="outlined" onClick={() => navigate(`/story/${storyId}`)}>View Story</Button>
         <Button
           variant="contained"
           onClick={handleAddPage}

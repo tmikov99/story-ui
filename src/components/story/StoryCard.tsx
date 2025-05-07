@@ -64,6 +64,14 @@ const SyledCard = styled(Card)(({ theme }) => ({
     lineHeight: '1.5em'
   }));
 
+  const TruncatedTitle = styled(Typography)({
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  });
+
 interface StoryCardProps {
   storyData: StoryData;
   onClick?: (story: StoryData) => void;
@@ -114,7 +122,14 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
   return (
     <SyledCard sx={{}} onClick={handleCardClick}>
       <CardHeader
-        sx={{paddingLeft: 2, paddingTop: 2, paddingRight: 2}}
+        sx={{
+          paddingLeft: 2, 
+          paddingTop: 2, 
+          paddingRight: 2, 
+          '& .MuiCardHeader-content': {
+            minWidth: 0,
+          },
+        }}
         avatar={
           <Avatar 
             sx={{ bgcolor: stringToHslColor(story.user.username) }} 
@@ -130,7 +145,11 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
             <MoreVertIcon />
           </IconButton>
         }
-        title={story.title}
+        title={
+          <TruncatedTitle title={story.title}>
+            {story.title}
+          </TruncatedTitle>
+        }
         subheader={`${formatStoryReads(story.reads)} • ${getTimeAgo(story.createdAt)}`}
       />
       <CardMedia

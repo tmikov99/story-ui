@@ -180,18 +180,25 @@ export default function StoryPage() {
             <Grid size={{ xs: 12, lg: 6 }}>
               <Stack>
                 {user?.username === story?.user.username && 
-                  <><ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
-                    <Button color='secondary' onClick={handleEditStory}>Edit Properties</Button>
-                    <Button color='secondary' onClick={handleEditPages}>Edit Pages</Button>
-                    <Button color='error'>Delete Story</Button>
-                  </ButtonGroup>
-                  <Box mb={1}>
-                    <Typography>Status: {story?.status}</Typography>
-                    {story?.status === "PUBLISHED" 
-                      ? <Button variant="contained" onClick={handleArchive}>ARCHIVE</Button> 
-                      : <Button variant="contained" onClick={handlePublish}>PUBLISH</Button>
-                    }
-                  </Box>
+                  <>
+                    <ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
+                      <Button color='secondary' onClick={handleEditStory}>
+                        {story?.status === "DRAFT" ? 'Edit Properties' : 'Create / Edit Draft'}
+                      </Button>
+                      {story?.status === "DRAFT" && 
+                        <Button color='secondary'onClick={handleEditPages}>
+                          Edit Pages
+                        </Button>
+                      }
+                      <Button color='error'>Delete Story</Button>
+                    </ButtonGroup>
+                    <Box mb={1}>
+                      <Typography>Status: {story?.status}</Typography>
+                      {story?.status === "PUBLISHED" 
+                        ? <Button variant="contained" onClick={handleArchive}>ARCHIVE</Button> 
+                        : <Button variant="contained" onClick={handlePublish}>PUBLISH</Button>
+                      }
+                    </Box>
                   </>
                 }
                 <Typography variant='h4'>{story?.title}</Typography>
