@@ -6,6 +6,7 @@ import { StoryData, UserData } from "../../types/story";
 import Grid from '@mui/material/Grid2';
 import StoryCard from "../story/StoryCard";
 import { fetchLatestPublishedByUser, fetchMostReadByUser, fetchPublishedByUser } from "../../api/story";
+import { stringToHslColor } from "../../utils/userColors";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -181,7 +182,17 @@ export default function ProfilePage() {
           m: 2,
         }}
       >
-        <Avatar sx={{height: 200, width: 200, fontSize: 100}} src={user?.imageUrl}>{user?.username[0]}</Avatar>
+        <Avatar 
+          sx={{ 
+            height: 200, 
+            width: 200, 
+            fontSize: 100, 
+            bgcolor: stringToHslColor(user?.username) 
+          }} 
+          src={user?.imageUrl}
+        >
+          {user?.username[0]}
+        </Avatar>
         <Box>
           <Typography variant="h2">{user?.username}</Typography>
           <Typography variant="body2">{storiesCount} Stroies</Typography>
