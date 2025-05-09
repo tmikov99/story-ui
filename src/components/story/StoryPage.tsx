@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { archiveStory, createComment, fetchComments, fetchStory, publishStory } from '../../api/story';
+import { archiveStory, createComment, deleteStory, fetchComments, fetchStory, publishStory } from '../../api/story';
 import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
 import { formatDateString } from '../../utils/formatDate';
@@ -77,6 +77,19 @@ export default function StoryPage() {
       return;
     }
     navigate(`/pageLinks/${id}`);
+  }
+
+  const handleDeleteStory = () => {
+    if (!story) {
+      console.log("Missing Story Error")
+      return;
+    }
+    deleteStory(story.id).then(() => {
+      navigate("/created");
+    }).catch(error => {
+      console.log(error);
+    });
+
   }
 
   const handleCommentFocus = () => {
@@ -190,7 +203,7 @@ export default function StoryPage() {
                           Edit Pages
                         </Button>
                       }
-                      <Button color='error'>Delete Story</Button>
+                      <Button color='error' onClick={handleDeleteStory}>Delete Story</Button>
                     </ButtonGroup>
                     <Box mb={1}>
                       <Typography>Status: {story?.status}</Typography>

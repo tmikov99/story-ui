@@ -24,7 +24,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import CloseIcon from '@mui/icons-material/Close';
 import { listClasses } from '@mui/material/List';
 import { logout } from '../../redux/authSlice';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
@@ -72,6 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function AppHeader() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.auth.user);
   const initials = user?.username.charAt(0).toUpperCase();
@@ -270,15 +271,17 @@ export default function AppHeader() {
             </IconButton>
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          {isAuthenticated && <Button 
-            size='large' 
-            variant='outlined' 
-            sx={{borderRadius:"24px", marginRight: 1, minWidth: "fit-content"}} 
-            startIcon={<AddRoundedIcon/>}
-            onClick={handleCreateStory}
-          >
-            Create
-          </Button>}
+          {isAuthenticated  && location.pathname !== '/create' && (
+            <Button 
+              size='large' 
+              variant='outlined' 
+              sx={{borderRadius:"24px", marginRight: 1, minWidth: "fit-content"}} 
+              startIcon={<AddRoundedIcon/>}
+              onClick={handleCreateStory}
+            >
+              Create
+            </Button>
+          )}
           <ColorModeIconDropdown />
           {isAuthenticated ? <Box sx={{ display: 'flex' }}>
             <NotificationDropdown />
