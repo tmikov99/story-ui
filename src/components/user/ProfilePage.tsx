@@ -195,7 +195,7 @@ export default function ProfilePage() {
         </Avatar>
         <Box>
           <Typography variant="h2">{user?.username}</Typography>
-          <Typography variant="body2">{storiesCount} Stroies</Typography>
+          <Typography variant="body2">{storiesCount} Stories</Typography>
         </Box>
       </Stack>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

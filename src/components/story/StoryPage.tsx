@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
+import { deleteComment } from '../../api/comments';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -108,6 +109,15 @@ export default function StoryPage() {
     setComments([newComment, ...comments]);
     unfocusComment();
   }
+
+  const handleCommentDelete = async (commentId: number) => {
+    try {
+      await deleteComment(commentId);
+      setComments(prev => prev.filter(comment => comment.id !== commentId));
+    } catch (error) {
+      console.error("Failed to delete comment", error);
+    }
+  };
 
   const handleArchive = async () => {
     const archiveResponse = await archiveStory(storyId);
@@ -261,7 +271,14 @@ export default function StoryPage() {
           (
             <Skeleton variant='rectangular' height={52} />
           ) : (
-            comments.map(comment => <CommentBlock key={comment.id} comment={comment} />)
+            comments.map(comment => (
+              <CommentBlock 
+                key={comment.id} 
+                comment={comment} 
+                showDelete={user?.username === comment.username}
+                onDelete={handleCommentDelete}
+              />
+            ))
           )
         }
       </Stack>
