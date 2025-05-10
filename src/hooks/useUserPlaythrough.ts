@@ -3,81 +3,113 @@ import { PlaythroughData } from "../types/playthrough";
 import { getLocalData, setLocalData, removeLocalData } from "../utils/storage";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchPlaythrough, startPlaythrough, updatePlaythrough } from "../api/playthrough";
+import { fetchPlaythroughs, startPlaythrough } from "../api/playthrough";
 
 const buildKey = (storyId: number) => `playthrough-${storyId}`;
 
 export const useUserPlaythrough = (storyId: number) => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const [playthrough, setPlaythrough] = useState<PlaythroughData | null>(null);
+  const [playthroughs, setPlaythroughs] = useState<PlaythroughData[]>([]);
+  const [currentPlaythrough, setCurrentPlaythrough] = useState<PlaythroughData | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      let data: PlaythroughData | null = null;
-
       if (isAuthenticated) {
         try {
-          data = await fetchPlaythrough(storyId);
+          const data = await fetchPlaythroughs(storyId);
+          setPlaythroughs(data);
+          setCurrentPlaythrough(data.find(p => p.active) || null);
         } catch (error) {
-          console.error("Failed to fetch playthrough from API", error);
+          console.error("Failed to fetch playthroughs from API", error);
         }
       } else {
-        data = getLocalData<PlaythroughData>(buildKey(storyId));
-      }
-
-      if (data) {
-        setPlaythrough(data);
+        const local = getLocalData<PlaythroughData>(buildKey(storyId));
+        if (local) {
+          setPlaythroughs([local]);
+          setCurrentPlaythrough(local);
+        }
       }
     };
 
     fetchData();
   }, [storyId]);
 
+  // const savePage = async (pageNumber: number, playthroughId?: number) => {
+  //   if (!isAuthenticated) {
+  //     savePageLocal(pageNumber);
+  //     return;
+  //   }
 
-  const savePage = (pageNumber: number) => {
-    if (!isAuthenticated) {
-      savePageLocal(pageNumber);
-    } else {
-      savePageBackend(pageNumber);
-    }
-  };
+  //   try {
+  //     const idToUse = playthroughId ?? currentPlaythrough?.id;
+  //     if (!idToUse) {
+  //       console.error("No playthrough to save to");
+  //       return;
+  //     }
+
+  //     const updated = await updatePlaythrough(idToUse, pageNumber);
+  //     setPlaythroughs(prev =>
+  //       prev.map(p => p.id === updated.id ? updated : p)
+  //     );
+  //     setCurrentPlaythrough(updated);
+  //   } catch (error) {
+  //     console.error("Failed to save playthrough", error);
+  //   }
+  // };
 
   const savePageLocal = (pageNumber: number) => {
-    const updatedPath = [...(playthrough?.path || []), pageNumber];
+    const updatedPath = [...(currentPlaythrough?.path || []), pageNumber];
     const newPlaythrough: PlaythroughData = {
       storyId,
       currentPage: pageNumber,
       path: updatedPath,
+      startedAt: currentPlaythrough?.startedAt || new Date().toISOString(),
       lastVisited: new Date().toISOString(),
     };
-    setPlaythrough(newPlaythrough);
+    setPlaythroughs([newPlaythrough]);
+    setCurrentPlaythrough(newPlaythrough);
     setLocalData(buildKey(storyId), newPlaythrough);
-  }
+  };
 
-  const savePageBackend = async (pageNumber: number) => {
-    let newPlaythrough: PlaythroughData | null = null;
-      try {
-        newPlaythrough = await (playthrough === null ? startPlaythrough(storyId) : updatePlaythrough(storyId, pageNumber));
-      } catch (error) {
-        console.error("Failed to fetch playthrough from API", error);
-      }
-      if (newPlaythrough) {
-        setPlaythrough(newPlaythrough);
-      }
-  }
+  const startNewPlaythrough = async () => {
+    if (!isAuthenticated) {
+      resetPlaythrough();
+      return;
+    }
+
+    try {
+      const newPlay = await startPlaythrough(storyId);
+      setPlaythroughs(prev => [...prev, newPlay]);
+      setCurrentPlaythrough(newPlay);
+      return newPlay;
+    } catch (error) {
+      console.error("Failed to start new playthrough", error);
+    }
+  };
+
+  const loadPlaythrough = (id: number) => {
+    const found = playthroughs.find(p => p.id === id);
+    if (found) {
+      setCurrentPlaythrough(found);
+    }
+  };
 
   const resetPlaythrough = () => {
     if (!isAuthenticated) {
       removeLocalData(buildKey(storyId));
+      setPlaythroughs([]);
+      setCurrentPlaythrough(null);
     } else {
-      // TODO: Add an API call to clear playthrough server-side
+      // TODO: Add API logic to delete/soft-reset playthrough
     }
-    setPlaythrough(null);
   };
 
   return {
-    playthrough,
-    savePage,
-    resetPlaythrough
+    currentPlaythrough,
+    playthroughs,
+    // savePage,
+    startNewPlaythrough,
+    loadPlaythrough,
+    resetPlaythrough,
   };
 };

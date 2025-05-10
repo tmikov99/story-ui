@@ -1,32 +1,47 @@
-import { Link, Typography } from "@mui/material";
+import { Button, Link, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageData } from "../../types/page";
-import { fetchPage } from "../../api/page";
-import { useUserPlaythrough } from "../../hooks/useUserPlaythrough";
-
+import { chooseNextPage, fetchPlaythroughCurrentPage } from "../../api/playthrough";
 
 export default function Page() {
-    const {storyId, pageNumber} = useParams();
+    const { playthroughId } = useParams();
+    const numericPlaythroughId = Number(playthroughId); //TODO: finally research this
     const navigate = useNavigate();
-    const { savePage } = useUserPlaythrough(Number(storyId));
     const [page, setPage] = useState<PageData | null>(null);
 
     useEffect(() => {
-        fetchPage(Number(storyId), Number(pageNumber)).then((page) => {
-            setPage(page);
-        })
-    },[pageNumber]);
+        try {
+            fetchPlaythroughCurrentPage(Number(playthroughId)).then((page) => {
+                setPage(page);
+            })
+        } catch (error) {
+            console.error("Failed to fetch playthrough current page", error);
+        }
+    },[playthroughId]);
 
-    const handleChoice = (targetPage: number) => {
-        savePage(targetPage);
-        navigate(`/story/${storyId}/page/${targetPage}`);
+    const handleChoice = async (targetPage: number) => {
+        try {
+            const nextPage = await chooseNextPage(numericPlaythroughId, targetPage);
+            setPage(nextPage);
+        } catch (error) {
+            console.error("Failed to make choice", error);
+        }
     }
 
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+        {page && 
+            <Button 
+                variant="outlined"
+                onClick={() => navigate(`/story/${page.storyId}`)}
+                sx={{ mb: 2 }}
+            >
+                Back to Story
+            </Button>
+        }
         <Paper 
             elevation={3}
             sx={{
@@ -46,6 +61,22 @@ export default function Page() {
                 <br></br>
                 <Link onClick={() => handleChoice(choice.targetPage)} key={index} sx={{ cursor: "pointer" }}>{choice.text}</Link>
             </>)}
+            {page?.choices.length === 0 && (
+                <>
+                    <br />
+                    <Typography variant="h5" color="text.secondary" align="center" sx={{ mt: 4 }}>
+                        🔚 The End - this path has reached its conclusion.
+                    </Typography>
+                    <Box display="flex" justifyContent="center" gap={2} mt={2}>
+                    <Link onClick={() => navigate(`/story/${page.storyId}`)} sx={{ cursor: "pointer" }}>
+                        Back to Story Overview
+                    </Link>
+                    <Link onClick={() => navigate('/')} sx={{ cursor: "pointer" }}>
+                        Discover More Stories
+                    </Link>
+                    </Box>
+                </>
+                )}
         </Paper>
       </Box>
     )

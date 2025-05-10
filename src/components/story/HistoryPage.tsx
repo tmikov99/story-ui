@@ -1,7 +1,7 @@
 import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchUserPlaythroughs } from "../../api/playthrough";
+import { fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
 import Grid from '@mui/material/Grid2';
 import EmptyState from "../emptyState/EmptyState";
 import HistoryIcon from '@mui/icons-material/History';
@@ -18,8 +18,8 @@ export default function HistoryPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleResume = (storyId: number, pageNumber: number) => {
-    navigate(`/story/${storyId}/page/${pageNumber}`);
+  const handleResume = (playthroughId: number) => {
+    loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
   };
 
   const renderSkeletons = (count: number) => {
@@ -73,7 +73,7 @@ export default function HistoryPage() {
                     />
                     <Button
                       variant="outlined"
-                      onClick={() => handleResume(entry.story.id, entry.currentPage)}
+                      onClick={() => handleResume(entry.id)}
                     >
                       {entry.completed ? 'View Again' : 'Resume'}
                     </Button>
