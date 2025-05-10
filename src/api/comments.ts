@@ -34,3 +34,8 @@ export const fetchUserComments = async (
 
   return response.data;
 };
+
+export const deleteComment = async (sommentId: number) => {
+  const response = await axios.delete(`/comments/${sommentId}`);
+  return response.data;
+}

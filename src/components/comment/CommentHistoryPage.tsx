@@ -1,8 +1,9 @@
-import { Typography, Stack, Skeleton, Box, Avatar, Card, styled } from "@mui/material";
+import { Typography, Stack, Skeleton, Box, Avatar, Card, styled, IconButton } from "@mui/material";
 import { useState, useEffect } from "react";
 import EmptyState from "../emptyState/EmptyState";
 import CommentIcon from '@mui/icons-material/Comment';
-import { fetchUserComments } from "../../api/comments";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { deleteComment, fetchUserComments } from "../../api/comments";
 import { StoryCommentData } from "../../types/story";
 import CommentBlock from "./CommentBlock";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +40,16 @@ export default function CommentHistoryPage() {
     ));
   };
 
+  const handleCommentDelete = async (event: React.MouseEvent<HTMLElement>, commentId: number) => {
+    event.stopPropagation();
+    try {
+      await deleteComment(commentId);
+      setComments(prev => prev.filter(comment => comment.id !== commentId));
+    } catch (error) {
+      console.error("Failed to delete comment", error);
+    }
+  };
+
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Typography variant="h4" sx={{ textAlign: "center" }} gutterBottom>
@@ -60,6 +71,15 @@ export default function CommentHistoryPage() {
               <Stack gap={1} direction="row">
                 <Avatar src={comment.story?.coverImageUrl}>{comment.story?.title[0]}</Avatar>
                 <Typography variant="h6">{comment.story?.title}</Typography>
+                <IconButton 
+                  size="large"
+                  aria-label="open drawer"
+                  sx={{ height: 40, width: 40, marginLeft: 'auto'}}
+                  title="delete comment"
+                  onClick={(event) => handleCommentDelete(event, comment.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
               </Stack>
               <Box sx={{ml: 6}}>
                 <CommentBlock key={comment.id} comment={comment} showAvatar={false} />
