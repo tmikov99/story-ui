@@ -14,6 +14,7 @@ import { RootState } from '../../redux/store';
 import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
+import { loadPlaythrough } from '../../api/playthrough';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -30,7 +31,11 @@ export default function StoryPage() {
     return(<div>ERROR</div>)
   }
 
-  const { playthrough, savePage } = useUserPlaythrough(storyId);
+  const { 
+    currentPlaythrough,
+    playthroughs,
+    startNewPlaythrough,
+  } = useUserPlaythrough(storyId);
 
   useEffect(() => {
     if (!id) return;
@@ -51,18 +56,25 @@ export default function StoryPage() {
     loadData();
   }, [id])
 
-  const handleStartPlaythrough = () => {
-    if (!story) {
-      console.log("Missing Story Error")
-      return;
+  // const handleStartPlaythrough = () => {
+  //   if (!story) {
+  //     console.log("Missing Story Error")
+  //     return;
+  //   }
+  //   if (!playthrough) {
+  //     savePage(story.startPage)
+  //     navigate(`/story/${id}/page/${story.startPage}`);
+  //   } else {
+  //     navigate(`/story/${id}/page/${playthrough.currentPage}`);
+  //   }
+  // }
+
+  const handleStartNewPlaythrough = async () => {
+    const newPlay = await startNewPlaythrough();
+    if (newPlay) {
+      navigate(`/playthrough/${newPlay.id}`);
     }
-    if (!playthrough) {
-      savePage(story.startPage)
-      navigate(`/story/${id}/page/${story.startPage}`);
-    } else {
-      navigate(`/story/${id}/page/${playthrough.currentPage}`);
-    }
-  }
+  };
 
   const handleEditStory = () => {
     if (!story) {
@@ -129,6 +141,22 @@ export default function StoryPage() {
     setStory(publishResponse);
   }
 
+  const handleLoadPlaythrough = (playthroughId: number | undefined) => {
+    if (!playthroughId) {
+      console.log("Missing playthrough id!");
+      return;
+    }
+    loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
+  }
+
+  const handleCoverImgClick = () => {
+    if (!currentPlaythrough) {
+      handleStartNewPlaythrough();
+    } else {
+      handleLoadPlaythrough(currentPlaythrough.id);
+    }
+  }
+
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
@@ -164,7 +192,7 @@ export default function StoryPage() {
           >
             <Grid size={{ xs: 12, lg: 6 }}>
               <Box         
-                onClick={handleStartPlaythrough}
+                onClick={handleCoverImgClick}
                 sx={{
                   position: "relative",
                   '&:hover .startText': {
@@ -196,9 +224,49 @@ export default function StoryPage() {
                     background: 'rgba(0, 0, 0, 0.7)',
                     color: 'white!important',
                 }}>
-                    {playthrough ? `Continue Reading` : `Start Reading`}
+                    {currentPlaythrough ? `Continue Reading` : `Start Reading`}
                 </Typography>
               </Box>
+              {user && (
+                <Stack spacing={1} sx={{ mb: 2 }}>
+                  <Typography variant="h6">Your Playthroughs</Typography>
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleStartNewPlaythrough}
+                  >
+                    Start New Playthrough
+                  </Button>
+
+                  {currentPlaythrough && (
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      onClick={() => handleLoadPlaythrough(currentPlaythrough.id)}
+                    >
+                      Continue Current Playthrough
+                    </Button>
+                  )}
+
+                  {playthroughs.length > 0 && (
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ mt: 1 }}>Load Saved Playthrough</Typography>
+                      <Stack spacing={1}>
+                        {playthroughs.map(p => (
+                          <Button
+                            key={p.id}
+                            variant="text"
+                            onClick={() => handleLoadPlaythrough(p.id)}
+                          >
+                            {`Playthrough from ${formatDateString(p.startedAt)} (Last Page: ${p.currentPage})`}
+                          </Button>
+                        ))}
+                      </Stack>
+                    </Box>
+                  )}
+                </Stack>
+              )}
             </Grid>
             <Grid size={{ xs: 12, lg: 6 }}>
               <Stack>

@@ -109,9 +109,10 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
     setStory(prev => ({ ...prev, liked: response.result, likes: response.likes }));
   };
 
-  const handleOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-  };
+  //TODO: Decide if menu is needed
+  // const handleOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   event.stopPropagation();
+  // };
 
   const handlePublish = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -140,11 +141,12 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
             {story.user.username.charAt(0).toUpperCase()}
           </Avatar>
         }
-        action={
-          <IconButton onClick={handleOptionsClick} aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
+        //TODO: Decide if menu is needed
+        // action={
+        //   <IconButton onClick={handleOptionsClick} aria-label="settings">
+        //     <MoreVertIcon />
+        //   </IconButton>
+        // }
         title={
           <TruncatedTitle title={story.title}>
             {story.title}
