@@ -22,7 +22,7 @@ export const chooseNextPage = async (playthroughId: number, pageNumber: number):
     return response.data;
 }
 
-export const fetchUserPlaythroughs = async () => {
+export const fetchUserPlaythroughs = async ():Promise<PlaythroughData[]> => {
     const response = await axios.get(`/playthrough`);
     return response.data;
 };
@@ -34,5 +34,10 @@ export const fetchPlaythroughCurrentPage = async (id: number): Promise<PageData>
 
 export const loadPlaythrough = async (id: number) => {
     const response = await axios.post(`/playthrough/${id}/load`);
+    return response.data;
+}
+
+export const deletePlaythrough = async (id: number) => {
+    const response = await axios.delete(`/playthrough/${id}`);
     return response.data;
 }

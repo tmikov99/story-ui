@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { PageData } from "../../types/page";
 import { chooseNextPage, fetchPlaythroughCurrentPage } from "../../api/playthrough";
+import React from "react";
 
 export default function Page() {
     const { playthroughId } = useParams();
@@ -56,11 +57,13 @@ export default function Page() {
         >
             <Typography variant="h2" gutterBottom style={{textAlign: "center"}}>{page?.pageNumber}</Typography>
             <br></br>
-            {page?.paragraphs.map((paragraph, index) => <Typography variant="body1" key={index} gutterBottom >{paragraph}</Typography>)}
-            {page?.choices.map((choice, index) => <>
-                <br></br>
-                <Link onClick={() => handleChoice(choice.targetPage)} key={index} sx={{ cursor: "pointer" }}>{choice.text}</Link>
-            </>)}
+            {page?.paragraphs.map((paragraph, index) => <Typography variant="body1" key={`paragraph-${index}`} gutterBottom >{paragraph}</Typography>)}
+            {page?.choices.map((choice, index) => (
+                <React.Fragment key={`choice-${index}`}>
+                    <br></br>
+                    <Link onClick={() => handleChoice(choice.targetPage)} key={`choice-${index}`} sx={{ cursor: "pointer" }}>{choice.text}</Link>
+                </React.Fragment>
+            ))}
             {page?.choices.length === 0 && (
                 <>
                     <br />

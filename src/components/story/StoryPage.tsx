@@ -35,6 +35,7 @@ export default function StoryPage() {
     currentPlaythrough,
     playthroughs,
     startNewPlaythrough,
+    removePlaythrough,
   } = useUserPlaythrough(storyId);
 
   useEffect(() => {
@@ -254,13 +255,20 @@ export default function StoryPage() {
                       <Typography variant="subtitle2" sx={{ mt: 1 }}>Load Saved Playthrough</Typography>
                       <Stack spacing={1}>
                         {playthroughs.map(p => (
-                          <Button
-                            key={p.id}
-                            variant="text"
-                            onClick={() => handleLoadPlaythrough(p.id)}
-                          >
-                            {`Playthrough from ${formatDateString(p.startedAt)} (Last Page: ${p.currentPage})`}
-                          </Button>
+                          <Box key={p.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Button
+                              variant="text"
+                              onClick={() => handleLoadPlaythrough(p.id)}
+                            >
+                              {`Playthrough from ${formatDateString(p.startedAt)} (Last Page: ${p.currentPage})`}
+                            </Button>
+                            <Button 
+                              color="error" 
+                              onClick={() => removePlaythrough(p.id)}
+                            >
+                              Delete
+                            </Button>
+                          </Box>
                         ))}
                       </Stack>
                     </Box>

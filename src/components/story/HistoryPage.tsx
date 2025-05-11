@@ -1,13 +1,14 @@
-import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton } from "@mui/material";
+import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
+import { deletePlaythrough, fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
 import Grid from '@mui/material/Grid2';
 import EmptyState from "../emptyState/EmptyState";
 import HistoryIcon from '@mui/icons-material/History';
+import { PlaythroughData } from "../../types/playthrough";
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<PlaythroughData[]>([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -20,6 +21,15 @@ export default function HistoryPage() {
 
   const handleResume = (playthroughId: number) => {
     loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
+  };
+
+  const handleDelete = async (playthroughId: number) => {
+    try {
+      await deletePlaythrough(playthroughId);
+      setHistory(prev => prev.filter(p => p.id !== playthroughId));
+    } catch (error) {
+      console.error("Failed to delete playthrough", error);
+    }
   };
 
   const renderSkeletons = (count: number) => {
@@ -76,6 +86,14 @@ export default function HistoryPage() {
                       onClick={() => handleResume(entry.id)}
                     >
                       {entry.completed ? 'View Again' : 'Resume'}
+                    </Button>
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      onClick={() => handleDelete(entry.id)}
+                      sx={{ml: 1}}
+                    >
+                      Delete
                     </Button>
                   </CardContent>
                 </Grid>
