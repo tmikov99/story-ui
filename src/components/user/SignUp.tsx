@@ -16,9 +16,9 @@ import ColorModeSelect from '../../theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../CustomIcons';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { login, register } from '../../api/auth';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../redux/store';
-import { loginSuccess } from '../../redux/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { clearRedirectAfterLogin, loginSuccess } from '../../redux/authSlice';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -72,6 +72,7 @@ export default function SignUp() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const redirectAfterLogin = useSelector((state: RootState) => state.auth.redirectAfterLogin);
 
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
@@ -131,7 +132,8 @@ export default function SignUp() {
       }
       const loginResponse = await login(username, password);
       dispatch(loginSuccess(loginResponse));
-      navigate('/landing');
+      navigate(redirectAfterLogin || '/landing');
+      dispatch(clearRedirectAfterLogin());
     } catch (err) {console.error(err)}
   };
 

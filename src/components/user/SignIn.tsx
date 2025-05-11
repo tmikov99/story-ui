@@ -17,9 +17,9 @@ import ColorModeSelect from '../../theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../CustomIcons';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { login } from '../../api/auth';
-import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../../redux/authSlice';
-import { AppDispatch } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearRedirectAfterLogin, loginSuccess } from '../../redux/authSlice';
+import { AppDispatch, RootState } from '../../redux/store';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -71,6 +71,7 @@ export default function SignIn() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const redirectAfterLogin = useSelector((state: RootState) => state.auth.redirectAfterLogin);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -96,7 +97,8 @@ export default function SignIn() {
     try {
       const loginResponse = await login(email, password);
       dispatch(loginSuccess(loginResponse));
-      navigate('/landing');
+      navigate(redirectAfterLogin || '/landing');
+      dispatch(clearRedirectAfterLogin());
     } catch (err) {
       // setError('Login failed. Please check your credentials.');
     }
