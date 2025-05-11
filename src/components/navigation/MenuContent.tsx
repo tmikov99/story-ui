@@ -36,7 +36,7 @@ const mainListItems2 = [
   { text: 'Liked stories', icon: ThumbUpAltRoundedIcon, path: '/liked' },
 ];
 const mainListItems3 = [
-  { text: 'Created stories', icon: BookRoundedIcon, path: '/created'},
+  { text: 'My stories', icon: BookRoundedIcon, path: '/created'},
   { text: 'My comments', icon: CommentRoundedIcon, path: '/comments' },
 ];
 

@@ -232,7 +232,15 @@ export default function StoryPage() {
               </Box>
               {user && (
                 <Stack spacing={1}>
-                  <Typography variant="h6">Your Playthroughs</Typography>
+                  {currentPlaythrough && (
+                    <Button
+                      variant="outlined"
+                      color="success"
+                      onClick={() => handleLoadPlaythrough(currentPlaythrough.id)}
+                    >
+                      Continue Playthrough
+                    </Button>
+                  )}
                   <Button
                     variant="contained"
                     color="primary"
@@ -241,15 +249,6 @@ export default function StoryPage() {
                     Start New Playthrough
                   </Button>
 
-                  {currentPlaythrough && (
-                    <Button
-                      variant="outlined"
-                      color="success"
-                      onClick={() => handleLoadPlaythrough(currentPlaythrough.id)}
-                    >
-                      Continue Current Playthrough
-                    </Button>
-                  )}
                 </Stack>
               )}
             </Grid>
@@ -321,7 +320,7 @@ export default function StoryPage() {
                           })}
                         >
                           <Typography variant="body1">
-                            {p.completed ? '✔ Completed' : '🕓 In Progress'} {p.active && ' (Current)'} - Started: {getTimeAgo(p.startedAt)}
+                            {p.completed ? '✔ Completed' : '🕓 In Progress'} (Page: {p.currentPage}) - Started: {getTimeAgo(p.startedAt)} {p.active && ' (Current)'}
                           </Typography>
                         </Paper>
                         <Stack direction="row" gap={1}>
