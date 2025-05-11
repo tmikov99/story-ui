@@ -116,6 +116,11 @@ export const updateStory = async (formData: FormData, storyId: string) => {
   return response.data;
 }
 
+export const copyStoryDraft = async (storyId: number) => {
+  const response = await axios.post(`/story/copyAsDraft/${storyId}`);
+  return response.data;
+}
+
 export const updateStoryPages = async (storyId: number, pages: PageDataNode[]) => {
   const response = await axios.put(`/story/pages/${storyId}`, pages);
   return response.data;
