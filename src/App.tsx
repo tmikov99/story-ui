@@ -88,7 +88,7 @@ function App() {
               path="created"
               element={
                 isAuthenticated ? (
-                  <MainGrid title="Created Stories" fetchMethod={fetchUserStories} showActions={true} />
+                  <MainGrid title="My Stories" fetchMethod={fetchUserStories} showActions={true} />
                 ) : (
                   <OwnedEmptyState />
                 )

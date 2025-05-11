@@ -204,7 +204,7 @@ export default function ProfilePage() {
         >
           <Tab label="Home" {...a11yProps(0)} />
           <Tab label="Stories" {...a11yProps(1)} />
-          <Tab label="Series" {...a11yProps(2)} />
+          {/* <Tab label="Series" {...a11yProps(2)} /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -285,9 +285,9 @@ export default function ProfilePage() {
           </Box>
         )}
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
+      {/* <CustomTabPanel value={value} index={2}>
         Series playlists
-      </CustomTabPanel>
+      </CustomTabPanel> */}
     </Box>
   );
 }
