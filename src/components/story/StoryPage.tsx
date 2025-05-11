@@ -7,14 +7,15 @@ import { useState, useEffect } from 'react';
 import { archiveStory, createComment, deleteStory, fetchComments, fetchStory, publishStory } from '../../api/story';
 import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
-import { formatDateString } from '../../utils/formatDate';
-import { Avatar, Button, ButtonGroup, Chip, Skeleton, TextField } from '@mui/material';
+import { formatDateString, getTimeAgo } from '../../utils/formatDate';
+import { Avatar, Button, ButtonGroup, Chip, Paper, Skeleton, TextField } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
+import React from 'react';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -190,6 +191,7 @@ export default function StoryPage() {
             container
             spacing={2}
             columns={12}
+            marginBottom={2}
           >
             <Grid size={{ xs: 12, lg: 6 }}>
               <Box         
@@ -229,9 +231,8 @@ export default function StoryPage() {
                 </Typography>
               </Box>
               {user && (
-                <Stack spacing={1} sx={{ mb: 2 }}>
+                <Stack spacing={1}>
                   <Typography variant="h6">Your Playthroughs</Typography>
-
                   <Button
                     variant="contained"
                     color="primary"
@@ -248,30 +249,6 @@ export default function StoryPage() {
                     >
                       Continue Current Playthrough
                     </Button>
-                  )}
-
-                  {playthroughs.length > 0 && (
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ mt: 1 }}>Load Saved Playthrough</Typography>
-                      <Stack spacing={1}>
-                        {playthroughs.map(p => (
-                          <Box key={p.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Button
-                              variant="text"
-                              onClick={() => handleLoadPlaythrough(p.id)}
-                            >
-                              {`Playthrough from ${formatDateString(p.startedAt)} (Last Page: ${p.currentPage})`}
-                            </Button>
-                            <Button 
-                              color="error" 
-                              onClick={() => removePlaythrough(p.id)}
-                            >
-                              Delete
-                            </Button>
-                          </Box>
-                        ))}
-                      </Stack>
-                    </Box>
                   )}
                 </Stack>
               )}
@@ -316,6 +293,58 @@ export default function StoryPage() {
                 </Typography>
               </Stack>
             </Grid>
+            {playthroughs.length > 0 && (
+              <Grid size={{ xs: 12 }}>
+                <Box>
+                  <Typography variant="h6">Load Saved Playthrough</Typography>
+                  <Stack spacing={1}>
+                    {playthroughs.map(p => (
+                      <Stack 
+                        key={p.id} 
+                        direction="row"
+                        spacing={2}
+                        sx={{
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Paper
+                          variant="outlined"
+                          sx={(theme) => ({
+                            padding: 1,
+                            borderLeft: p.completed ? `6px solid ${theme.palette.success.main}` : undefined,
+                            backgroundColor: p.completed
+                              ? theme.palette.success.light
+                              : theme.palette.background.paper,
+                            opacity: p.completed ? 0.8 : 1,
+                            flexGrow: 1,
+                          })}
+                        >
+                          <Typography variant="body1">
+                            {p.completed ? '✔ Completed' : '🕓 In Progress'} {p.active && ' (Current)'} - Started: {getTimeAgo(p.startedAt)}
+                          </Typography>
+                        </Paper>
+                        <Stack direction="row" gap={1}>
+                          <Button 
+                            variant='contained'
+                            onClick={() => handleLoadPlaythrough(p.id)}
+                          >
+                            Load
+                          </Button>
+                          <Button 
+                            color="error"
+                            variant='outlined'
+                            onClick={() => removePlaythrough(p.id)}
+                          >
+                            Delete
+                          </Button>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </Box>
+              </Grid>
+            )}
           </Grid>
         )}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>

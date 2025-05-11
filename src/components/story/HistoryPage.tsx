@@ -1,4 +1,4 @@
-import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box } from "@mui/material";
+import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box, Chip } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePlaythrough, fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
@@ -61,7 +61,15 @@ export default function HistoryPage() {
               Icon={HistoryIcon}
             />
           ) : (history.map((entry: any) => (
-            <Card key={entry.id}>
+            <Card 
+              key={entry.id}
+              sx={entry.completed ? (theme => ({
+                borderColor: theme.palette.mode === 'dark'
+                  ? theme.palette.success.dark
+                  : theme.palette.success.light,
+                })) : {}
+              }
+            >
               <Grid container>
                 <Grid size={{xs:4}}>
                   <CardMedia
@@ -76,11 +84,21 @@ export default function HistoryPage() {
                     <Typography variant="h6">{entry.story.title}</Typography>
                     <Typography variant="body2">Last visited: {new Date(entry.lastVisited).toLocaleString()}</Typography>
                     <Typography variant="body2">Progress: Page {entry.currentPage}</Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(entry.path.length / entry.story.pageCount) * 100}
-                      sx={{ mt: 1, mb: 1 }}
-                    />
+                    {entry.completed ? 
+                      <Box>
+                        <Chip
+                          label="Completed"
+                          color="success"
+                          size="small"
+                          sx={{ mt: 1, mb: 1 }}
+                        />
+                      </Box> :
+                      <LinearProgress
+                        variant="determinate"
+                        value={(entry.path.length / entry.story.pageCount) * 100}
+                        sx={{ mt: 1, mb: 1 }}
+                      />
+                    }
                     <Button
                       variant="outlined"
                       onClick={() => handleResume(entry.id)}
