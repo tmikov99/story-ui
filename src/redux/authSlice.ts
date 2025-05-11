@@ -6,12 +6,14 @@ interface AuthState {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
+  redirectAfterLogin: string | null;
 }
 
 const initialState: AuthState = {
   token: sessionStorage.getItem('token'),
   user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
   isAuthenticated: !!sessionStorage.getItem('token'),
+  redirectAfterLogin: null,
 };
 
 const authSlice = createSlice({
@@ -36,8 +38,14 @@ const authSlice = createSlice({
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('user');
     },
+    setRedirectAfterLogin: (state, action: PayloadAction<string>) => {
+      state.redirectAfterLogin = action.payload;
+    },
+    clearRedirectAfterLogin: (state) => {
+      state.redirectAfterLogin = null;
+    },
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logout, setRedirectAfterLogin, clearRedirectAfterLogin } = authSlice.actions;
 export default authSlice.reducer;

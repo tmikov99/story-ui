@@ -1,7 +1,9 @@
 import { Stack, Typography, Button } from "@mui/material";
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SvgIconComponent } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { setRedirectAfterLogin } from "../../redux/authSlice";
 
 
 interface EmptyStateProps {
@@ -13,6 +15,14 @@ interface EmptyStateProps {
 
 export default function EmptyState({ title, message, Icon, loginRedirect }: EmptyStateProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+
+  const handleSignInRedirect = () => {
+    dispatch(setRedirectAfterLogin(location.pathname));
+    navigate('/signIn');
+  };
+
   return (
     <Stack   
       direction="column"
@@ -29,7 +39,7 @@ export default function EmptyState({ title, message, Icon, loginRedirect }: Empt
       {loginRedirect && <Button 
           variant='outlined' 
           startIcon={<AccountCircleRoundedIcon />}
-          onClick={() => navigate('/signIn')}
+          onClick={handleSignInRedirect}
         >
           Sign In
         </Button>
