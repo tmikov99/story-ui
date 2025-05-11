@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { archiveStory, createComment, deleteStory, fetchComments, fetchStory, publishStory } from '../../api/story';
+import { archiveStory, copyStoryDraft, createComment, deleteStory, fetchComments, fetchStory, publishStory } from '../../api/story';
 import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
 import { formatDateString, getTimeAgo } from '../../utils/formatDate';
@@ -15,7 +15,6 @@ import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
-import React from 'react';
 
 export default function StoryPage() {
   const { id } = useParams();
@@ -27,6 +26,7 @@ export default function StoryPage() {
   const [commentText, setCommentText] = useState<string>("");
   const [commentFocus, setCommentFocus] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const isDraft = story?.status === "DRAFT";
   
   if (!id) {
     return(<div>ERROR</div>)
@@ -84,6 +84,19 @@ export default function StoryPage() {
       return;
     }
     navigate(`/edit/${id}`);
+  }
+
+  const handleCreateDraft = async () => {
+    if (!story) {
+      console.log("Missing Story Error")
+      return;
+    }
+    try {
+      const newStory = await copyStoryDraft(story.id);
+      navigate(`/story/${newStory.id}`);
+    } catch (err) {
+      console.error('Failed to create draft:', err);
+    }
   }
 
   const handleEditPages = () => {
@@ -257,10 +270,12 @@ export default function StoryPage() {
                 {user?.username === story?.user.username && 
                   <>
                     <ButtonGroup aria-label="Basic button group" sx={{marginBottom: 1}}>
-                      <Button color='secondary' onClick={handleEditStory}>
-                        {story?.status === "DRAFT" ? 'Edit Properties' : 'Create / Edit Draft'}
-                      </Button>
-                      {story?.status === "DRAFT" && 
+                      <Button 
+                        color='secondary' 
+                        onClick={isDraft ? handleEditStory : handleCreateDraft}>
+                        {isDraft ? "Edit Properties" : "Create Draft"}
+                      </Button> 
+                      {isDraft && 
                         <Button color='secondary'onClick={handleEditPages}>
                           Edit Pages
                         </Button>
