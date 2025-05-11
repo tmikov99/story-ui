@@ -3,7 +3,7 @@ import { PlaythroughData } from "../types/playthrough";
 import { getLocalData, setLocalData, removeLocalData } from "../utils/storage";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchPlaythroughs, startPlaythrough } from "../api/playthrough";
+import { deletePlaythrough, fetchPlaythroughs, startPlaythrough } from "../api/playthrough";
 
 const buildKey = (storyId: number) => `playthrough-${storyId}`;
 
@@ -60,6 +60,7 @@ export const useUserPlaythrough = (storyId: number) => {
   const savePageLocal = (pageNumber: number) => {
     const updatedPath = [...(currentPlaythrough?.path || []), pageNumber];
     const newPlaythrough: PlaythroughData = {
+      id: 1,
       storyId,
       currentPage: pageNumber,
       path: updatedPath,
@@ -104,6 +105,28 @@ export const useUserPlaythrough = (storyId: number) => {
     }
   };
 
+  const removePlaythrough = async (id: number) => {
+    if (!isAuthenticated) {
+      // Handle local user delete
+      // const updated = playthroughs.filter(p => p.startedAt !== currentPlaythrough?.startedAt);
+      // removeLocalData(buildKey(storyId));
+      // setPlaythroughs([]);
+      // setCurrentPlaythrough(null);
+      // return;
+    }
+
+    try {
+      await deletePlaythrough(id);
+      const updated = playthroughs.filter(p => p.id !== id);
+      setPlaythroughs(updated);
+      if (currentPlaythrough?.id === id) {
+        setCurrentPlaythrough(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete playthrough", error);
+    }
+  };
+
   return {
     currentPlaythrough,
     playthroughs,
@@ -111,5 +134,6 @@ export const useUserPlaythrough = (storyId: number) => {
     startNewPlaythrough,
     loadPlaythrough,
     resetPlaythrough,
+    removePlaythrough,
   };
 };
