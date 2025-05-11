@@ -2,7 +2,7 @@ import { Avatar, Box, Button, CircularProgress, IconButton, Stack, TextField, Ty
 import AddAPhotoRoundedIcon from '@mui/icons-material/AddAPhotoRounded';
 import { useEffect, useState } from "react";
 import { saveUserPicture } from "../../api/images";
-import { getCurrentUser } from "../../api/user";
+import { changePassword, getCurrentUser } from "../../api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { User } from "../../types/user";
@@ -13,6 +13,10 @@ export default function AccountSettings() {
   const [user, setUser] = useState<User | null>(null);
   const [changingPassword, setChangingPassword] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [error, setError] = useState("");
 
   const fetchUser = async () => {
     if (!username) return;
@@ -43,6 +47,47 @@ export default function AccountSettings() {
       setUploading(false);
     }
   };
+
+  const handleChangePassword = async () => {
+    setError("");
+
+    if (newPassword !== confirmNewPassword) {
+      setError("New passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    try {
+      await changePassword({currentPassword, newPassword});
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setChangingPassword(false);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const resetPasswordFields = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setError("");
+  }
+
+  const startChangingPassword = () => {
+    resetPasswordFields();
+    setChangingPassword(true);
+  }
+
+  const cancelChangingPassword = () => {
+    resetPasswordFields();
+    setChangingPassword(false);
+  }
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
@@ -128,11 +173,31 @@ export default function AccountSettings() {
         </Typography>
         {changingPassword ? 
           <>
-            <TextField type="password" label="New Password"/>
-            <TextField type="password" label="Confirm New Password" />
-            <Button variant="contained" onClick={() => setChangingPassword(false)}>Confirm</Button>
+            <TextField
+              type="password"
+              label="Current Password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <TextField
+              type="password"
+              label="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <TextField
+              type="password"
+              label="Confirm New Password"
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+            />
+            {error && <Typography color="error">{error}</Typography>}
+            <Stack direction="row" spacing={2}>
+              <Button variant="contained" onClick={handleChangePassword}>Confirm</Button>
+              <Button variant="outlined" onClick={cancelChangingPassword}>Cancel</Button>
+            </Stack>
           </> :
-          <Button variant="contained" onClick={() => setChangingPassword(true)}>Change Password</Button>
+          <Button variant="contained" onClick={startChangingPassword}>Change Password</Button>
         }
       </Stack>
     </Box>
