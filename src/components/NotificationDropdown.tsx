@@ -3,6 +3,7 @@ import { IconButton, Menu, MenuItem, Badge, CircularProgress, Typography } from 
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { NotificationData } from '../types/notification';
 import { fetchNotifications, markAsRead } from '../api/notifications';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -10,6 +11,7 @@ export default function NotificationDropdown() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
 
@@ -42,6 +44,13 @@ export default function NotificationDropdown() {
     setAnchorEl(null);
   };
 
+  const handleNotificationClick = (notification: NotificationData) => {
+    if (notification.type === "ACHIEVED_VIEWS" || notification.type === "NEW_COMMENT") {
+      navigate(`/story/${notification.targetId}`)
+    }
+    handleClose();
+  }
+
   return (
     <>
       <IconButton size="large" onClick={handleOpen}>
@@ -64,9 +73,13 @@ export default function NotificationDropdown() {
         ) : notifications.length === 0 ? (
           <MenuItem disabled>No notifications</MenuItem>
         ) : (
-          notifications.map((n) => (
-            <MenuItem key={n.id} sx={{ whiteSpace: 'normal' }}>
-              <Typography variant="body2">{n.message}</Typography>
+          notifications.map((notification) => (
+            <MenuItem 
+              key={notification.id} 
+              sx={{ whiteSpace: 'normal' }} 
+              onClick={() => handleNotificationClick(notification)}
+            >
+              <Typography variant="body2">{notification.message}</Typography>
             </MenuItem>
           ))
         )}
