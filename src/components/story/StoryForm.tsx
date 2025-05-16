@@ -7,6 +7,7 @@ import {
   Chip,
   Stack,
   Autocomplete,
+  Alert,
 } from "@mui/material";
 import { StoryFormData } from "../../types/story";
 import { fetchGenres } from "../../api/story";
@@ -18,9 +19,10 @@ type Props = {
   onSubmit: (formData: FormData) => void;
   onCancel: () => void;
   initialData?: StoryFormData;
+  error?: string | null;
 };
 
-export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
+export default function StoryForm({ onSubmit, onCancel, initialData, error }: Props) {
   const [formData, setFormData] = useState<StoryFormData>(
     initialData || {
       title: "",
@@ -33,6 +35,7 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
   const [availableGenres, setAvailableGenres] = useState<string[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (initialData?.coverImageUrl) {
@@ -60,12 +63,48 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
     if (initialData) setFormData(initialData);
   }, [initialData]);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title || formData.title.trim() === "") {
+      newErrors.title = "Title is required.";
+    } else if (formData.title.length > 100) {
+      newErrors.title = "Title must be less than 100 characters.";
+    }
+
+    if (!formData.genres || formData.genres.length === 0) {
+      newErrors.genres = "Please select at least one genre.";
+    }
+
+    if (!formData.description || formData.description.trim() === "") {
+      newErrors.description = "Description is required.";
+    } else if (formData.description.length > 1000) {
+      newErrors.description = "Description must be less than 100 characters.";
+    }
+
+    return newErrors;
+  };
+
   const handleChange = (field: keyof StoryFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    
+    setErrors((prevErrors) => {
+      const { [field]: _, ...rest } = prevErrors;
+      return rest;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log("1")
     e.preventDefault();
+    console.log("2")
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    } else {
+      setErrors({});
+    }
 
     const formPayload = new FormData();
     formPayload.append("story", new Blob([JSON.stringify({ ...formData })], { type: "application/json" }));
@@ -81,6 +120,11 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
       <Typography variant="h4" gutterBottom>
         {initialData ? "Edit Story" : "Create New Story"}
       </Typography>
+      {error && (
+        <Box mb={2}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
+      )}
 
       <UploadThumbnail onFileSelect={(file) => setThumbnailFile(file)} />
       {imagePreview && (
@@ -94,7 +138,8 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
         value={formData.title}
         onChange={(e) => handleChange("title", e.target.value)}
         fullWidth
-        required
+        error={!!errors.title}
+        helperText={errors.title}
         sx={{ mb: 3 }}
       />
 
@@ -109,7 +154,14 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
           ))
         }
         renderInput={(params) => (
-          <TextField {...params} variant="outlined" label="Genres" placeholder="Select genres" />
+          <TextField 
+            {...params} 
+            variant="outlined" 
+            label="Genres" 
+            placeholder="Select genres" 
+            error={!!errors.genres}
+            helperText={errors.genres}
+          />
         )}
         sx={{ mb: 3 }}
       />
@@ -138,13 +190,14 @@ export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
         multiline
         minRows={4}
         fullWidth
-        required
+        error={!!errors.description}
+        helperText={errors.description}
         sx={{ mb: 4 }}
       />
 
       <Stack direction="row" justifyContent="space-between">
         <Button variant="outlined" color="error" onClick={onCancel}>Cancel</Button>
-        <Button variant="contained" type="submit">
+        <Button variant="contained" type="submit" disabled={Object.keys(errors).length > 0}>
           {initialData ? "Update Story" : "Create Story"}
         </Button>
       </Stack>

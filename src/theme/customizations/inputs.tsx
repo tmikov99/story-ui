@@ -88,6 +88,19 @@ export const inputsCustomizations: Components<Theme> = {
           },
           {
             props: {
+              color: 'primary',
+              variant: 'contained',
+              disabled: true,
+            },
+            style: {
+              color: `${gray[600]}!important`,
+              ...theme.applyStyles('dark', {
+                color: `${gray[300]}!important`,
+              }),
+            }
+          },
+          {
+            props: {
               color: 'secondary',
               variant: 'contained',
             },

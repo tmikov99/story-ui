@@ -99,21 +99,29 @@ export const fetchPublishedByUser = async (
 };
 
 export const createStory = async (formData: FormData) => {
-  const response = await axios.post('/story/create', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.post('/story/create', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data?.message || "Failed to create story.";
+  }
 };
 
 export const updateStory = async (formData: FormData, storyId: string) => {
-  const response = await axios.put(`/story/update/${storyId}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.put(`/story/update/${storyId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data?.message || "Failed to update story.";
+  }
 }
 
 export const copyStoryDraft = async (storyId: number) => {

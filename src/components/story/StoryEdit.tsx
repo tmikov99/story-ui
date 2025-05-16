@@ -15,12 +15,17 @@ export default function StoryEdit() {
     description: '',
     status: ''
   });
+  const [error, setError] = useState<string | null>(null);
 
   const saveStory = async (formData: FormData) => {
     if (!storyId) return;
 
-    const savedStory = await updateStory(formData, storyId);
-    navigate(`/story/${savedStory.id}`);
+    try {
+      const savedStory = await updateStory(formData, storyId);
+      navigate(`/story/${savedStory.id}`);
+    } catch (err: any) {
+      setError(err.toString());
+    }
   }
 
   const cancelSave = () => {
@@ -45,7 +50,12 @@ export default function StoryEdit() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <StoryForm onSubmit={saveStory} onCancel={cancelSave} initialData={story} />
+      <StoryForm 
+        onSubmit={saveStory} 
+        onCancel={cancelSave} 
+        initialData={story} 
+        error={error}
+      />
     </Box>
   );
 }
