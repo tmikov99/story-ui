@@ -16,6 +16,8 @@ import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
 
+const PAGE_SIZE = 10;
+
 export default function StoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ export default function StoryPage() {
   const user = useSelector((state: RootState) => state.auth.user);
   const [commentText, setCommentText] = useState<string>("");
   const [commentFocus, setCommentFocus] = useState<boolean>(false);
+  const [page, setPage] = useState(0);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
   const [loading, setLoading] = useState<boolean>(true);
   const isDraft = story?.status === "DRAFT";
   
@@ -45,9 +49,7 @@ export default function StoryPage() {
     const loadData = async () => {
       try {
         const data = await fetchStory(storyId);
-        const commentsData = await fetchComments(storyId);
         setStory(data);
-        setComments(commentsData);
       } catch (error) {
         console.error("Error fetching story:", error);
       } finally {
@@ -58,18 +60,31 @@ export default function StoryPage() {
     loadData();
   }, [id])
 
-  // const handleStartPlaythrough = () => {
-  //   if (!story) {
-  //     console.log("Missing Story Error")
-  //     return;
-  //   }
-  //   if (!playthrough) {
-  //     savePage(story.startPage)
-  //     navigate(`/story/${id}/page/${story.startPage}`);
-  //   } else {
-  //     navigate(`/story/${id}/page/${playthrough.currentPage}`);
-  //   }
-  // }
+  const loadCommentsPage = async (pageNum: number) => {
+    try {
+      const res = await fetchComments(storyId, pageNum, PAGE_SIZE);
+      if (pageNum === 0) {
+        setComments(res.content);
+      } else {
+        setComments(prev => [...prev, ...res.content]);
+      }
+      setHasMoreComments(!res.last);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      loadCommentsPage(0);
+    }
+  }, [id]);
+
+  const loadMoreComments = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadCommentsPage(nextPage);
+  };
 
   const handleStartNewPlaythrough = async () => {
     const newPlay = await startNewPlaythrough();
@@ -390,14 +405,21 @@ export default function StoryPage() {
           (
             <Skeleton variant='rectangular' height={52} />
           ) : (
-            comments.map(comment => (
-              <CommentBlock 
-                key={comment.id} 
-                comment={comment} 
-                showDelete={user?.username === comment.username}
-                onDelete={handleCommentDelete}
-              />
-            ))
+            <>
+              {comments.map(comment => (
+                <CommentBlock 
+                  key={comment.id} 
+                  comment={comment} 
+                  showDelete={user?.username === comment.username}
+                  onDelete={handleCommentDelete}
+                />
+              ))}
+              {hasMoreComments && (
+                <Button variant="outlined" onClick={loadMoreComments}>
+                  Load More Comments
+                </Button>
+              )}
+            </>
           )
         }
       </Stack>

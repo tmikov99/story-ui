@@ -153,8 +153,10 @@ export const createComment = async (storyId: number, commentText: string) => {
   return response.data;
 }
 
-export const fetchComments = async (storyId: number) => {
-  const response = await axios.get(`/comments/story/${storyId}`);
+export const fetchComments = async (storyId: number, page = 0, size = 10) => {
+  const response = await axios.get(`/comments/story/${storyId}`, {
+    params: { page, size }
+  });
   return response.data;
 }
 

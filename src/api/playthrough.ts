@@ -1,5 +1,6 @@
 import { PageData } from '../types/page';
 import { PlaythroughData } from '../types/playthrough';
+import { PaginatedResponse } from '../types/story';
 import axios from './axios';
 
 export const fetchPlaythrough = async (id: number) => {
@@ -22,9 +23,14 @@ export const chooseNextPage = async (playthroughId: number, pageNumber: number):
     return response.data;
 }
 
-export const fetchUserPlaythroughs = async ():Promise<PlaythroughData[]> => {
-    const response = await axios.get(`/playthrough`);
-    return response.data;
+export const fetchUserPlaythroughs = async (
+  page = 0,
+  size = 10
+): Promise<PaginatedResponse<PlaythroughData>> => {
+  const response = await axios.get(`/playthrough`, {
+    params: { page, size }
+  });
+  return response.data;
 };
 
 export const fetchPlaythroughCurrentPage = async (id: number): Promise<PageData> => {

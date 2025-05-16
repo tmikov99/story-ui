@@ -80,6 +80,8 @@ const StoryGrid = ({ stories, onClick }: StoryGridProps) => (
   </Grid>
 );
 
+const PAGE_SIZE = 12;
+
 export default function ProfilePage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -89,7 +91,6 @@ export default function ProfilePage() {
   const [totalPages, setTotalPages] = useState(0);
   const [value, setValue] = useState(tabParam);
   const page = pageParam - 1;
-  const pageSize = 12;
   const [user, setUser] = useState<UserData | null>(null);
   const [latestStories, setLatestStories] = useState<StoryData[]>([]);
   const [popularStories, setPopularStories] = useState<StoryData[]>([]);
@@ -137,7 +138,7 @@ export default function ProfilePage() {
     if (!user) return;
     const stories = await fetchPublishedByUser(user.username, {
       page,
-      size: pageSize,
+      size: PAGE_SIZE,
       sort: (searchParams.get('sort') as 'latest' | 'oldest' | 'most_read') || 'latest',
     });
     setAllStories(stories.content);
