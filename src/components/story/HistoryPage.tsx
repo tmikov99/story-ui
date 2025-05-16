@@ -1,23 +1,39 @@
-import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box, Chip } from "@mui/material";
+import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box, Chip, Pagination } from "@mui/material";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { deletePlaythrough, fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
 import Grid from '@mui/material/Grid2';
 import EmptyState from "../emptyState/EmptyState";
 import HistoryIcon from '@mui/icons-material/History';
 import { PlaythroughData } from "../../types/playthrough";
 
+const PAGE_SIZE = 10;
+
 export default function HistoryPage() {
   const [history, setHistory] = useState<PlaythroughData[]>([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const [totalPages, setTotalPages] = useState(1);
+  const page = pageParam - 1;
 
   useEffect(() => {
-    fetchUserPlaythroughs()
-      .then(setHistory)
+    if (history.length === 0) {
+      setLoading(true);
+    }
+    fetchUserPlaythroughs(page, PAGE_SIZE)
+      .then(data => {
+        if (data.totalPages > 0 && page >= data.totalPages) {
+          setSearchParams({ page: '1' });
+          return;
+        }
+        setHistory(data.content);
+        setTotalPages(data.totalPages);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
 
   const handleResume = (playthroughId: number) => {
     loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
@@ -120,6 +136,19 @@ export default function HistoryPage() {
           )))
         )}
       </Stack>
+      {!loading && totalPages > 1 && (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <Pagination
+            count={totalPages}
+            page={page + 1}
+            onChange={(_, value) => {
+              setSearchParams({ page: (value).toString() });
+            }}            
+            siblingCount={2}
+            shape="rounded"
+          />
+        </Box>
+      )}
     </div>
   );
 }

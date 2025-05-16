@@ -16,8 +16,9 @@ export default function NotificationDropdown() {
   const open = Boolean(anchorEl);
 
   const getNotifications = async () => {
-    if (open) return;
-    setLoading(true);
+    if (!notifications) {
+      setLoading(true);
+    }
     try {
       const res = await fetchNotifications();
       setNotifications(res);
@@ -28,14 +29,19 @@ export default function NotificationDropdown() {
   };
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setNotifications(prev => prev.map(item => ({...item, read: true})));
     setAnchorEl(event.currentTarget);
-    markAsRead(notifications.map(notification => notification.id));
+    getNotifications().then(() => {
+      const unreadNotifications = notifications.filter(notification => !notification.read)
+      if (unreadNotifications.length) {
+        markAsRead(unreadNotifications.map(notification => notification.id));
+        setNotifications(prev => prev.map(item => ({...item, read: true})));
+      }
+    });
   };
 
   useEffect(() => {
     getNotifications();
-    const interval = setInterval(getNotifications, 60000);
+    const interval = setInterval(getNotifications, 300000);
 
     return () => clearInterval(interval);
   }, []);

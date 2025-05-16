@@ -24,13 +24,14 @@ interface MainGridProps {
 const allowedSortFields = ['createdAt', 'likes', 'favorites', 'title', 'reads'] as const;
 export type SortField = typeof allowedSortFields[number];
 
+const PAGE_SIZE = 12;
+
 export default function MainGrid({fetchMethod, title, showActions, showSort = true, placeholderText}: MainGridProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [stories, setStories] = useState<StoryData[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
-  const [pageSize] = useState(12);
   const queryParam = searchParams.get('query') || '';
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
   const rawSortField = searchParams.get('sortField');
@@ -50,11 +51,15 @@ export default function MainGrid({fetchMethod, title, showActions, showSort = tr
     fetchMethod({
       query: queryParam,
       page: page,
-      size: pageSize,
+      size: PAGE_SIZE,
       sortField: sortFieldParam,
       sortOrder: sortOrderParam
     })
       .then((response) => {
+        if (response.totalPages > 0 && page >= response.totalPages) {
+          setSearchParams({ page: '1' });
+          return;
+        }
         setStories(response.content);
         setTotalPages(response.totalPages);
       })
@@ -64,7 +69,7 @@ export default function MainGrid({fetchMethod, title, showActions, showSort = tr
         setTotalPages(0);
       })
       .finally(() => setLoading(false));
-  }, [fetchMethod, queryParam, page, pageSize, sortFieldParam, sortOrderParam]);
+  }, [fetchMethod, queryParam, page, sortFieldParam, sortOrderParam]);
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (

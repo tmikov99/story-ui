@@ -1,4 +1,4 @@
-import { Typography, Stack, Skeleton, Box, Avatar, Card, styled, IconButton } from "@mui/material";
+import { Typography, Stack, Skeleton, Box, Avatar, Card, styled, IconButton, Pagination } from "@mui/material";
 import { useState, useEffect } from "react";
 import EmptyState from "../emptyState/EmptyState";
 import CommentIcon from '@mui/icons-material/Comment';
@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteComment, fetchUserComments } from "../../api/comments";
 import { StoryCommentData } from "../../types/story";
 import CommentBlock from "./CommentBlock";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const HistoryCommentCard = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -16,17 +16,30 @@ const HistoryCommentCard = styled(Card)(({ theme }) => ({
   }
 }));
 
+const PAGE_SIZE = 10;
+
 export default function CommentHistoryPage() {
   const [comments, setComments] = useState<StoryCommentData[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [totalPages, setTotalPages] = useState(0);
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const page = pageParam - 1;
 
   useEffect(() => {
-    fetchUserComments()
-      .then((res) => setComments(res.content))
+    fetchUserComments({ page, size: PAGE_SIZE })
+      .then((res) => {
+        if (res.totalPages > 0 && page >= res.totalPages) {
+          setSearchParams({ page: '1' });
+          return;
+        }
+        setComments(res.content);
+        setTotalPages(res.totalPages);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
 
   const renderSkeletons = (count: number) => {
     return Array.from({ length: count }).map((_, index) => (
@@ -48,6 +61,10 @@ export default function CommentHistoryPage() {
     } catch (error) {
       console.error("Failed to delete comment", error);
     }
+  };
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    setSearchParams({ page: value.toString() });
   };
 
   return (
@@ -87,6 +104,17 @@ export default function CommentHistoryPage() {
             </HistoryCommentCard>)
         )}
       </Stack>
+      {!loading && comments.length > 0 && totalPages > 1 && (
+        <Box mt={2} display="flex" justifyContent="center">
+          <Pagination
+            count={totalPages}
+            page={page + 1}
+            onChange={handlePageChange}
+            siblingCount={2}
+            shape="rounded"
+          />
+        </Box>
+      )}
     </Box>
   );
 }
