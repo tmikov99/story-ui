@@ -16,10 +16,11 @@ const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
 type Props = {
   onSubmit: (formData: FormData) => void;
+  onCancel: () => void;
   initialData?: StoryFormData;
 };
 
-export default function StoryForm({ onSubmit, initialData }: Props) {
+export default function StoryForm({ onSubmit, onCancel, initialData }: Props) {
   const [formData, setFormData] = useState<StoryFormData>(
     initialData || {
       title: "",
@@ -141,7 +142,8 @@ export default function StoryForm({ onSubmit, initialData }: Props) {
         sx={{ mb: 4 }}
       />
 
-      <Stack direction="row" justifyContent="flex-end">
+      <Stack direction="row" justifyContent="space-between">
+        <Button variant="outlined" color="error" onClick={onCancel}>Cancel</Button>
         <Button variant="contained" type="submit">
           {initialData ? "Update Story" : "Create Story"}
         </Button>

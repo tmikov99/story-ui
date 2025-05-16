@@ -8,12 +8,6 @@ import { useEffect, useState } from 'react';
 export default function StoryEdit() {
   const navigate = useNavigate();
   const {storyId} = useParams();
-  const saveStory = async (formData: FormData) => {
-    if (!storyId) return;
-
-    const savedStory = await updateStory(formData, storyId);
-    navigate(`/story/${savedStory.id}`);
-  }
   const [story, setStory] = useState<StoryFormData>({
     title: '',
     genres: [],
@@ -21,6 +15,17 @@ export default function StoryEdit() {
     description: '',
     status: ''
   });
+
+  const saveStory = async (formData: FormData) => {
+    if (!storyId) return;
+
+    const savedStory = await updateStory(formData, storyId);
+    navigate(`/story/${savedStory.id}`);
+  }
+
+  const cancelSave = () => {
+    navigate(`/story/${storyId}`);
+  }
 
   const getOriginalStory = async (storyId: number) => {
     const originalStory = await fetchStory(storyId);
@@ -40,7 +45,7 @@ export default function StoryEdit() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <StoryForm onSubmit={saveStory} initialData={story} />
+      <StoryForm onSubmit={saveStory} onCancel={cancelSave} initialData={story} />
     </Box>
   );
 }
