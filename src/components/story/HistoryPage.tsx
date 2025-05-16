@@ -1,4 +1,4 @@
-import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box, Chip, Pagination } from "@mui/material";
+import { Typography, Card, CardContent, LinearProgress, Button, CardMedia, Stack, Skeleton, Box, Chip, Pagination, TextField, FormControl, InputLabel, MenuItem, Select, IconButton, Tooltip } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { deletePlaythrough, fetchUserPlaythroughs, loadPlaythrough } from "../../api/playthrough";
@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid2';
 import EmptyState from "../emptyState/EmptyState";
 import HistoryIcon from '@mui/icons-material/History';
 import { PlaythroughData } from "../../types/playthrough";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 
 const PAGE_SIZE = 10;
 
@@ -14,6 +15,11 @@ export default function HistoryPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const [searchInput, setSearchInput] = useState(query);
+  const sortField = searchParams.get('sortField') || 'lastVisited';
+  const sortOrder = searchParams.get('sortOrder') || 'desc';
+  const isAscending = sortOrder === 'asc';
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
   const [totalPages, setTotalPages] = useState(1);
   const page = pageParam - 1;
@@ -22,7 +28,7 @@ export default function HistoryPage() {
     if (history.length === 0) {
       setLoading(true);
     }
-    fetchUserPlaythroughs(page, PAGE_SIZE)
+    fetchUserPlaythroughs(page, PAGE_SIZE, query, sortField, sortOrder)
       .then(data => {
         if (data.totalPages > 0 && page >= data.totalPages) {
           setSearchParams({ page: '1' });
@@ -33,7 +39,7 @@ export default function HistoryPage() {
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [page]);
+  }, [page, query, sortField, sortOrder]);
 
   const handleResume = (playthroughId: number) => {
     loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
@@ -67,6 +73,60 @@ export default function HistoryPage() {
       <Typography variant="h4" sx={{textAlign: 'center'}} gutterBottom>Reading History</Typography>
       
       <Stack gap={2}>
+        {history.length !== 0 && 
+          <Box display="flex" gap={2} mb={2}>
+            <TextField
+              label="Search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setSearchParams({
+                    page: '1',
+                    q: searchInput,
+                    sortField,
+                    sortOrder
+                  });
+                }
+              }}
+              sx={{ flexGrow: 1 }}
+            />
+            <FormControl>
+              <InputLabel>Sort By</InputLabel>
+              <Select
+                value={sortField}
+                onChange={(e) =>
+                  setSearchParams({ 
+                    page: '1', 
+                    q: query, 
+                    sortField: e.target.value, 
+                    sortOrder 
+                  })
+                }
+                label="Sort By"
+              >
+                <MenuItem value="lastVisited">Last Visited</MenuItem>
+                <MenuItem value="startedAt">Started At</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+              </Select>
+            </FormControl>
+            <Tooltip title={isAscending ? 'Ascending' : 'Descending'}>
+              <IconButton
+                onClick={() => {
+                  setSearchParams({
+                    page: '1',
+                    q: query,
+                    sortField,
+                    sortOrder: isAscending ? 'desc' : 'asc',
+                  });
+                }}
+                sx={{ border: '1px solid #ccc', borderRadius: 1 }}
+              >
+                {isAscending ? <ArrowUpward /> : <ArrowDownward />}
+              </IconButton>
+            </Tooltip>
+          </Box>
+        }
       {loading ? (
           renderSkeletons(4)
         ) : (

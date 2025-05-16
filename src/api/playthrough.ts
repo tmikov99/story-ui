@@ -25,10 +25,18 @@ export const chooseNextPage = async (playthroughId: number, pageNumber: number):
 
 export const fetchUserPlaythroughs = async (
   page = 0,
-  size = 10
+  size = 10,
+  query?: string,
+  sortField = 'lastVisited',
+  sortOrder = 'desc'
 ): Promise<PaginatedResponse<PlaythroughData>> => {
   const response = await axios.get(`/playthrough`, {
-    params: { page, size }
+    params: {
+        page,
+        size,
+        sort: `${sortField},${sortOrder}`,
+        ...(query ? { q: query } : {})
+    }
   });
   return response.data;
 };
