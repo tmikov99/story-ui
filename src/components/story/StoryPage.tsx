@@ -16,6 +16,7 @@ import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
 import { ValidationErrorResponse } from '../../types/validations';
+import { getGenreLabel } from '../../utils/genreUtil';
 
 const PAGE_SIZE = 10;
 
@@ -336,14 +337,14 @@ const handlePublish = async () => {
                 <Typography variant='h6'>By: {story?.user.username}</Typography>
                 <Typography>Pages: {story?.pageCount}</Typography>
                 <Typography>Created: {formatDateString(story?.createdAt)}</Typography>
-                <Box sx={{display: "flex", alignItems: "center"}}>
+                <Stack direction="row" gap={0.5} sx={{display: "flex", alignItems: "center", flexWrap: "wrap"}}>
                   <Typography>Genres:&nbsp;</Typography>
-                  {story?.genres.map(genre => <Chip variant="outlined" label={genre} key={genre} />)}
-                </Box>
-                <Box sx={{display: "flex", alignItems: "center"}}>
+                  {story?.genres.map(genre => <Chip variant="outlined" label={getGenreLabel(genre)} key={genre} />)}
+                </Stack>
+                <Stack direction="row" gap={0.5} sx={{display: "flex", alignItems: "center", flexWrap: "wrap"}}>
                   <Typography>Tags:&nbsp;</Typography>
                   {story?.tags.map(tag => <Chip variant="outlined" label={tag} key={tag} />)}
-                </Box>
+                </Stack>
                 <Typography>Description: {story?.description}
                 </Typography>
               </Stack>

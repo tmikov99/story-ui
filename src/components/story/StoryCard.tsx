@@ -8,21 +8,20 @@ import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { StoryData } from '../../types/story';
 import { getTimeAgo } from '../../utils/formatDate';
 import { publishStory, toggleFavorite, toggleLike } from '../../api/story';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatStoryReads } from '../../utils/formatStory';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Chip, Stack } from '@mui/material';
 import ModeIcon from '@mui/icons-material/Mode';
 import { stringToHslColor } from '../../utils/userColors';
+import { getGenreLabel } from '../../utils/genreUtil';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -164,6 +163,16 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
         <StyledTypography variant="body2">
           {story.description}
         </StyledTypography>
+        {story.genres && story.genres.length > 0 && (
+          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" mt={1}>
+            {story.genres.map((genre) => (
+              <Chip
+                key={genre}
+                label={getGenreLabel(genre)}
+              />
+            ))}
+          </Stack>
+        )}
       </SyledCardContent>
       {showActions && <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
         {story.status ==="DRAFT" 
