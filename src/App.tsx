@@ -31,6 +31,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 import OwnedEmptyState from './components/emptyState/OwnedEmptyState';
 import CommentHistoryPage from './components/comment/CommentHistoryPage';
 import CommentHistoryEmptyState from './components/emptyState/CommentHistoryEmptyState';
+import GlobalConfirmDialog from './components/GlobalConfirmDialog';
+import GlobalSnackbar from './components/GlobalSnackbar';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -123,6 +125,8 @@ function App() {
           </Routes>    
         </Stack>
       </Box>
+      <GlobalSnackbar />
+      <GlobalConfirmDialog />
     </Box>
   </>
 
