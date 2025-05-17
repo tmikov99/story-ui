@@ -15,6 +15,7 @@ import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
 import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
+import { ValidationErrorResponse } from '../../types/validations';
 
 const PAGE_SIZE = 10;
 
@@ -30,6 +31,7 @@ export default function StoryPage() {
   const [page, setPage] = useState(0);
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [validationErrors, setValidationErrors] = useState<string[] | null>(null);
   const isDraft = story?.status === "DRAFT";
   
   if (!id) {
@@ -166,10 +168,20 @@ export default function StoryPage() {
     setStory(archiveResponse);
   }
 
-  const handlePublish = async () => {
+const handlePublish = async () => {
+  try {
     const publishResponse = await publishStory(storyId);
     setStory(publishResponse);
+    setValidationErrors(null);
+  } catch (error: any) {
+    const errData = error?.response?.data as ValidationErrorResponse;
+    if (error?.response?.status === 400 && errData?.errors) {
+      setValidationErrors(errData.errors);
+    } else {
+      console.error("Unexpected error during publish:", error);
+    }
   }
+};
 
   const handleLoadPlaythrough = (playthroughId: number | undefined) => {
     if (!playthroughId) {
@@ -297,6 +309,20 @@ export default function StoryPage() {
                       }
                       <Button color='error' onClick={handleDeleteStory}>Delete Story</Button>
                     </ButtonGroup>
+                    {validationErrors && validationErrors.length > 0 && (
+                      <Box mb={2}>
+                        <Paper variant="outlined" sx={{padding: 2}}>
+                          <Typography variant="subtitle1" color="warning">
+                            Cannot publish story due to the following validation issues:
+                          </Typography>
+                            {validationErrors.map((err, i) => (
+                                <Typography variant="body2" fontWeight="bold" color="warning" key={i}>
+                                  {err}
+                                </Typography>
+                            ))}
+                        </Paper>
+                      </Box>
+                    )}
                     <Box mb={1}>
                       <Typography>Status: {story?.status}</Typography>
                       {story?.status === "PUBLISHED" 
