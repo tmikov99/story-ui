@@ -9,7 +9,7 @@ import { StoryCommentData, StoryData } from '../../types/story';
 import { useUserPlaythrough } from '../../hooks/useUserPlaythrough';
 import { formatDateString, getTimeAgo } from '../../utils/formatDate';
 import { Avatar, Button, ButtonGroup, Chip, Paper, Skeleton, TextField } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import CommentBlock from '../comment/CommentBlock';
 import { stringToHslColor } from '../../utils/userColors';
@@ -17,12 +17,14 @@ import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
 import { ValidationErrorResponse } from '../../types/validations';
 import { getGenreLabel } from '../../utils/genreUtil';
+import { showConfirmDialog, showSnackbar } from '../../redux/uiSlice';
 
 const PAGE_SIZE = 10;
 
 export default function StoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const storyId = Number(id)
   const [story, setStory] = useState<StoryData | null>(null);
   const [comments, setComments] = useState<StoryCommentData[]>([]);
@@ -89,6 +91,15 @@ export default function StoryPage() {
     loadCommentsPage(nextPage);
   };
 
+  
+  const askConfirmation = (message: string, action: () => void) => {
+    dispatch(showConfirmDialog({
+      open: true,
+      message,
+      onConfirm: action
+    }));
+  };
+
   const handleStartNewPlaythrough = async () => {
     const newPlay = await startNewPlaythrough();
     if (newPlay) {
@@ -126,17 +137,17 @@ export default function StoryPage() {
   }
 
   const handleDeleteStory = () => {
-    if (!story) {
-      console.log("Missing Story Error")
-      return;
-    }
-    deleteStory(story.id).then(() => {
-      navigate("/created");
-    }).catch(error => {
-      console.log(error);
+    if (!story) return;
+    askConfirmation("Are you sure you want to delete this story? This action cannot be undone.", async () => {
+      try {
+        await deleteStory(story.id);
+        dispatch(showSnackbar({ message: "Story deleted successfully!", severity: "success" }));
+        navigate("/created");
+      } catch (error) {
+        console.error("Delete failed:", error);
+      }
     });
-
-  }
+  };
 
   const handleCommentFocus = () => {
     if (!commentFocus) {
@@ -164,10 +175,13 @@ export default function StoryPage() {
     }
   };
 
-  const handleArchive = async () => {
-    const archiveResponse = await archiveStory(storyId);
-    setStory(archiveResponse);
-  }
+  const handleArchive = () => {
+    askConfirmation("Archive this story? It will be hidden from public view.", async () => {
+      const archiveResponse = await archiveStory(storyId);
+      setStory(archiveResponse);
+      dispatch(showSnackbar({ message: "Story archived successfully!", severity: "success" }));
+    });
+  };
 
 const handlePublish = async () => {
   try {
@@ -324,13 +338,13 @@ const handlePublish = async () => {
                         </Paper>
                       </Box>
                     )}
-                    <Box mb={1}>
+                    <Stack direction="row" gap={1} sx={{alignItems: "center"}}>
                       <Typography>Status: {story?.status}</Typography>
                       {story?.status === "PUBLISHED" 
                         ? <Button variant="contained" onClick={handleArchive}>ARCHIVE</Button> 
                         : <Button variant="contained" onClick={handlePublish}>PUBLISH</Button>
                       }
-                    </Box>
+                    </Stack>
                   </>
                 }
                 <Typography variant='h4'>{story?.title}</Typography>
