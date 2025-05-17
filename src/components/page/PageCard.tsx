@@ -99,8 +99,8 @@ export default function PageCard({ page, onClick, onMenuOpen, selected }: PageCa
         </StyledTypographyLarge>
       </SyledCardContent>
       <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
-        <Button onClick={handleButtonClickPlaceholder} color="info" variant="text" size="small">Entering 4</Button>
-        <Button onClick={handleButtonClickPlaceholder} sx={{ marginLeft: "auto" }} color="error" variant="text" size="small">Exiting {page?.choices.length}</Button>
+        <Button onClick={handleButtonClickPlaceholder} color="info" variant="text" size="small">Paragraphs: {page?.paragraphs.length}</Button>
+        <Button onClick={handleButtonClickPlaceholder} sx={{ marginLeft: "auto" }} color="error" variant="text" size="small">Choices: {page?.choices.length}</Button>
       </CardActions>
     </SyledCard>
   );
