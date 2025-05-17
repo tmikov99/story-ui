@@ -12,6 +12,7 @@ import {
 import { StoryFormData } from "../../types/story";
 import { fetchGenres } from "../../api/story";
 import UploadThumbnail from "./UploadThumbnail";
+import { getGenreLabel } from "../../utils/genreUtil";
 
 const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
@@ -95,9 +96,7 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    console.log("1")
     e.preventDefault();
-    console.log("2")
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -150,7 +149,7 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
         onChange={(_, value) => handleChange("genres", value)}
         renderTags={(value: string[], getTagProps) =>
           value.map((option: string, index: number) => (
-            <Chip variant="outlined" label={option} {...getTagProps({ index })} key={option} />
+            <Chip variant="outlined" label={getGenreLabel(option)} {...getTagProps({ index })} key={option} />
           ))
         }
         renderInput={(params) => (
@@ -161,6 +160,13 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
             placeholder="Select genres" 
             error={!!errors.genres}
             helperText={errors.genres}
+            multiline
+            sx={{
+              '& .MuiAutocomplete-inputRoot textarea.MuiAutocomplete-input[role="combobox"]': {
+                whiteSpace: 'nowrap',
+                width: 'fit-content',
+              }
+            }}
           />
         )}
         sx={{ mb: 3 }}
@@ -178,7 +184,19 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
           ))
         }
         renderInput={(params) => (
-          <TextField {...params} variant="outlined" label="Tags" placeholder="Add or select tags" />
+          <TextField 
+            {...params} 
+            variant="outlined" 
+            label="Tags" 
+            placeholder="Add or select tags" 
+            multiline
+            sx={{
+              '& .MuiAutocomplete-inputRoot textarea.MuiAutocomplete-input[role="combobox"]': {
+                whiteSpace: 'nowrap',
+                width: 'fit-content',
+              }
+            }}
+          />
         )}
         sx={{ mb: 3 }}
       />
