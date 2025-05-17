@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   Controls,
@@ -18,7 +18,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import { ChoiceData, PageData, PageDataNode } from "../../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
-import { updateStoryPages } from "../../api/story";
+import { updateStartPageNumber, updateStoryPages } from "../../api/story";
 import { createPage, deletePage, updatePage } from "../../api/page";
 import { nodeTypes } from "../../utils/reactFlowUtil";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,7 @@ interface PageGraphProps {
   pages: PageDataNode[];
   storyId: number;
   rootPageNumber: number;
+  setRootPageNumber: (pageNumber: number) => void;
 }
 
 function buildEdges(pages: PageData[]): Edge[] {
@@ -72,7 +73,7 @@ function getFirstAvailablePageNumber (pages: PageDataNode[]): number {
   return length + 1;
 }
 
-function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
+function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGraphProps) {
   const edges = useMemo(() => buildEdges(pages), [pages]);
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const updateQueueRef = useRef<Map<number, PageDataNode>>(new Map());
@@ -91,9 +92,21 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
   const [editingPageNumber, setEditingPageNumber] = useState<number | null>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          rootPageNumber,
+        },
+      }))
+    );
+  }, [rootPageNumber, setNodes]);
 
   function handleMenuOpen (event: React.MouseEvent<HTMLElement>, page: PageData) {
     event.stopPropagation();
+    event.preventDefault();
     setMenuAnchorEl(event.currentTarget);
     setMenuTargetPage(page);
   };
@@ -105,6 +118,7 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       position: { x: page.positionX, y: page.positionY },
       data: { 
         page,
+        rootPageNumber,
         onMenuOpen: (event: React.MouseEvent<HTMLElement>, page: PageData) => handleMenuOpen(event, page)
        },
       
@@ -285,6 +299,18 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
 
     handleMenuClose();
   }
+
+  const handleSetAsStartPage = async () => {
+    if (!menuTargetPage) return;
+    try {
+      await updateStartPageNumber(storyId, menuTargetPage.pageNumber);
+      setRootPageNumber(menuTargetPage.pageNumber);
+    } catch (err) {
+      console.error("Failed to set start page:", err);
+    }
+
+    handleMenuClose();
+  };
 
   const handleConfirmChoice = () => {
     if (!pendingConnection) return;
@@ -483,6 +509,9 @@ function PageGraph({ pages, storyId, rootPageNumber }: PageGraphProps) {
       >
         <MenuItem onClick={handleEditPage}>Edit</MenuItem>
         <MenuItem onClick={handleDeletePage}>Delete</MenuItem>
+        {menuTargetPage && menuTargetPage.pageNumber !== rootPageNumber && (
+          <MenuItem onClick={handleSetAsStartPage}>Set as Start</MenuItem>
+        )}
       </Menu>
     </Box>
   );

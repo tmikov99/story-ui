@@ -3,29 +3,42 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchPagesMapByStory } from '../../api/page';
 import PageGraph from './PageGraph';
+import { fetchStory } from '../../api/story';
 
 export default function PageLinks() {
   const { storyId } = useParams();
   const [pages, setPages] = useState(null);
+  const [rootPageNumber, setRootPageNumber] = useState<number>(0);
 
-  const fetchPages = async () => {
+  const fetchStoryPageData = async () => {
     try {
-      const response = await fetchPagesMapByStory(Number(storyId));
-      setPages(response);
+      const [fetchedPages, story] = await Promise.all([
+        fetchPagesMapByStory(Number(storyId)),
+        fetchStory(Number(storyId)),
+      ]);
+      setPages(fetchedPages);
+      setRootPageNumber(story.startPageNumber);
     } catch (err) {
-      console.error("Failed to fetch pages:", err);
+      console.error("Failed to fetch story or pages:", err);
     }
   };
 
   useEffect(() => {
     if (!storyId) return;
-    fetchPages();
+    fetchStoryPageData();
   }, [storyId]);
   
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      {pages !== null && <PageGraph pages={pages} storyId={Number(storyId)} rootPageNumber={1} />}
+      {pages !== null && (
+        <PageGraph 
+          pages={pages} 
+          storyId={Number(storyId)} 
+          rootPageNumber={rootPageNumber}
+          setRootPageNumber={setRootPageNumber} 
+        />
+      )}
     </Box>
   );
 }

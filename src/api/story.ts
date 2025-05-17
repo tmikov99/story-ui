@@ -124,6 +124,10 @@ export const updateStory = async (formData: FormData, storyId: string) => {
   }
 }
 
+export async function updateStartPageNumber(storyId: number, pageNumber: number) {
+  return await axios.patch(`/story/${storyId}/start-page`, { startPageNumber: pageNumber });
+}
+
 export const copyStoryDraft = async (storyId: number) => {
   const response = await axios.post(`/story/copyAsDraft/${storyId}`);
   return response.data;
