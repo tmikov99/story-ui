@@ -133,11 +133,6 @@ export const copyStoryDraft = async (storyId: number) => {
   return response.data;
 }
 
-export const updateStoryPages = async (storyId: number, pages: PageDataNode[]) => {
-  const response = await axios.put(`/story/pages/${storyId}`, pages);
-  return response.data;
-}
-
 export const deleteStory = async (id: number) => {
   const response = await axios.delete(`/story/${id}`);
   return response;
