@@ -33,6 +33,8 @@ import CommentHistoryPage from './components/comment/CommentHistoryPage';
 import CommentHistoryEmptyState from './components/emptyState/CommentHistoryEmptyState';
 import GlobalConfirmDialog from './components/GlobalConfirmDialog';
 import GlobalSnackbar from './components/GlobalSnackbar';
+import ResetPassword from './components/user/ResetPassword';
+import CheckEmail from './components/user/CheckEmail';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -137,6 +139,8 @@ function App() {
           <Routes>
             {!isAuthenticated && <Route path="/signIn" element={<SignIn />} />}
             {!isAuthenticated && <Route path="/signUp" element={<SignUp />} />}
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/check-email" element={<CheckEmail />} />
             <Route path="*" element={nonAuthContent} />
           </Routes>        
       </BrowserRouter>
