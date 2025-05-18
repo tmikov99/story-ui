@@ -128,12 +128,11 @@ export default function SignUp() {
     try {
       const registerResponse = await register(username, email, password);
       if (registerResponse.status !== 200) {
+        console.log("Register error", registerResponse)
         return;
+      } else {
+        navigate('/check-email');
       }
-      const loginResponse = await login(username, password);
-      dispatch(loginSuccess(loginResponse));
-      navigate(redirectAfterLogin || '/landing');
-      dispatch(clearRedirectAfterLogin());
     } catch (err) {console.error(err)}
   };
 

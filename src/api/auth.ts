@@ -24,3 +24,18 @@ export const refreshToken = async () => {
 export const logout = async () => {
   return axios.post('/auth/logout');
 };
+
+export const forgotPassword = async (email: string): Promise<string> => {
+  const response = await axios.post('/user/forgot-password', null, {
+    params: { email },
+  });
+  return response.data;
+};
+
+export const resetPassword = async (token: string, newPassword: string): Promise<string> => {
+  const response = await axios.post('/user/reset-password', {
+    token,
+    newPassword,
+  });
+  return response.data;
+};

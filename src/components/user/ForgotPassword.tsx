@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import { forgotPassword } from '../../api/auth';
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -20,9 +21,20 @@ export default function ForgotPassword({ open, handleClose }: ForgotPasswordProp
       slotProps={{
         paper: {
           component: 'form',
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+          onSubmit: async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
-            handleClose();
+            const formData = new FormData(event.currentTarget);
+            const email = formData.get('email')?.toString();
+
+            if (!email) return;
+
+            try {
+              await forgotPassword(email);
+              alert("A password reset link has been sent to your email.");
+              handleClose();
+            } catch (error) {
+              alert("Failed to send reset email: " + (error as Error).message);
+            }
           },
           sx: { backgroundImage: 'none' },
         },
