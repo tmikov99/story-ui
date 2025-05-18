@@ -18,7 +18,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import { ChoiceData, PageData, PageDataNode } from "../../types/page";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
-import { updateStartPageNumber, updateStoryPages } from "../../api/story";
+import { updateStartPageNumber } from "../../api/story";
 import { createPage, deletePage, updatePage } from "../../api/page";
 import { nodeTypes } from "../../utils/reactFlowUtil";
 import { useNavigate } from "react-router-dom";
@@ -42,19 +42,6 @@ function buildEdges(pages: PageData[]): Edge[] {
     }
   }
   return edges;
-}
-
-function savePositions(storyId: number, nodes: Node[]) {
-  const pagesMap: PageDataNode[] = nodes.map(node => {
-    const existingPageData = (node.data.page as PageDataNode)
-    const page: PageDataNode = {
-      ...existingPageData,
-      positionX: node.position.x,
-      positionY: node.position.y,
-    }
-    return page;
-  });
-  updateStoryPages(storyId, pagesMap);
 }
 
 function getFirstAvailablePageNumber (pages: PageDataNode[]): number {

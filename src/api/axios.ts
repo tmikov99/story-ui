@@ -23,9 +23,9 @@ const processQueue = (error: any, token: string | null = null) => {
 
 axiosInstance.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+if (token && !config.url?.startsWith('/auth/refresh')) {
+  config.headers.Authorization = `Bearer ${token}`;
+}
   return config;
 });
 
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 403 && !originalRequest._retry) {
+    if (error.response?.status === 401 && error.response.data.code === "TOKEN_EXPIRED" && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -55,7 +55,6 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data.token;
 
         sessionStorage.setItem("token", newAccessToken);
-        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         processQueue(null, newAccessToken);
 
         return axiosInstance(originalRequest);
