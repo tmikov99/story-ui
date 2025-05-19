@@ -22,6 +22,8 @@ import { updateStartPageNumber } from "../../api/story";
 import { createPage, deletePage, updatePage } from "../../api/page";
 import { nodeTypes } from "../../utils/reactFlowUtil";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 interface PageGraphProps {
   pages: PageDataNode[];
@@ -78,6 +80,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [editingPageNumber, setEditingPageNumber] = useState<number | null>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setNodes((prevNodes) =>
@@ -128,7 +131,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
         try {
           await Promise.all(updates.map((page) => updatePage(page)));
         } catch (err) {
-          console.error("Failed to update page positions:", err);
+          dispatch(showSnackbar({ message: "Failed to update page positions.", severity: "error" }));
         }
         updateQueueRef.current.clear();
       }
@@ -212,7 +215,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
         setIsAddPageDialogOpen(false);
         setNewPageTitle("");
       } catch (err) {
-        console.error("Failed to create page:", err);
+        dispatch(showSnackbar({ message: "Failed to create page.", severity: "error" }));
       }
     } else if (dialogMode === "edit" && editingPageNumber !== null) {
       setNodes((prevNodes) => {
@@ -282,7 +285,11 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
       )
     );
 
-    await deletePage(menuTargetPage.id);
+    try {
+      await deletePage(menuTargetPage.id);
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to delete page.", severity: "error" }));
+    }
 
     handleMenuClose();
   }
@@ -293,7 +300,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
       await updateStartPageNumber(storyId, menuTargetPage.pageNumber);
       setRootPageNumber(menuTargetPage.pageNumber);
     } catch (err) {
-      console.error("Failed to set start page:", err);
+      dispatch(showSnackbar({ message: "Failed to set start page.", severity: "error" }));
     }
 
     handleMenuClose();

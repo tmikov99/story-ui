@@ -7,6 +7,8 @@ import Grid from '@mui/material/Grid2';
 import StoryCard from "../story/StoryCard";
 import { fetchLatestPublishedByUser, fetchMostReadByUser, fetchPublishedByUser } from "../../api/story";
 import { stringToHslColor } from "../../utils/userColors";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -97,6 +99,7 @@ export default function ProfilePage() {
   const [allStories, setAllStories] = useState<StoryData[]>([]);
   const { username } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [storiesCount, setStoriesCount] = useState(0);
 
@@ -106,8 +109,12 @@ export default function ProfilePage() {
     if (!username) {
       return;
     }
-    const userResponse = await getUserByUsername(username);
-    setUser(userResponse);
+    try {
+      const userResponse = await getUserByUsername(username);
+      setUser(userResponse);
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to fetch user data.", severity: "error" }));
+    }
   }
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -125,25 +132,33 @@ export default function ProfilePage() {
 
   const updateHomeTab = async () => {
     if (user === null) return;
-    const [latest, mostRead] = await Promise.all([
-      fetchLatestPublishedByUser(user.username), 
-      fetchMostReadByUser(user.username)
-    ]);
-    setLatestStories(latest.content);
-    setPopularStories(mostRead.content);
-    setStoriesCount(latest.totalElements);
+    try {
+      const [latest, mostRead] = await Promise.all([
+        fetchLatestPublishedByUser(user.username), 
+        fetchMostReadByUser(user.username)
+      ]);
+      setLatestStories(latest.content);
+      setPopularStories(mostRead.content);
+      setStoriesCount(latest.totalElements);
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to fetch stories.", severity: "error" }));
+    }
   }
 
   const updateStoriesTab = async () => {
     if (!user) return;
-    const stories = await fetchPublishedByUser(user.username, {
-      page,
-      size: PAGE_SIZE,
-      sort: (searchParams.get('sort') as 'latest' | 'oldest' | 'most_read') || 'latest',
-    });
-    setAllStories(stories.content);
-    setTotalPages(stories.totalPages);
-    setStoriesCount(stories.totalElements);
+    try {
+      const stories = await fetchPublishedByUser(user.username, {
+        page,
+        size: PAGE_SIZE,
+        sort: (searchParams.get('sort') as 'latest' | 'oldest' | 'most_read') || 'latest',
+      });
+      setAllStories(stories.content);
+      setTotalPages(stories.totalPages);
+      setStoriesCount(stories.totalElements);
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to fetch stories.", severity: "error" }));
+    }
   };
 
   useEffect(() => {

@@ -4,19 +4,25 @@ type SnackbarState = {
   message: string;
   severity?: 'success' | 'error' | 'info' | 'warning';
   open: boolean;
+  key: number; // <-- new field
 };
 
 const initialState: SnackbarState = {
   message: '',
   open: false,
+  key: 0,
 };
 
 const snackbarSlice = createSlice({
   name: 'snackbar',
   initialState,
   reducers: {
-    showSnackbar: (_, action: PayloadAction<Omit<SnackbarState, 'open'>>) => {
-      return { ...action.payload, open: true };
+    showSnackbar: (_, action: PayloadAction<Omit<SnackbarState, 'open' | 'key'>>) => {
+      return {
+        ...action.payload,
+        open: true,
+        key: new Date().getTime(),
+      };
     },
     hideSnackbar: (state) => {
       state.open = false;

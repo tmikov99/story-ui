@@ -11,6 +11,7 @@ export default function GlobalSnackbar() {
 
   return (
     <Snackbar
+      key={snackbar.key}
       open={snackbar.open}
       autoHideDuration={3000}
       onClose={handleClose}

@@ -49,7 +49,7 @@ export default function ResetPassword() {
     try {
       await resetPassword(token, password);
       setMessage("Password has been reset successfully.");
-      setTimeout(() => navigate("/signin"), 2000); // Optional: 2s delay
+      setTimeout(() => navigate("/signin"), 2000);
     } catch (err) {
       setMessage("Failed to reset password: " + (err as Error).message);
     }

@@ -22,6 +22,8 @@ import { Box, Button, Chip, Stack } from '@mui/material';
 import ModeIcon from '@mui/icons-material/Mode';
 import { stringToHslColor } from '../../utils/userColors';
 import { getGenreLabel } from '../../utils/genreUtil';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -79,6 +81,7 @@ interface StoryCardProps {
 export default function StoryCard({ storyData, onClick }: StoryCardProps) {
   const [story, setStory] = useState(storyData);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setStory(storyData);
@@ -97,14 +100,22 @@ export default function StoryCard({ storyData, onClick }: StoryCardProps) {
 
   const handleFavoriteClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const result = await toggleFavorite(story.id);
-    setStory(prev => ({ ...prev, favorite: result }));
+    try {
+      const result = await toggleFavorite(story.id);
+      setStory(prev => ({ ...prev, favorite: result }));
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to toggle favorite.", severity: "error" }));
+    }
   };
 
   const handleLikeClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const response = await toggleLike(story.id);
-    setStory(prev => ({ ...prev, liked: response.result, likes: response.likes }));
+    try {
+      const response = await toggleLike(story.id);
+      setStory(prev => ({ ...prev, liked: response.result, likes: response.likes }));
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to toggle like.", severity: "error" }));
+    }
   };
 
   //TODO: Decide if menu is needed
@@ -114,8 +125,13 @@ export default function StoryCard({ storyData, onClick }: StoryCardProps) {
 
   const handlePublish = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    const publishResponse = await publishStory(story.id);
-    setStory(publishResponse);
+    try {
+      const publishResponse = await publishStory(story.id);
+      setStory(publishResponse);
+      dispatch(showSnackbar({ message: "Story published successfully.", severity: "success" }));
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
+    }
   }
 
   return (

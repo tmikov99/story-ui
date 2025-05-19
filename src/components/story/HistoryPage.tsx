@@ -7,12 +7,15 @@ import EmptyState from "../emptyState/EmptyState";
 import HistoryIcon from '@mui/icons-material/History';
 import { PlaythroughData } from "../../types/playthrough";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 const PAGE_SIZE = 10;
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<PlaythroughData[]>([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
@@ -37,12 +40,16 @@ export default function HistoryPage() {
         setHistory(data.content);
         setTotalPages(data.totalPages);
       })
-      .catch(console.error)
+      .catch(() => {
+        dispatch(showSnackbar({ message: "Failed to fetch playthroughs.", severity: "error" }));
+      })
       .finally(() => setLoading(false));
   }, [page, query, sortField, sortOrder]);
 
   const handleResume = (playthroughId: number) => {
-    loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
+    loadPlaythrough(playthroughId)
+      .then(() => navigate(`/playthrough/${playthroughId}`))
+      .catch(() => dispatch(showSnackbar({ message: "Failed to load playthrough.", severity: "error" })));
   };
 
   const handleDelete = async (playthroughId: number) => {
@@ -50,7 +57,7 @@ export default function HistoryPage() {
       await deletePlaythrough(playthroughId);
       setHistory(prev => prev.filter(p => p.id !== playthroughId));
     } catch (error) {
-      console.error("Failed to delete playthrough", error);
+      dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
     }
   };
 

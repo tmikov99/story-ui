@@ -58,7 +58,7 @@ export default function StoryPage() {
         const data = await fetchStory(storyId);
         setStory(data);
       } catch (error) {
-        console.error("Error fetching story:", error);
+        dispatch(showSnackbar({ message: "Failed to fetch story.", severity: "error" }));
       } finally {
         setLoading(false);
       }
@@ -77,7 +77,7 @@ export default function StoryPage() {
       }
       setHasMoreComments(!res.last);
     } catch (error) {
-      console.error("Error fetching comments:", error);
+      dispatch(showSnackbar({ message: "Error fetching comments.", severity: "error" }));
     }
   };
 
@@ -120,8 +120,9 @@ export default function StoryPage() {
     try {
       const newStory = await copyStoryDraft(story.id);
       navigate(`/story/${newStory.id}`);
+      dispatch(showSnackbar({ message: "Draft created successfully.", severity: "success" }));
     } catch (err) {
-      console.error('Failed to create draft:', err);
+      dispatch(showSnackbar({ message: "Failed to create draft.", severity: "error" }));
     }
   }
 
@@ -141,7 +142,7 @@ export default function StoryPage() {
         dispatch(showSnackbar({ message: "Story deleted successfully!", severity: "success" }));
         navigate("/created");
       } catch (error) {
-        console.error("Delete failed:", error);
+        dispatch(showSnackbar({ message: "Failed to delete story.", severity: "error" }));
       }
     });
   };
@@ -158,9 +159,13 @@ export default function StoryPage() {
   }
 
   const handleCommentSend = async () => {
-    const newComment = await createComment(storyId, commentText);
-    setComments([newComment, ...comments]);
-    unfocusComment();
+    try {
+      const newComment = await createComment(storyId, commentText);
+      setComments([newComment, ...comments]);
+      unfocusComment();
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to send comment.", severity: "error" }));
+    }
   }
 
   const handleCommentDelete = async (commentId: number) => {
@@ -168,15 +173,19 @@ export default function StoryPage() {
       await deleteComment(commentId);
       setComments(prev => prev.filter(comment => comment.id !== commentId));
     } catch (error) {
-      console.error("Failed to delete comment", error);
+      dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
     }
   };
 
   const handleArchive = () => {
     askConfirmation("Archive this story? It will be hidden from public view.", async () => {
-      const archiveResponse = await archiveStory(storyId);
-      setStory(archiveResponse);
-      dispatch(showSnackbar({ message: "Story archived successfully!", severity: "success" }));
+      try {
+        const archiveResponse = await archiveStory(storyId);
+        setStory(archiveResponse);
+        dispatch(showSnackbar({ message: "Story archived successfully!", severity: "success" }));
+      } catch (error) {
+        dispatch(showSnackbar({ message: "Failed to archive story.", severity: "error" }));
+      }
     });
   };
 
@@ -185,12 +194,13 @@ const handlePublish = async () => {
     const publishResponse = await publishStory(storyId);
     setStory(publishResponse);
     setValidationErrors(null);
+    dispatch(showSnackbar({ message: "Story published successfully.", severity: "success" }));
   } catch (error: any) {
     const errData = error?.response?.data as ValidationErrorResponse;
     if (error?.response?.status === 400 && errData?.errors) {
       setValidationErrors(errData.errors);
     } else {
-      console.error("Unexpected error during publish:", error);
+      dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
     }
   }
 };
@@ -200,7 +210,9 @@ const handlePublish = async () => {
       console.log("Missing playthrough id!");
       return;
     }
-    loadPlaythrough(playthroughId).then(() => navigate(`/playthrough/${playthroughId}`));
+    loadPlaythrough(playthroughId)
+      .then(() => navigate(`/playthrough/${playthroughId}`))
+      .catch(() => dispatch(showSnackbar({ message: "Failed to load playthrough.", severity: "error" })));
   }
 
   const handleCoverImgClick = () => {

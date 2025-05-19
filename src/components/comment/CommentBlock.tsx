@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Link, Stack, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Stack, Typography } from "@mui/material";
 import { getTimeAgo } from "../../utils/formatDate";
 import { StoryCommentData } from "../../types/story";
 import { stringToHslColor } from "../../utils/userColors";
