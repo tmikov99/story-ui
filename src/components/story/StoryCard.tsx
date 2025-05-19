@@ -74,10 +74,9 @@ const SyledCard = styled(Card)(({ theme }) => ({
 interface StoryCardProps {
   storyData: StoryData;
   onClick?: (story: StoryData) => void;
-  showActions?: boolean;
 }
 
-export default function StoryCard({ storyData, onClick, showActions = true }: StoryCardProps) {
+export default function StoryCard({ storyData, onClick }: StoryCardProps) {
   const [story, setStory] = useState(storyData);
   const navigate = useNavigate();
 
@@ -174,7 +173,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
           </Stack>
         )}
       </SyledCardContent>
-      {showActions && <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
+      <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
         {story.status ==="DRAFT" 
           ? <Box sx={{display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between'}}>
               <Box gap={1} sx={{display: 'flex'}}>
@@ -193,7 +192,7 @@ export default function StoryCard({ storyData, onClick, showActions = true }: St
             {story.likes}
           </>
         }
-      </CardActions>}
+      </CardActions>
     </SyledCard>
   );
 }

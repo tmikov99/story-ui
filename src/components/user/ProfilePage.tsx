@@ -74,7 +74,7 @@ const StoryGrid = ({ stories, onClick }: StoryGridProps) => (
   >
     {stories.map((story) => (
       <Grid key={story.id} size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-        <StoryCard storyData={story} showActions={true} onClick={() => onClick(story)} />
+        <StoryCard storyData={story} onClick={() => onClick(story)} />
       </Grid>
     ))}
   </Grid>

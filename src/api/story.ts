@@ -1,4 +1,3 @@
-import { PageDataNode } from '../types/page';
 import { LikesResponse, PaginatedResponse, StoryData } from '../types/story';
 import axios from './axios';
 

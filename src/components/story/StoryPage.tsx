@@ -17,7 +17,8 @@ import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
 import { ValidationErrorResponse } from '../../types/validations';
 import { getGenreLabel } from '../../utils/genreUtil';
-import { showConfirmDialog, showSnackbar } from '../../redux/uiSlice';
+import { showSnackbar } from '../../redux/uiSlice';
+import { useConfirmDialog } from '../../hooks/ConfirmDialogProvider';
 
 const PAGE_SIZE = 10;
 
@@ -35,6 +36,7 @@ export default function StoryPage() {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [validationErrors, setValidationErrors] = useState<string[] | null>(null);
+  const { showConfirm } = useConfirmDialog();
   const isDraft = story?.status === "DRAFT";
   
   if (!id) {
@@ -91,13 +93,8 @@ export default function StoryPage() {
     loadCommentsPage(nextPage);
   };
 
-  
   const askConfirmation = (message: string, action: () => void) => {
-    dispatch(showConfirmDialog({
-      open: true,
-      message,
-      onConfirm: action
-    }));
+    showConfirm({ message }, action);
   };
 
   const handleStartNewPlaythrough = async () => {
