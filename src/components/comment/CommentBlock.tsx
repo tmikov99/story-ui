@@ -1,8 +1,9 @@
-import { Avatar, Box, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Link, Stack, Typography } from "@mui/material";
 import { getTimeAgo } from "../../utils/formatDate";
 import { StoryCommentData } from "../../types/story";
 import { stringToHslColor } from "../../utils/userColors";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from "react-router-dom";
 
 interface CommentBlockProps {
   comment: StoryCommentData;
@@ -12,6 +13,7 @@ interface CommentBlockProps {
 }
 
 export default function CommentBlock({ comment, showAvatar = true, showDelete = false, onDelete }:CommentBlockProps) {
+  const navigate = useNavigate();
   return (
     <Box gap={2} sx={{display: "flex"}}>
       {showAvatar && 
@@ -24,7 +26,15 @@ export default function CommentBlock({ comment, showAvatar = true, showDelete = 
       }
       <Stack width='100%'>
         <Box gap={1} sx={{display: "flex"}}>
-          <Typography variant="body2">{comment.username}</Typography>
+          <Typography 
+            variant="body2" 
+            {...(showAvatar && {
+              sx: { cursor: "pointer" },
+              onClick: () => navigate(`/user/${comment.username}`)
+            })}
+          >
+            {comment.username}
+          </Typography>
           <Typography variant="caption" sx={(theme) => ({color: theme.palette.text.secondary})}>
             {getTimeAgo(comment.createdAt)}
           </Typography>
