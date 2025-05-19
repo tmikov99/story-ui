@@ -17,7 +17,7 @@ import { deleteComment } from '../../api/comments';
 import { loadPlaythrough } from '../../api/playthrough';
 import { ValidationErrorResponse } from '../../types/validations';
 import { getGenreLabel } from '../../utils/genreUtil';
-import { showSnackbar } from '../../redux/uiSlice';
+import { showSnackbar } from '../../redux/snackbarSlice';
 import { useConfirmDialog } from '../../hooks/ConfirmDialogProvider';
 
 const PAGE_SIZE = 10;
