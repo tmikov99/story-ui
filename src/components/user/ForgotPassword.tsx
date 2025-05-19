@@ -7,6 +7,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { forgotPassword } from '../../api/auth';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -14,6 +16,7 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({ open, handleClose }: ForgotPasswordProps) {
+  const dispatch = useDispatch();
   return (
     <Dialog
       open={open}
@@ -30,10 +33,10 @@ export default function ForgotPassword({ open, handleClose }: ForgotPasswordProp
 
             try {
               await forgotPassword(email);
-              alert("A password reset link has been sent to your email.");
+              dispatch(showSnackbar({message: "A password reset link has been sent to your email.", severity: "success"}));
               handleClose();
             } catch (error) {
-              alert("Failed to send reset email: " + (error as Error).message);
+              dispatch(showSnackbar({ message: `Failed to send reset email: ${(error as Error).message}`, severity: "error" }));
             }
           },
           sx: { backgroundImage: 'none' },

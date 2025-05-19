@@ -7,6 +7,8 @@ import { deleteComment, fetchUserComments } from "../../api/comments";
 import { StoryCommentData } from "../../types/story";
 import CommentBlock from "./CommentBlock";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 const HistoryCommentCard = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -22,6 +24,7 @@ export default function CommentHistoryPage() {
   const [comments, setComments] = useState<StoryCommentData[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(0);
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
@@ -37,7 +40,9 @@ export default function CommentHistoryPage() {
         setComments(res.content);
         setTotalPages(res.totalPages);
       })
-      .catch(console.error)
+      .catch(() => {
+        dispatch(showSnackbar({ message: "Request failed. Please try again.", severity: "error" }));
+      })
       .finally(() => setLoading(false));
   }, [page]);
 
@@ -59,7 +64,7 @@ export default function CommentHistoryPage() {
       await deleteComment(commentId);
       setComments(prev => prev.filter(comment => comment.id !== commentId));
     } catch (error) {
-      console.error("Failed to delete comment", error);
+      dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
     }
   };
 

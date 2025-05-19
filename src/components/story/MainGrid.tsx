@@ -11,6 +11,8 @@ import { useSearchParams } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import SortControls from '../SortControls';
 import { FetchParams } from '../../api/story';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 
 interface MainGridProps {
@@ -28,6 +30,7 @@ const PAGE_SIZE = 12;
 export default function MainGrid({fetchMethod, title, showSort = true, placeholderText}: MainGridProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [stories, setStories] = useState<StoryData[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
@@ -62,8 +65,8 @@ export default function MainGrid({fetchMethod, title, showSort = true, placehold
         setStories(response.content);
         setTotalPages(response.totalPages);
       })
-      .catch((err) => {
-        console.error('Error fetching stories:', err);
+      .catch(() => {
+        dispatch(showSnackbar({ message: "Failed to fetch stories.", severity: "error" }));
         setStories([]);
         setTotalPages(0);
       })

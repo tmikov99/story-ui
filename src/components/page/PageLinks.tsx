@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import { fetchPagesMapByStory } from '../../api/page';
 import PageGraph from './PageGraph';
 import { fetchStory } from '../../api/story';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 export default function PageLinks() {
   const { storyId } = useParams();
   const [pages, setPages] = useState(null);
   const [rootPageNumber, setRootPageNumber] = useState<number>(0);
+  const dispatch = useDispatch();
 
   const fetchStoryPageData = async () => {
     try {
@@ -19,7 +22,7 @@ export default function PageLinks() {
       setPages(fetchedPages);
       setRootPageNumber(story.startPageNumber);
     } catch (err) {
-      console.error("Failed to fetch story or pages:", err);
+      dispatch(showSnackbar({ message: "Failed to fetch story or pages.", severity: "error" }));
     }
   };
 

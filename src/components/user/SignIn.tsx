@@ -20,6 +20,7 @@ import { login } from '../../api/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearRedirectAfterLogin, loginSuccess } from '../../redux/authSlice';
 import { AppDispatch, RootState } from '../../redux/store';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -97,10 +98,11 @@ export default function SignIn() {
     try {
       const loginResponse = await login(email, password);
       dispatch(loginSuccess(loginResponse));
+      dispatch(showSnackbar({ message: "Login successful.", severity: "success" }));
       navigate(redirectAfterLogin || '/landing');
       dispatch(clearRedirectAfterLogin());
     } catch (err) {
-      // setError('Login failed. Please check your credentials.');
+      dispatch(showSnackbar({ message: "Login failed. Please check your credentials.", severity: "error" }));
     }
   };
 

@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { User } from "../../types/user";
 import { stringToHslColor } from "../../utils/userColors";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 export default function AccountSettings() {
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -17,13 +19,18 @@ export default function AccountSettings() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
   const fetchUser = async () => {
     if (!username) return;
     
-    const userResponse = await getCurrentUser();
-    if (userResponse) {
-      setUser(userResponse);
+    try {
+      const userResponse = await getCurrentUser();
+      if (userResponse) {
+        setUser(userResponse);
+      }
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to fetch user data.", severity: "error" }));
     }
   }
 
@@ -42,7 +49,7 @@ export default function AccountSettings() {
       const data = await saveUserPicture(formData);
       setUser(data);
     } catch (err) {
-      console.error('Upload failed:', err);
+      dispatch(showSnackbar({ message: "Image upload failed.", severity: "error" }));
     } finally {
       setUploading(false);
     }

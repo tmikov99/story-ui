@@ -15,11 +15,10 @@ import { styled } from '@mui/material/styles';
 import ColorModeSelect from '../../theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../CustomIcons';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { login, register } from '../../api/auth';
+import { register } from '../../api/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { clearRedirectAfterLogin, loginSuccess } from '../../redux/authSlice';
-
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -72,7 +71,6 @@ export default function SignUp() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-  const redirectAfterLogin = useSelector((state: RootState) => state.auth.redirectAfterLogin);
 
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
@@ -133,7 +131,9 @@ export default function SignUp() {
       } else {
         navigate('/check-email');
       }
-    } catch (err) {console.error(err)}
+    } catch (err) {
+      dispatch(showSnackbar({ message: "Register failed. Please check your credentials.", severity: "error" }));
+    }
   };
 
   return (

@@ -4,9 +4,12 @@ import { StoryFormData } from '../../types/story';
 import StoryForm from './StoryForm';
 import { fetchStory, updateStory } from '../../api/story';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 export default function StoryEdit() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {storyId} = useParams();
   const [story, setStory] = useState<StoryFormData>({
     title: '',
@@ -33,15 +36,19 @@ export default function StoryEdit() {
   }
 
   const getOriginalStory = async (storyId: number) => {
-    const originalStory = await fetchStory(storyId);
-    setStory({
-      title: originalStory.title,
-      genres: originalStory.genres,
-      tags: originalStory.tags,
-      description: originalStory.description,
-      coverImageUrl: originalStory.coverImageUrl,
-      status: originalStory.status,
-    });
+    try {
+      const originalStory = await fetchStory(storyId);
+      setStory({
+        title: originalStory.title,
+        genres: originalStory.genres,
+        tags: originalStory.tags,
+        description: originalStory.description,
+        coverImageUrl: originalStory.coverImageUrl,
+        status: originalStory.status,
+      });
+    } catch (error) {
+      dispatch(showSnackbar({ message: "Failed to fetch story.", severity: "error" }));
+    }
   }
 
   useEffect(() => {

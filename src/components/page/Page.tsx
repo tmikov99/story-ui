@@ -6,11 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { PageData } from "../../types/page";
 import { chooseNextPage, fetchPlaythroughCurrentPage } from "../../api/playthrough";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 export default function Page() {
     const { playthroughId } = useParams();
     const numericPlaythroughId = Number(playthroughId); //TODO: finally research this
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [page, setPage] = useState<PageData | null>(null);
 
     useEffect(() => {
@@ -19,7 +22,7 @@ export default function Page() {
                 setPage(page);
             })
         } catch (error) {
-            console.error("Failed to fetch playthrough current page", error);
+            dispatch(showSnackbar({ message: "Failed to fetch playthrough current page", severity: "error" }));
         }
     },[playthroughId]);
 
@@ -28,7 +31,7 @@ export default function Page() {
             const nextPage = await chooseNextPage(numericPlaythroughId, targetPage);
             setPage(nextPage);
         } catch (error) {
-            console.error("Failed to make choice", error);
+            dispatch(showSnackbar({ message: "Failed to make choice.", severity: "error" }));
         }
     }
 

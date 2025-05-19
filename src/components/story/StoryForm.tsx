@@ -13,6 +13,8 @@ import { StoryFormData } from "../../types/story";
 import { fetchGenres } from "../../api/story";
 import UploadThumbnail from "./UploadThumbnail";
 import { getGenreLabel } from "../../utils/genreUtil";
+import { useDispatch } from "react-redux";
+import { showSnackbar } from "../../redux/snackbarSlice";
 
 const availableTags = ["Magic", "Time Travel", "Space", "War", "Friendship"];
 
@@ -37,6 +39,7 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (initialData?.coverImageUrl) {
@@ -57,7 +60,9 @@ export default function StoryForm({ onSubmit, onCancel, initialData, error }: Pr
   useEffect(() => {
     fetchGenres().then((genres) => {
       setAvailableGenres(genres);
-    });
+    }).catch(() => {
+      dispatch(showSnackbar({ message: "Error fetching genres.", severity: "error" }));
+    })
   }, []);
 
   useEffect(() => {

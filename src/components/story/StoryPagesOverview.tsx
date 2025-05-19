@@ -7,10 +7,13 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useEffect, useState } from 'react';
 import { fetchPagesByStory } from '../../api/page';
 import { Button } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 export default function StoryPagesOverview() {
   const { storyId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [pages, setPages] = useState([]);
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export default function StoryPagesOverview() {
         const response = await fetchPagesByStory(Number(storyId));
         setPages(response);
       } catch (err) {
-        console.error("Failed to fetch pages:", err);
+        dispatch(showSnackbar({ message: "Failed to fetch pages.", severity: "error" }));
       }
     };
 

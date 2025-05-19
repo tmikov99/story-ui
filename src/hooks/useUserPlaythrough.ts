@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { PlaythroughData } from "../types/playthrough";
 import { getLocalData, setLocalData, removeLocalData } from "../utils/storage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { deletePlaythrough, fetchPlaythroughs, startPlaythrough } from "../api/playthrough";
+import { showSnackbar } from "../redux/snackbarSlice";
 
 const buildKey = (storyId: number) => `playthrough-${storyId}`;
 
@@ -11,6 +12,7 @@ export const useUserPlaythrough = (storyId: number) => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const [playthroughs, setPlaythroughs] = useState<PlaythroughData[]>([]);
   const [currentPlaythrough, setCurrentPlaythrough] = useState<PlaythroughData | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +22,7 @@ export const useUserPlaythrough = (storyId: number) => {
           setPlaythroughs(data);
           setCurrentPlaythrough(data.find(p => p.active) || null);
         } catch (error) {
-          console.error("Failed to fetch playthroughs from API", error);
+          dispatch(showSnackbar({ message: "Failed to fetch playthroughs.", severity: "error" }));
         }
       } else {
         const local = getLocalData<PlaythroughData>(buildKey(storyId));
@@ -84,7 +86,7 @@ export const useUserPlaythrough = (storyId: number) => {
       setCurrentPlaythrough(newPlay);
       return newPlay;
     } catch (error) {
-      console.error("Failed to start new playthrough", error);
+      dispatch(showSnackbar({ message: "Failed to start new playthrough.", severity: "error" }));
     }
   };
 
@@ -123,7 +125,7 @@ export const useUserPlaythrough = (storyId: number) => {
         setCurrentPlaythrough(null);
       }
     } catch (error) {
-      console.error("Failed to delete playthrough", error);
+      dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
     }
   };
 
