@@ -16,7 +16,6 @@ import { FetchParams } from '../../api/story';
 interface MainGridProps {
   fetchMethod: (params?: FetchParams) => Promise<PaginatedResponse<StoryData>>;
   title: string;
-  showActions: boolean;
   showSort?: boolean;
   placeholderText?: string;
 }
@@ -26,7 +25,7 @@ export type SortField = typeof allowedSortFields[number];
 
 const PAGE_SIZE = 12;
 
-export default function MainGrid({fetchMethod, title, showActions, showSort = true, placeholderText}: MainGridProps) {
+export default function MainGrid({fetchMethod, title, showSort = true, placeholderText}: MainGridProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [stories, setStories] = useState<StoryData[]>([]);
@@ -127,7 +126,7 @@ export default function MainGrid({fetchMethod, title, showActions, showSort = tr
         >
           {stories.map((story, index) => (
             <Grid key={index} size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-                <StoryCard storyData={story} showActions={showActions} onClick={(story) => navigate(`/story/${story.id}`)}/>
+                <StoryCard storyData={story} onClick={(story) => navigate(`/story/${story.id}`)}/>
             </Grid>
           ))}
         </Grid>

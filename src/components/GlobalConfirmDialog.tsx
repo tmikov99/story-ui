@@ -1,37 +1,32 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { hideConfirmDialog } from "../redux/uiSlice";
 
-export default function GlobalConfirmDialog() {
-  const dispatch = useDispatch();
-  const { open, message, title, confirmText, cancelText, onConfirm } = useSelector(
-    (state: RootState) => state.ui.confirmDialog
-  );
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  message: string;
+  title?: string;
+  confirmText?: string;
+  cancelText?: string;
+};
 
+export default function GlobalConfirmDialog({
+  open,
+  onClose,
+  onConfirm,
+  message,
+  title,
+  confirmText,
+  cancelText,
+}: Props) {
   return (
-    <Dialog open={open} onClose={() => dispatch(hideConfirmDialog())}>
-      <DialogTitle>{title || 'Are you sure?'}</DialogTitle>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>{title || "Are you sure?"}</DialogTitle>
       <DialogContent>{message}</DialogContent>
       <DialogActions>
-        <Button onClick={() => dispatch(hideConfirmDialog())}>
-          {cancelText || 'Cancel'}
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          onClick={async () => {
-            dispatch(hideConfirmDialog());
-            if (onConfirm) {
-              try {
-                await onConfirm();
-              } catch (err) {
-                console.error("Confirm action failed:", err);
-              }
-            }
-          }}
-        >
-          {confirmText || 'Confirm'}
+        <Button onClick={onClose}>{cancelText || "Cancel"}</Button>
+        <Button variant="outlined" color="error" onClick={onConfirm}>
+          {confirmText || "Confirm"}
         </Button>
       </DialogActions>
     </Dialog>

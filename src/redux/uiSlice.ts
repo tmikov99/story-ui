@@ -6,23 +6,12 @@ type SnackbarState = {
   open: boolean;
 };
 
-type ConfirmDialogState = {
-  open: boolean;
-  message: string;
-  title?: string;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm?: () => void;
-};
-
 type UIState = {
   snackbar: SnackbarState;
-  confirmDialog: ConfirmDialogState;
 };
 
 const initialState: UIState = {
   snackbar: { message: '', open: false },
-  confirmDialog: { open: false, message: '' },
 };
 
 const uiSlice = createSlice({
@@ -35,20 +24,12 @@ const uiSlice = createSlice({
     hideSnackbar: (state) => {
       state.snackbar.open = false;
     },
-    showConfirmDialog: (state, action: PayloadAction<ConfirmDialogState>) => {
-      state.confirmDialog = { ...action.payload };
-    },
-    hideConfirmDialog: (state) => {
-      state.confirmDialog.open = false;
-    },
   },
 });
 
 export const {
   showSnackbar,
   hideSnackbar,
-  showConfirmDialog,
-  hideConfirmDialog,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

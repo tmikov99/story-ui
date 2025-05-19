@@ -31,10 +31,10 @@ import ErrorIcon from '@mui/icons-material/Error';
 import OwnedEmptyState from './components/emptyState/OwnedEmptyState';
 import CommentHistoryPage from './components/comment/CommentHistoryPage';
 import CommentHistoryEmptyState from './components/emptyState/CommentHistoryEmptyState';
-import GlobalConfirmDialog from './components/GlobalConfirmDialog';
 import GlobalSnackbar from './components/GlobalSnackbar';
 import ResetPassword from './components/user/ResetPassword';
 import CheckEmail from './components/user/CheckEmail';
+import { ConfirmDialogProvider } from './hooks/ConfirmDialogProvider';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -58,12 +58,11 @@ function App() {
               element={
                 <MainGrid 
                   title="Browse" 
-                  fetchMethod={fetchStories} 
-                  showActions={true}
+                  fetchMethod={fetchStories}
                 />
               }
             />
-            <Route path="/trending" element={<MainGrid title="Trending" fetchMethod={fetchTrending} showActions={true} showSort={false} />} /> 
+            <Route path="/trending" element={<MainGrid title="Trending" fetchMethod={fetchTrending} showSort={false} />} /> 
             <Route path="/playthrough/:playthroughId" element={<Page />}/>
             <Route path="/story/:id" element={<StoryPage />} />
             <Route path="/landing" element={<HomePage />} />
@@ -72,7 +71,7 @@ function App() {
               path="/favorite" 
               element={ 
                 isAuthenticated ? (
-                  <MainGrid title="Favorite Stories" fetchMethod={ fetchFavorite } showActions={false} /> 
+                  <MainGrid title="Favorite Stories" fetchMethod={ fetchFavorite } /> 
                 ) : (
                   <FavoriteEmptyState />
                 )
@@ -82,7 +81,7 @@ function App() {
               path="/liked" 
               element={
                 isAuthenticated ? (
-                  <MainGrid title="Liked Stories" fetchMethod={fetchLiked} showActions={false} />
+                  <MainGrid title="Liked Stories" fetchMethod={fetchLiked} />
                 ) : (
                   <LikedEmptyState />
                 )
@@ -92,7 +91,7 @@ function App() {
               path="created"
               element={
                 isAuthenticated ? (
-                  <MainGrid title="My Stories" fetchMethod={fetchUserStories} showActions={true} />
+                  <MainGrid title="My Stories" fetchMethod={fetchUserStories} />
                 ) : (
                   <OwnedEmptyState />
                 )
@@ -128,22 +127,23 @@ function App() {
         </Stack>
       </Box>
       <GlobalSnackbar />
-      <GlobalConfirmDialog />
     </Box>
   </>
 
   return (
     <AppTheme>
       <CssBaseline enableColorScheme />
-      <BrowserRouter>
-          <Routes>
-            {!isAuthenticated && <Route path="/signIn" element={<SignIn />} />}
-            {!isAuthenticated && <Route path="/signUp" element={<SignUp />} />}
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/check-email" element={<CheckEmail />} />
-            <Route path="*" element={nonAuthContent} />
-          </Routes>        
-      </BrowserRouter>
+      <ConfirmDialogProvider>
+        <BrowserRouter>
+            <Routes>
+              {!isAuthenticated && <Route path="/signIn" element={<SignIn />} />}
+              {!isAuthenticated && <Route path="/signUp" element={<SignUp />} />}
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/check-email" element={<CheckEmail />} />
+              <Route path="*" element={nonAuthContent} />
+            </Routes>        
+        </BrowserRouter>
+      </ConfirmDialogProvider>
     </AppTheme>
   )
 }
