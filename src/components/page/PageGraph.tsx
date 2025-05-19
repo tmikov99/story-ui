@@ -276,19 +276,20 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
     if (!menuTargetPage || !menuTargetPage.id) return;
 
     const pageIdToDelete = menuTargetPage.pageNumber.toString();
-
-    setNodes((prevNodes) => prevNodes.filter((node) => node.id !== pageIdToDelete));
-
-    setEdges((prevEdges) =>
-      prevEdges.filter(
-        (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
-      )
-    );
+    
 
     try {
       await deletePage(menuTargetPage.id);
-    } catch (error) {
-      dispatch(showSnackbar({ message: "Failed to delete page.", severity: "error" }));
+      setNodes((prevNodes) => prevNodes.filter((node) => node.id !== pageIdToDelete));
+
+      setEdges((prevEdges) =>
+        prevEdges.filter(
+          (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
+        )
+      );
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.message || "Failed to delete page.";
+      dispatch(showSnackbar({ message: errorMsg, severity: "error" }));
     }
 
     handleMenuClose();
