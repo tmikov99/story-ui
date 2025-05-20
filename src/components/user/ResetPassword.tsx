@@ -2,7 +2,6 @@ import { styled, Stack, Typography, Box, FormControl, FormLabel, TextField, Butt
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../api/auth";
-import { SitemarkIcon } from "../CustomIcons";
 import MuiCard from '@mui/material/Card';
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -58,7 +57,6 @@ export default function ResetPassword() {
   return (
     <ResetContainer>
       <Card variant="outlined">
-        <SitemarkIcon />
         <Typography component="h1" variant="h5">
           Reset Password
         </Typography>
