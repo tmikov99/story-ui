@@ -214,6 +214,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
     
         setIsAddPageDialogOpen(false);
         setNewPageTitle("");
+        dispatch(showSnackbar({ message: "Page created.", severity: "success" }));
       } catch (err) {
         dispatch(showSnackbar({ message: "Failed to create page.", severity: "error" }));
       }
@@ -287,6 +288,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
           (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
         )
       );
+      dispatch(showSnackbar({ message: "Page deleted.", severity: "success" }));
     } catch (error: any) {
       const errorMsg = error?.response?.data?.message || "Failed to delete page.";
       dispatch(showSnackbar({ message: errorMsg, severity: "error" }));
@@ -300,6 +302,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
     try {
       await updateStartPageNumber(storyId, menuTargetPage.pageNumber);
       setRootPageNumber(menuTargetPage.pageNumber);
+      dispatch(showSnackbar({ message: "Start page updated.", severity: "success" }));
     } catch (err) {
       dispatch(showSnackbar({ message: "Failed to set start page.", severity: "error" }));
     }

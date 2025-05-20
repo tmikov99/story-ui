@@ -82,8 +82,7 @@ export const useUserPlaythrough = (storyId: number) => {
 
     try {
       const newPlay = await startPlaythrough(storyId);
-      setPlaythroughs(prev => [...prev, newPlay]);
-      setCurrentPlaythrough(newPlay);
+      dispatch(showSnackbar({ message: "New playthrough started.", severity: "success" }));
       return newPlay;
     } catch (error) {
       dispatch(showSnackbar({ message: "Failed to start new playthrough.", severity: "error" }));
@@ -124,6 +123,7 @@ export const useUserPlaythrough = (storyId: number) => {
       if (currentPlaythrough?.id === id) {
         setCurrentPlaythrough(null);
       }
+      dispatch(showSnackbar({ message: "Playthrough deleted.", severity: "success" }));
     } catch (error) {
       dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
     }

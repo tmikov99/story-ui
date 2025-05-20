@@ -56,6 +56,7 @@ export default function HistoryPage() {
     try {
       await deletePlaythrough(playthroughId);
       setHistory(prev => prev.filter(p => p.id !== playthroughId));
+      dispatch(showSnackbar({ message: "Playthrough deleted.", severity: "success" }));
     } catch (error) {
       dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
     }

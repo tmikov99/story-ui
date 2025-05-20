@@ -128,7 +128,7 @@ export default function StoryCard({ storyData, onClick }: StoryCardProps) {
     try {
       const publishResponse = await publishStory(story.id);
       setStory(publishResponse);
-      dispatch(showSnackbar({ message: "Story published successfully.", severity: "success" }));
+      dispatch(showSnackbar({ message: "Story published.", severity: "success" }));
     } catch (error) {
       dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
     }

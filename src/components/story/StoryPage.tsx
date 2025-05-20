@@ -117,13 +117,15 @@ export default function StoryPage() {
       console.log("Missing Story Error")
       return;
     }
-    try {
-      const newStory = await copyStoryDraft(story.id);
-      navigate(`/story/${newStory.id}`);
-      dispatch(showSnackbar({ message: "Draft created successfully.", severity: "success" }));
-    } catch (err) {
-      dispatch(showSnackbar({ message: "Failed to create draft.", severity: "error" }));
-    }
+    askConfirmation("Create draft? Story properties and pages will be copied to a separate new story draft.", async () => {
+      try {
+        const newStory = await copyStoryDraft(story.id);
+        navigate(`/story/${newStory.id}`);
+        dispatch(showSnackbar({ message: "Draft created.", severity: "success" }));
+      } catch (err) {
+        dispatch(showSnackbar({ message: "Failed to create draft.", severity: "error" }));
+      }
+    });
   }
 
   const handleEditPages = () => {
@@ -139,7 +141,7 @@ export default function StoryPage() {
     askConfirmation("Are you sure you want to delete this story? This action cannot be undone.", async () => {
       try {
         await deleteStory(story.id);
-        dispatch(showSnackbar({ message: "Story deleted successfully!", severity: "success" }));
+        dispatch(showSnackbar({ message: "Story deleted.", severity: "success" }));
         navigate("/created");
       } catch (error) {
         dispatch(showSnackbar({ message: "Failed to delete story.", severity: "error" }));
@@ -169,12 +171,15 @@ export default function StoryPage() {
   }
 
   const handleCommentDelete = async (commentId: number) => {
-    try {
-      await deleteComment(commentId);
-      setComments(prev => prev.filter(comment => comment.id !== commentId));
-    } catch (error) {
-      dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
-    }
+    askConfirmation("Delete comment? It will be permanently deleted.", async () => {
+      try {
+        await deleteComment(commentId);
+        setComments(prev => prev.filter(comment => comment.id !== commentId));
+        dispatch(showSnackbar({ message: "Comment deleted.", severity: "success" }));
+      } catch (error) {
+        dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
+      }
+    });
   };
 
   const handleArchive = () => {
@@ -182,7 +187,7 @@ export default function StoryPage() {
       try {
         const archiveResponse = await archiveStory(storyId);
         setStory(archiveResponse);
-        dispatch(showSnackbar({ message: "Story archived successfully!", severity: "success" }));
+        dispatch(showSnackbar({ message: "Story archived.", severity: "success" }));
       } catch (error) {
         dispatch(showSnackbar({ message: "Failed to archive story.", severity: "error" }));
       }
@@ -190,19 +195,21 @@ export default function StoryPage() {
   };
 
 const handlePublish = async () => {
-  try {
-    const publishResponse = await publishStory(storyId);
-    setStory(publishResponse);
-    setValidationErrors(null);
-    dispatch(showSnackbar({ message: "Story published successfully.", severity: "success" }));
-  } catch (error: any) {
-    const errData = error?.response?.data as ValidationErrorResponse;
-    if (error?.response?.status === 400 && errData?.errors) {
-      setValidationErrors(errData.errors);
-    } else {
-      dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
+  askConfirmation("Publish this story? It will be publicly visible.", async () => {
+    try {
+      const publishResponse = await publishStory(storyId);
+      setStory(publishResponse);
+      setValidationErrors(null);
+      dispatch(showSnackbar({ message: "Story published.", severity: "success" }));
+    } catch (error: any) {
+      const errData = error?.response?.data as ValidationErrorResponse;
+      if (error?.response?.status === 400 && errData?.errors) {
+        setValidationErrors(errData.errors);
+      } else {
+        dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
+      }
     }
-  }
+  });
 };
 
   const handleLoadPlaythrough = (playthroughId: number | undefined) => {
