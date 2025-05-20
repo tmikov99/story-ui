@@ -24,6 +24,7 @@ import { nodeTypes } from "../../utils/reactFlowUtil";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
+import { useConfirmDialog } from "../../hooks/ConfirmDialogProvider";
 
 interface PageGraphProps {
   pages: PageDataNode[];
@@ -81,6 +82,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   const [editingPageNumber, setEditingPageNumber] = useState<number | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { showConfirm } = useConfirmDialog();
 
   useEffect(() => {
     setNodes((prevNodes) =>
@@ -274,27 +276,28 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   }
 
   const handleDeletePage = async () => {
-    if (!menuTargetPage || !menuTargetPage.id) return;
+    showConfirm({title: "Delete page", message: "Delete this page permanently?"}, async () => {
+      if (!menuTargetPage || !menuTargetPage.id) return;
 
-    const pageIdToDelete = menuTargetPage.pageNumber.toString();
+      const pageIdToDelete = menuTargetPage.pageNumber.toString();
     
+      try {
+        await deletePage(menuTargetPage.id);
+        setNodes((prevNodes) => prevNodes.filter((node) => node.id !== pageIdToDelete));
 
-    try {
-      await deletePage(menuTargetPage.id);
-      setNodes((prevNodes) => prevNodes.filter((node) => node.id !== pageIdToDelete));
+        setEdges((prevEdges) =>
+          prevEdges.filter(
+            (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
+          )
+        );
+        dispatch(showSnackbar({ message: "Page deleted.", severity: "success" }));
+      } catch (error: any) {
+        const errorMsg = error?.response?.data?.message || "Failed to delete page.";
+        dispatch(showSnackbar({ message: errorMsg, severity: "error" }));
+      }
 
-      setEdges((prevEdges) =>
-        prevEdges.filter(
-          (edge) => edge.source !== pageIdToDelete && edge.target !== pageIdToDelete
-        )
-      );
-      dispatch(showSnackbar({ message: "Page deleted.", severity: "success" }));
-    } catch (error: any) {
-      const errorMsg = error?.response?.data?.message || "Failed to delete page.";
-      dispatch(showSnackbar({ message: errorMsg, severity: "error" }));
-    }
-
-    handleMenuClose();
+      handleMenuClose();
+    });
   }
 
   const handleSetAsStartPage = async () => {

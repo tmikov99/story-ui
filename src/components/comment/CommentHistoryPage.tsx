@@ -9,6 +9,7 @@ import CommentBlock from "./CommentBlock";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
+import { useConfirmDialog } from "../../hooks/ConfirmDialogProvider";
 
 const HistoryCommentCard = styled(Card)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -29,6 +30,7 @@ export default function CommentHistoryPage() {
   const [totalPages, setTotalPages] = useState(0);
   const pageParam = parseInt(searchParams.get('page') || '1', 10);
   const page = pageParam - 1;
+  const { showConfirm } = useConfirmDialog();
 
   useEffect(() => {
     fetchUserComments({ page, size: PAGE_SIZE })
@@ -60,13 +62,15 @@ export default function CommentHistoryPage() {
 
   const handleCommentDelete = async (event: React.MouseEvent<HTMLElement>, commentId: number) => {
     event.stopPropagation();
-    try {
-      await deleteComment(commentId);
-      setComments(prev => prev.filter(comment => comment.id !== commentId));
-      dispatch(showSnackbar({ message: "Comment deleted.", severity: "success" }));
-    } catch (error) {
-      dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
-    }
+    showConfirm({title: "Delete comment", message: "Delete your comment permanently?"}, async () => {
+      try {
+        await deleteComment(commentId);
+        setComments(prev => prev.filter(comment => comment.id !== commentId));
+        dispatch(showSnackbar({ message: "Comment deleted.", severity: "success" }));
+      } catch (error) {
+        dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
+      }
+    });
   };
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
