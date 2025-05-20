@@ -22,7 +22,9 @@ export default function GlobalConfirmDialog({
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title || "Are you sure?"}</DialogTitle>
-      <DialogContent>{message}</DialogContent>
+      <DialogContent style={{ whiteSpace: 'pre-line' }}>
+        {message}
+      </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{cancelText || "Cancel"}</Button>
         <Button variant="outlined" color="error" onClick={onConfirm}>

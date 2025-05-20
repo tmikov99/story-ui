@@ -29,6 +29,8 @@ import { RootState } from '../../redux/store';
 import { Button, Stack } from '@mui/material';
 import NotificationDropdown from '../NotificationDropdown';
 import { stringToHslColor } from '../../utils/userColors';
+import { logoutRequest } from '../../api/auth';
+import { showSnackbar } from '../../redux/snackbarSlice';
 
 const Search = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -118,7 +120,13 @@ export default function AppHeader() {
     navigate('/create');
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutRequest();
+    } catch (err) {
+      dispatch(showSnackbar({ message: "Couldn't log out.", severity: "error" }));
+    }
+
     dispatch(logout());
     navigate('/landing');
     handleMenuClose();

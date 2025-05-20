@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useRef } from "react";
+import { createContext, useContext, useState, useRef, useEffect } from "react";
 import GlobalConfirmDialog from "../components/GlobalConfirmDialog";
+import { registerConfirmDialog } from "../utils/confirmDialogController";
 
 type ConfirmDialogOptions = {
   message: string;
@@ -24,12 +25,22 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<ConfirmDialogOptions>({ message: "" });
   const confirmCallback = useRef<() => void>();
+  const cancelCallback = useRef<() => void>();
 
-  const showConfirm = (opts: ConfirmDialogOptions, onConfirm: () => void) => {
+  const showConfirm = (
+    opts: ConfirmDialogOptions, 
+    onConfirm: () => void,   
+    onCancel?: () => void
+  ) => {
     confirmCallback.current = onConfirm;
+    cancelCallback.current = onCancel;
     setOptions(opts);
     setOpen(true);
   };
+
+  useEffect(() => {
+    registerConfirmDialog(showConfirm);
+  }, []);
 
   const handleConfirm = async () => {
     setOpen(false);
@@ -37,11 +48,22 @@ export const ConfirmDialogProvider: React.FC<{ children: React.ReactNode }> = ({
       confirmCallback.current?.();
     } catch (e) {
       console.error("Error in confirm action:", e);
+    } finally {
+      confirmCallback.current = undefined;
+      cancelCallback.current = undefined;
     }
   };
 
   const handleClose = () => {
     setOpen(false);
+    try {
+      cancelCallback.current?.();
+    } catch (e) {
+      console.error("Error in cancel action:", e);
+    } finally {
+      confirmCallback.current = undefined;
+      cancelCallback.current = undefined;
+    }
   };
 
   return (

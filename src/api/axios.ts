@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { refreshToken } from './auth';
+import { handleSessionExpired, handleSessionRefresh } from '../utils/sessionHelpers';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -23,9 +25,12 @@ const processQueue = (error: any, token: string | null = null) => {
 
 axiosInstance.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token');
-if (token && !config.url?.startsWith('/auth/refresh')) {
-  config.headers.Authorization = `Bearer ${token}`;
-}
+
+  const isAuthEndpoint = config.url?.startsWith('/auth/refresh') || config.url?.startsWith('/auth/logout');
+
+  if (token && !isAuthEndpoint) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
@@ -47,22 +52,16 @@ axiosInstance.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
-
       try {
-        const res = await axiosInstance.get(
-          "/auth/refresh",
-        );
-        const newAccessToken = res.data.token;
-
-        sessionStorage.setItem("token", newAccessToken);
-        processQueue(null, newAccessToken);
-
-        return axiosInstance(originalRequest);
+        const res = await refreshToken();
+        return handleSessionRefresh(res).then(() => {
+          processQueue(null, res.token);
+          originalRequest.headers["Authorization"] = `Bearer ${res.token}`;
+          return axiosInstance(originalRequest);
+        });
       } catch (err) {
         processQueue(err, null);
-        sessionStorage.removeItem("token");
-        window.location.href = "/login";
-        return Promise.reject(err);
+        return handleSessionExpired();
       } finally {
         isRefreshing = false;
       }
