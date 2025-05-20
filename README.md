@@ -1,41 +1,99 @@
-# Choose your own adventure creation and sharing platform
+# 📚 Choose Your Own Adventure Platform
 
-![demo screenshot 1](/public/assets/screenshots/Screenshot%201.png)
-![demo screenshot 2](/public/assets/screenshots/Screenshot%202.png)
-![demo screenshot 3](/public/assets/screenshots/Screenshot%203.png)
-![demo screenshot 4](/public/assets/screenshots/Screenshot%204.png)
-![demo screenshot 5](/public/assets/screenshots/Screenshot%205.png)
-![demo screenshot 6](/public/assets/screenshots/Screenshot%206.png)
-![demo screenshot 7](/public/assets/screenshots/Screenshot%207.png)
-![demo screenshot 8](/public/assets/screenshots/Screenshot%208.png)
-![demo screenshot 9](/public/assets/screenshots/Screenshot%209.png)
-![demo screenshot 10](/public/assets/screenshots/Screenshot%2010.png)
-![demo screenshot 11](/public/assets/screenshots/Screenshot%2011.png)
-![demo screenshot 12](/public/assets/screenshots/Screenshot%2012.png)
-![demo screenshot 13](/public/assets/screenshots/Screenshot%2013.png)
-![demo screenshot 14](/public/assets/screenshots/Screenshot%2014.png)
-![demo screenshot 15](/public/assets/screenshots/Screenshot%2015.png)
-![demo screenshot 16](/public/assets/screenshots/Screenshot%2016.png)
-![demo screenshot 17](/public/assets/screenshots/Screenshot%2017.png)
-![demo screenshot 18](/public/assets/screenshots/Screenshot%2018.png)
-![demo screenshot 19](/public/assets/screenshots/Screenshot%2019.png)
-![demo screenshot 20](/public/assets/screenshots/Screenshot%2020.png)
-![demo screenshot 21](/public/assets/screenshots/Screenshot%2021.png)
-![demo screenshot 22](/public/assets/screenshots/Screenshot%2022.png)
-![demo screenshot 23](/public/assets/screenshots/Screenshot%2023.png)
-![demo screenshot 24](/public/assets/screenshots/Screenshot%2024.png)
-![demo screenshot 25](/public/assets/screenshots/Screenshot%2025.png)
-![demo screenshot 26](/public/assets/screenshots/Screenshot%2026.png)
-![demo screenshot 27](/public/assets/screenshots/Screenshot%2027.png)
-![demo screenshot 28](/public/assets/screenshots/Screenshot%2028.png)
-![demo screenshot 29](/public/assets/screenshots/Screenshot%2029.png)
-![demo screenshot 30](/public/assets/screenshots/Screenshot%2030.png)
-![demo screenshot 31](/public/assets/screenshots/Screenshot%2031.png)
-![demo screenshot 32](/public/assets/screenshots/Screenshot%2032.png)
-![demo screenshot 33](/public/assets/screenshots/Screenshot%2033.png)
-![demo screenshot 34](/public/assets/screenshots/Screenshot%2034.png)
-![demo screenshot 35](/public/assets/screenshots/Screenshot%2035.png)
-![demo screenshot 36](/public/assets/screenshots/Screenshot%2036.png)
-![demo screenshot 37](/public/assets/screenshots/Screenshot%2037.png)
-![demo screenshot 38](/public/assets/screenshots/Screenshot%2038.png)
-![demo screenshot 39](/public/assets/screenshots/Screenshot%2039.png)
+A web-based platform for creating, publishing, and exploring interactive "choose your own adventure"-style stories.
+
+---
+
+## 🚀 Features
+
+- ✍️ Intuitive story creation interface
+- 📖 Publish and share your adventures
+- 🔍 Browse and read user-generated stories
+
+---
+
+## 🖼️ UI Preview
+
+### 🔧 Story Builder
+Build branching narratives with an easy-to-use editor.
+
+![Story Editor](/public/assets/screenshots/Screenshot%201.png)
+![Path Configuration](/public/assets/screenshots/Screenshot%203.png)
+
+---
+
+### 📖 Story Viewer
+Experience adventures as a reader.
+
+![Story Start](/public/assets/screenshots/Screenshot%205.png)
+![Choices Example](/public/assets/screenshots/Screenshot%206.png)
+
+---
+
+### 🗂️ Browse & Discover
+Find published adventures from other users.
+
+![Story List](/public/assets/screenshots/Screenshot%208.png)
+![Story Details](/public/assets/screenshots/Screenshot%2010.png)
+
+---
+
+### 👤 User Dashboard
+Manage your created stories.
+
+![User Dashboard](/public/assets/screenshots/Screenshot%2012.png)
+![Edit Story](/public/assets/screenshots/Screenshot%2014.png)
+
+---
+
+## 📸 Full Gallery
+
+> Expand this section if you'd like to showcase **all screenshots**.
+
+<details>
+  <summary>Click to expand all screenshots (39)</summary>
+
+![1](/public/assets/screenshots/Screenshot%201.png)
+![2](/public/assets/screenshots/Screenshot%202.png)
+...
+![39](/public/assets/screenshots/Screenshot%2039.png)
+
+</details>
+
+---
+
+## 🛠️ Tech Stack
+
+See [API README](https://github.com/tmikov99/story-app/blob/main/README.md) for full backend details.
+
+**Frontend**:  
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+
+**Design & UI Framework**:  
+![MUI](https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=mui&logoColor=white)  
+(`@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/icons-material`, `@mui/x-charts`)
+
+**State Management**:  
+![Redux Toolkit](https://img.shields.io/badge/Redux_Toolkit-593D88?style=for-the-badge&logo=redux&logoColor=white)  
+(`@reduxjs/toolkit`, `react-redux`)
+
+**Routing**:  
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)  
+(`react-router-dom`)
+
+**Others**:  
+![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white&style=for-the-badge)
+![Firebase Badge](https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=white&style=for-the-badge)
+![xyflow](https://img.shields.io/badge/xyflow-1A192B?logo=xyflow&logoColor=white&style=for-the-badge)
+
+---
+
+## 📦 Getting Started
+
+Instructions for running the UI locally.
+
+```bash
+npm install
+npm run dev

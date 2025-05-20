@@ -63,6 +63,7 @@ export default function CommentHistoryPage() {
     try {
       await deleteComment(commentId);
       setComments(prev => prev.filter(comment => comment.id !== commentId));
+      dispatch(showSnackbar({ message: "Comment deleted.", severity: "success" }));
     } catch (error) {
       dispatch(showSnackbar({ message: "Failed to delete comment.", severity: "error" }));
     }

@@ -48,6 +48,7 @@ export default function AccountSettings() {
     try {
       const data = await saveUserPicture(formData);
       setUser(data);
+      dispatch(showSnackbar({ message: "Profile picture updated.", severity: "success" }));
     } catch (err) {
       dispatch(showSnackbar({ message: "Image upload failed.", severity: "error" }));
     } finally {

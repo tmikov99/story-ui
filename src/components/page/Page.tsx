@@ -37,15 +37,13 @@ export default function Page() {
 
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-        {page && 
-            <Button 
-                variant="outlined"
-                onClick={() => navigate(`/story/${page.storyId}`)}
-                sx={{ mb: 2 }}
-            >
-                Back to Story
-            </Button>
-        }
+        <Button 
+            variant="outlined"
+            onClick={() => { page && navigate(`/story/${page.storyId}`)}}
+            sx={{ mb: 2 }}
+        >
+            Back to Story
+        </Button>
         <Paper 
             elevation={3}
             sx={{
