@@ -1,9 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
@@ -12,13 +10,12 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import ColorModeSelect from '../../theme/ColorModeSelect';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from '../CustomIcons';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { register } from '../../api/auth';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
 import { showSnackbar } from '../../redux/snackbarSlice';
+import ColorModeIconDropdown from '../../theme/ColorModeIconDropdown';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -97,9 +94,9 @@ export default function SignUp() {
       setPasswordErrorMessage('');
     }
 
-    if (!name.value || name.value.length < 1) {
+    if (!name.value || name.value.length < 3) {
       setNameError(true);
-      setNameErrorMessage('Name is required.');
+      setNameErrorMessage('Username must be at least 3 characters long.');
       isValid = false;
     } else {
       setNameError(false);
@@ -131,119 +128,106 @@ export default function SignUp() {
       } else {
         navigate('/check-email');
       }
-    } catch (err) {
+    } catch (err: any) {
+      //TODO: Add error codes to differentiate and handle @Valid fields
+      if (err.response?.data === "Username already exists! Choose a different one.") {
+        setNameError(true);
+        setNameErrorMessage(err.response?.data);
+      }
+      if (err.response?.data === "Email already in use!") {
+        setEmailError(true);
+        setEmailErrorMessage(err.response?.data);
+      }
       dispatch(showSnackbar({ message: "Register failed. Please check your credentials.", severity: "error" }));
     }
   };
 
   return (
-      <SignUpContainer direction="column" justifyContent="space-between">
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
-        <Card variant="outlined">
-          <SitemarkIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+    <SignUpContainer direction="column" justifyContent="space-between">
+      <ColorModeIconDropdown sx={{ position: 'fixed', top: '1rem', right: '1rem' }}/>
+      <Card variant="outlined">
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+        >
+          Sign up
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          <FormControl>
+            <FormLabel htmlFor="name">Full name</FormLabel>
+            <TextField
+              autoComplete="name"
+              name="name"
+              required
+              fullWidth
+              id="name"
+              placeholder="Jon Snow"
+              error={nameError}
+              helperText={nameErrorMessage}
+              color={nameError ? 'error' : 'primary'}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel htmlFor="email">Email</FormLabel>
+            <TextField
+              required
+              fullWidth
+              id="email"
+              placeholder="your@email.com"
+              name="email"
+              autoComplete="email"
+              variant="outlined"
+              error={emailError}
+              helperText={emailErrorMessage}
+              color={passwordError ? 'error' : 'primary'}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel htmlFor="password">Password</FormLabel>
+            <TextField
+              required
+              fullWidth
+              name="password"
+              placeholder="••••••"
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              variant="outlined"
+              error={passwordError}
+              helperText={passwordErrorMessage}
+              color={passwordError ? 'error' : 'primary'}
+              sx={{mb: 2}}
+            />
+          </FormControl>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            onClick={validateInputs}
           >
             Sign up
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          </Button>
+        </Box>
+        <Divider>
+          <Typography sx={{ color: 'text.secondary' }}>or</Typography>
+        </Divider>
+        <Typography sx={{ textAlign: 'center' }}>
+          Already have an account?{' '}
+          <Link
+            to="/signIn"
+            variant="body2"
+            component={RouterLink}
+            sx={{ alignSelf: 'center' }}
           >
-            <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
-              <TextField
-                autoComplete="name"
-                name="name"
-                required
-                fullWidth
-                id="name"
-                placeholder="Jon Snow"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
-              Sign up
-            </Button>
-          </Box>
-          <Divider>
-            <Typography sx={{ color: 'text.secondary' }}>or</Typography>
-          </Divider>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Google')}
-              startIcon={<GoogleIcon />}
-            >
-              Sign up with Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign up with Facebook')}
-              startIcon={<FacebookIcon />}
-            >
-              Sign up with Facebook
-            </Button>
-            <Typography sx={{ textAlign: 'center' }}>
-              Already have an account?{' '}
-              <Link
-                to="/signIn"
-                variant="body2"
-                component={RouterLink}
-                sx={{ alignSelf: 'center' }}
-              >
-                Sign in
-              </Link>
-            </Typography>
-          </Box>
-        </Card>
-      </SignUpContainer>
+            Sign in
+          </Link>
+        </Typography>
+      </Card>
+    </SignUpContainer>
   );
 }
