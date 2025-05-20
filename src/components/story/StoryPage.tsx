@@ -93,10 +93,6 @@ export default function StoryPage() {
     loadCommentsPage(nextPage);
   };
 
-  const askConfirmation = (message: string, action: () => void) => {
-    showConfirm({ message }, action);
-  };
-
   const handleStartNewPlaythrough = async () => {
     const newPlay = await startNewPlaythrough();
     if (newPlay) {
@@ -117,8 +113,8 @@ export default function StoryPage() {
       console.log("Missing Story Error")
       return;
     }
-    askConfirmation("Create draft? Story properties and pages will be copied to a separate new story draft.", async () => {
-      try {
+      showConfirm({title: "Create draft", message: "Copy properties and pages to a fresh draft?"}, async () => {
+       try {
         const newStory = await copyStoryDraft(story.id);
         navigate(`/story/${newStory.id}`);
         dispatch(showSnackbar({ message: "Draft created.", severity: "success" }));
@@ -138,7 +134,7 @@ export default function StoryPage() {
 
   const handleDeleteStory = () => {
     if (!story) return;
-    askConfirmation("Are you sure you want to delete this story? This action cannot be undone.", async () => {
+    showConfirm({title: "Delete story", message: "Delete this story permanently?"}, async () => {
       try {
         await deleteStory(story.id);
         dispatch(showSnackbar({ message: "Story deleted.", severity: "success" }));
@@ -171,7 +167,7 @@ export default function StoryPage() {
   }
 
   const handleCommentDelete = async (commentId: number) => {
-    askConfirmation("Delete comment? It will be permanently deleted.", async () => {
+    showConfirm({title: "Delete comment", message: "Delete your comment permanently?"}, async () => {
       try {
         await deleteComment(commentId);
         setComments(prev => prev.filter(comment => comment.id !== commentId));
@@ -183,7 +179,7 @@ export default function StoryPage() {
   };
 
   const handleArchive = () => {
-    askConfirmation("Archive this story? It will be hidden from public view.", async () => {
+    showConfirm({title: "Archive story", message: "Archive story? It will be accessible only through direct links"}, async () => {
       try {
         const archiveResponse = await archiveStory(storyId);
         setStory(archiveResponse);
@@ -195,7 +191,7 @@ export default function StoryPage() {
   };
 
 const handlePublish = async () => {
-  askConfirmation("Publish this story? It will be publicly visible.", async () => {
+  showConfirm({title: "Publish story", message: "Make story publicly visible?"}, async () => {
     try {
       const publishResponse = await publishStory(storyId);
       setStory(publishResponse);
@@ -398,7 +394,7 @@ const handlePublish = async () => {
                           variant="outlined"
                           sx={(theme) => ({
                             padding: 1,
-                            borderLeft: p.completed ? `6px solid ${theme.palette.success.main}` : undefined,
+                            borderLeft: p.active ? `6px solid ${theme.palette.info.main}` : p.completed ? `6px solid ${theme.palette.success.main}` : undefined,
                             backgroundColor: p.completed
                               ? theme.palette.success.light
                               : theme.palette.background.paper,

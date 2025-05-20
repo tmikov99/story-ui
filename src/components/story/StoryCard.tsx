@@ -24,6 +24,7 @@ import { stringToHslColor } from '../../utils/userColors';
 import { getGenreLabel } from '../../utils/genreUtil';
 import { useDispatch } from 'react-redux';
 import { showSnackbar } from '../../redux/snackbarSlice';
+import { useConfirmDialog } from '../../hooks/ConfirmDialogProvider';
 
 const SyledCard = styled(Card)(({ theme }) => ({
     display: 'flex',
@@ -82,6 +83,7 @@ export default function StoryCard({ storyData, onClick }: StoryCardProps) {
   const [story, setStory] = useState(storyData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { showConfirm } = useConfirmDialog();
 
   useEffect(() => {
     setStory(storyData);
@@ -125,13 +127,15 @@ export default function StoryCard({ storyData, onClick }: StoryCardProps) {
 
   const handlePublish = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    try {
-      const publishResponse = await publishStory(story.id);
-      setStory(publishResponse);
-      dispatch(showSnackbar({ message: "Story published.", severity: "success" }));
-    } catch (error) {
-      dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
-    }
+    showConfirm({title: "Publish story", message: "Make story publicly visible?"}, async () => {
+      try {
+        const publishResponse = await publishStory(story.id);
+        setStory(publishResponse);
+        dispatch(showSnackbar({ message: "Story published.", severity: "success" }));
+      } catch (error) {
+        dispatch(showSnackbar({ message: "Failed to publish story.", severity: "error" }));
+      }
+    });
   }
 
   return (

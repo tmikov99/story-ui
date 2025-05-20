@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { deletePlaythrough, fetchPlaythroughs, startPlaythrough } from "../api/playthrough";
 import { showSnackbar } from "../redux/snackbarSlice";
+import { useConfirmDialog } from "./ConfirmDialogProvider";
 
 const buildKey = (storyId: number) => `playthrough-${storyId}`;
 
@@ -13,6 +14,7 @@ export const useUserPlaythrough = (storyId: number) => {
   const [playthroughs, setPlaythroughs] = useState<PlaythroughData[]>([]);
   const [currentPlaythrough, setCurrentPlaythrough] = useState<PlaythroughData | null>(null);
   const dispatch = useDispatch();
+  const { showConfirm } = useConfirmDialog();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,29 +37,6 @@ export const useUserPlaythrough = (storyId: number) => {
 
     fetchData();
   }, [storyId]);
-
-  // const savePage = async (pageNumber: number, playthroughId?: number) => {
-  //   if (!isAuthenticated) {
-  //     savePageLocal(pageNumber);
-  //     return;
-  //   }
-
-  //   try {
-  //     const idToUse = playthroughId ?? currentPlaythrough?.id;
-  //     if (!idToUse) {
-  //       console.error("No playthrough to save to");
-  //       return;
-  //     }
-
-  //     const updated = await updatePlaythrough(idToUse, pageNumber);
-  //     setPlaythroughs(prev =>
-  //       prev.map(p => p.id === updated.id ? updated : p)
-  //     );
-  //     setCurrentPlaythrough(updated);
-  //   } catch (error) {
-  //     console.error("Failed to save playthrough", error);
-  //   }
-  // };
 
   const savePageLocal = (pageNumber: number) => {
     const updatedPath = [...(currentPlaythrough?.path || []), pageNumber];
@@ -107,26 +86,28 @@ export const useUserPlaythrough = (storyId: number) => {
   };
 
   const removePlaythrough = async (id: number) => {
-    if (!isAuthenticated) {
-      // Handle local user delete
-      // const updated = playthroughs.filter(p => p.startedAt !== currentPlaythrough?.startedAt);
-      // removeLocalData(buildKey(storyId));
-      // setPlaythroughs([]);
-      // setCurrentPlaythrough(null);
-      // return;
-    }
-
-    try {
-      await deletePlaythrough(id);
-      const updated = playthroughs.filter(p => p.id !== id);
-      setPlaythroughs(updated);
-      if (currentPlaythrough?.id === id) {
-        setCurrentPlaythrough(null);
+    showConfirm({title: "Delete playthrough", message: "Delete this playthrough permanently?"}, async () => {
+      if (!isAuthenticated) {
+        // Handle local user delete
+        // const updated = playthroughs.filter(p => p.startedAt !== currentPlaythrough?.startedAt);
+        // removeLocalData(buildKey(storyId));
+        // setPlaythroughs([]);
+        // setCurrentPlaythrough(null);
+        // return;
       }
-      dispatch(showSnackbar({ message: "Playthrough deleted.", severity: "success" }));
-    } catch (error) {
-      dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
-    }
+
+      try {
+        await deletePlaythrough(id);
+        const updated = playthroughs.filter(p => p.id !== id);
+        setPlaythroughs(updated);
+        if (currentPlaythrough?.id === id) {
+          setCurrentPlaythrough(null);
+        }
+        dispatch(showSnackbar({ message: "Playthrough deleted.", severity: "success" }));
+      } catch (error) {
+        dispatch(showSnackbar({ message: "Failed to delete playthrough.", severity: "error" }));
+      }
+    });
   };
 
   return {
