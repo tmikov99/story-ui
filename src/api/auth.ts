@@ -16,12 +16,12 @@ export const register = async (username: string, email: string, password: string
   return await axios.post('/auth/register', { username, email, password});
 }
 
-export const refreshToken = async () => {
+export const refreshToken = async ():Promise<AuthResponse> => {
   const response = await axios.get('/auth/refresh');
   return response.data;
 };
 
-export const logout = async () => {
+export const logoutRequest = async () => {
   return axios.post('/auth/logout');
 };
 

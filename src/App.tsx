@@ -35,9 +35,27 @@ import GlobalSnackbar from './components/GlobalSnackbar';
 import ResetPassword from './components/user/ResetPassword';
 import CheckEmail from './components/user/CheckEmail';
 import { ConfirmDialogProvider } from './hooks/ConfirmDialogProvider';
+import { useEffect } from 'react';
+import { refreshToken } from './api/auth';
+import { useDispatch } from 'react-redux';
+import { loginSuccess, logout } from './redux/authSlice';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      refreshToken()
+        .then(res => {
+          dispatch(loginSuccess(res));
+        })
+        .catch(() => {
+          dispatch(logout());
+        });
+    }
+  }, []);
 
   const nonAuthContent = <>
     <Box sx={{ display: 'flex' }}>
