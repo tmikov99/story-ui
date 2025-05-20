@@ -4,6 +4,19 @@ import { handleSessionExpired, handleSessionRefresh } from '../utils/sessionHelp
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
+const PUBLIC_ENDPOINTS: { method?: string; pattern: RegExp }[] = [
+  { method: 'GET', pattern: /^\/user\/[^/]+$/ },
+  { method: 'POST', pattern: /^\/user\/forgot-password$/ },
+  { method: 'POST', pattern: /^\/user\/reset-password$/ },
+  { method: 'GET', pattern: /^\/story\/genres$/ },
+  { method: 'GET', pattern: /^\/comments\/story\/[^/]+$/ },
+  { method: 'POST', pattern: /^\/auth\/login$/ },
+  { method: 'POST', pattern: /^\/auth\/logout$/ },
+  { method: 'POST', pattern: /^\/auth\/register$/ },
+  { method: 'GET', pattern: /^\/auth\/refresh$/ },
+  { method: 'GET', pattern: /^\/auth\/verify$/ },
+];
+
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
@@ -23,14 +36,21 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
+function isPublicEndpoint(url?: string, method?: string): boolean {
+  if (!url || !method) return false;
+  
+  return PUBLIC_ENDPOINTS.some(({ pattern, method: m }) => {
+    return pattern.test(url) && (!m || m === method.toUpperCase());
+  });
+}
+
 axiosInstance.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token');
 
-  const isAuthEndpoint = config.url?.startsWith('/auth/refresh') || config.url?.startsWith('/auth/logout');
-
-  if (token && !isAuthEndpoint) {
+  if (token && !isPublicEndpoint(config.url, config.method)) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 

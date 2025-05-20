@@ -9,6 +9,7 @@ import { User } from "../../types/user";
 import { stringToHslColor } from "../../utils/userColors";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
+import { updateUser } from "../../redux/authSlice";
 
 export default function AccountSettings() {
   const username = useSelector((state: RootState) => state.auth.user?.username);
@@ -48,6 +49,7 @@ export default function AccountSettings() {
     try {
       const data = await saveUserPicture(formData);
       setUser(data);
+      dispatch(updateUser({ imageUrl: data.imageUrl }));
       dispatch(showSnackbar({ message: "Profile picture updated.", severity: "success" }));
     } catch (err) {
       dispatch(showSnackbar({ message: "Image upload failed.", severity: "error" }));

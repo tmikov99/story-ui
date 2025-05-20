@@ -38,6 +38,12 @@ const authSlice = createSlice({
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('user');
     },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        sessionStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
     setRedirectAfterLogin: (state, action: PayloadAction<string>) => {
       state.redirectAfterLogin = action.payload;
     },
@@ -47,5 +53,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout, setRedirectAfterLogin, clearRedirectAfterLogin } = authSlice.actions;
+export const { loginSuccess, logout, updateUser, setRedirectAfterLogin, clearRedirectAfterLogin } = authSlice.actions;
 export default authSlice.reducer;
