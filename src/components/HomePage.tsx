@@ -39,7 +39,7 @@ export default function HomePage() {
                 ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
               })}
             >
-                <Typography variant='h1'>Story Project</Typography>
+                <Typography variant='h1'>ForkLore</Typography>
                 <Button 
                   sx={{ marginTop: 3 }} 
                   variant='contained' 
