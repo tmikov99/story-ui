@@ -234,7 +234,7 @@ export default function AppHeader() {
             sx={{ display: { xs: 'none', sm: 'block' }, cursor: "pointer", width: 200 }}
             onClick={() => navigate('/')}
           >
-            Story
+            ForkLore
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Search>

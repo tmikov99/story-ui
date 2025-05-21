@@ -1,6 +1,7 @@
-# 📚 Choose Your Own Adventure Platform
+# 🪄 ForkLore — Branch Your Own Adventure
 
-A web-based platform for creating, publishing, and exploring interactive "choose your own adventure"-style stories.
+A web-based platform for creating, publishing, and exploring interactive **"choose your own adventure"** style stories.  
+Build branching narratives, share them with others, and dive into user-created adventures.
 
 ---
 
@@ -85,7 +86,7 @@ See [API README](https://github.com/tmikov99/story-app/blob/main/README.md) for 
 
 **Others**:  
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white&style=for-the-badge)
-![Firebase Badge](https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=white&style=for-the-badge)
+![Firebase](https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=white&style=for-the-badge)
 ![xyflow](https://img.shields.io/badge/xyflow-1A192B?logo=xyflow&logoColor=white&style=for-the-badge)
 
 ---
