@@ -31,7 +31,7 @@ Experience adventures as a reader.
 
 ---
 
-### 🗂️ Browse & Discover
+### 🔍 Browse & Discover
 Find published adventures from other users.
 
 ![Story List](/public/assets/screenshots/Screenshot%208.png)
@@ -49,7 +49,7 @@ Manage your created stories.
 
 ## 📸 Full Gallery
 
-> Expand this section if you'd like to showcase **all screenshots**.
+> Expand this section if you'd like to view **all screenshots**.
 
 <details>
   <summary>Click to expand all screenshots (39)</summary>

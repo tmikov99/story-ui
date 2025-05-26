@@ -1,5 +1,5 @@
 import { PageData } from '../types/page';
-import { PlaythroughData } from '../types/playthrough';
+import { Battle, PlaythroughData } from '../types/playthrough';
 import { PaginatedResponse } from '../types/story';
 import axios from './axios';
 
@@ -20,6 +20,46 @@ export const startPlaythrough = async (id: number) => {
 
 export const chooseNextPage = async (playthroughId: number, pageNumber: number): Promise<PageData> => {
     const response = await axios.patch(`/playthrough/${playthroughId}/choose/${pageNumber}`);
+    return response.data;
+}
+
+export const makePlaythroughChoice = async (playthroughId: number, choiceId: number) => {
+    const response = await axios.post(`/playthrough/${playthroughId}/choice/${choiceId}`);
+    return response.data;
+}
+
+export const performLuckCheck = async (playthroughId: number) => {
+    const response = await axios.get(`/playthrough/${playthroughId}/testLuck`);
+    return response.data;
+}
+
+export const sendStartBattle = async (playthroughId: number) => {
+    const response = await axios.post(`/playthrough/${playthroughId}/battle/start`);
+    return response.data;
+}
+
+export const doRollsInBattle = async (playthroughId: number): Promise<Battle> => {
+    const response = await axios.post(`/playthrough/${playthroughId}/battle/play`);
+    return response.data;
+}
+
+export const useLuckInBattle = async (playthroughId: number): Promise<Battle> => {
+    const response = await axios.post(`/playthrough/${playthroughId}/battle/luck`);
+    return response.data;
+}
+
+export const continueNextRound = async (playthroughId: number): Promise<Battle> => {
+    const response = await axios.post(`/playthrough/${playthroughId}/battle/continue`);
+    return response.data;
+}
+
+export const finishBattle = async (playthroughId: number): Promise<PlaythroughData> => {
+    const response = await axios.post(`/playthrough/${playthroughId}/battle/finish`);
+    return response.data;
+}
+
+export const fetchBattle = async (playthroughId: number): Promise<Battle> => {
+    const response = await axios.get(`/playthrough/${playthroughId}/battle`);
     return response.data;
 }
 
