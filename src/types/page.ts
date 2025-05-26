@@ -1,6 +1,8 @@
 export interface ChoiceData {
+    id?: number;
     text: string;
     targetPage: number;
+    requiresLuckCheck: boolean;
 }
 
 export interface PageData {
@@ -11,6 +13,7 @@ export interface PageData {
     paragraphs: string[];
     choices: ChoiceData[];
     endPage: boolean;
+    luckRequired: boolean;
 }
 
 export interface PageDataNode extends PageData {
