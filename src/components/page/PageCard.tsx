@@ -9,6 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArticleIcon from '@mui/icons-material/Article';
 import Button from '@mui/material/Button';
 import { PageData } from '../../types/page';
+import { Stack, Chip } from '@mui/material';
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -97,6 +98,25 @@ export default function PageCard({ page, onClick, onMenuOpen, selected }: PageCa
         <StyledTypographyLarge variant="body2" sx={{ color: 'text.secondary' }}>
           {page?.paragraphs && page.paragraphs[0]}
         </StyledTypographyLarge>
+        <Stack direction="row" gap={1} sx={{ px: 1, flexWrap: 'wrap' }}>
+          {page.endPage && <Chip label="🏁 End Page" color="success" size="small" />}
+          {page.enemy && (
+            <Chip
+              label={`👹 Enemy: ${page.enemy.enemyName}`}
+              color="error"
+              size="small"
+              variant="outlined"
+            />
+          )}
+          {page.luckRequired && <Chip label="🍀 Requires Luck" color="warning" size="small" />}
+          {(!!page.statModifiers?.skill || !!page.statModifiers?.stamina || !!page.statModifiers?.luck) && (
+            <Chip
+              label={`⚙️ stats: ${page.statModifiers.skill || 0} skill / ${page.statModifiers.stamina || 0} stam / ${page.statModifiers.luck || 0} luck`}
+              color="info"
+              size="small"
+            />
+          )}
+        </Stack>
       </SyledCardContent>
       <CardActions disableSpacing sx={{paddingLeft: 2, paddingRight: 2, paddingBottom: 2}}>
         <Button onClick={handleButtonClickPlaceholder} color="info" variant="text" size="small">Paragraphs: {page?.paragraphs.length}</Button>

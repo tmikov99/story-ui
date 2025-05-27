@@ -5,6 +5,18 @@ export interface ChoiceData {
     requiresLuckCheck: boolean;
 }
 
+export interface StatModifiers {
+  skill: number;
+  stamina: number;
+  luck: number;
+};
+
+export interface Enemy {
+    enemyName: string;
+    enemySkill: number;
+    enemyStamina: number;
+}
+
 export interface PageData {
     id?: number;
     storyId: number;
@@ -12,8 +24,10 @@ export interface PageData {
     pageNumber: number;
     paragraphs: string[];
     choices: ChoiceData[];
+    enemy?: Enemy;
+    statModifiers?: StatModifiers;
     endPage: boolean;
-    luckRequired: boolean;
+    luckRequired?: boolean;
 }
 
 export interface PageDataNode extends PageData {

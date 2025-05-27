@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Link, Stack, styled, Typography } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, Link, styled, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
 import { Battle, PlaythroughData } from "../../types/playthrough";
+import CountUp from "react-countup";
 
 const InactiveChoice = styled(Typography)(({ theme }) => ({
     color: theme.palette.action.disabled,
@@ -22,6 +23,8 @@ export default function Page() {
     const [playthroughData, setPlaythroughData] = useState<PlaythroughData | null>(null);
     const [battleData, setBattleData] = useState<Battle | null>(null);
     const [isBattleDialogOpen, setBattleDialogOpen] = useState(false);
+    const [isLuckDialogOpen, setLuckDialogOpen] = useState(false);
+    const [luckCheckResult, setLuckCheckResult] = useState<{ diceRoll: number; passed: boolean } | null>(null);
 
     useEffect(() => {
         try {
@@ -49,6 +52,7 @@ export default function Page() {
         try {
             const playthrough = await makePlaythroughChoice(numericPlaythroughId, choiceId)
             setPlaythroughData(playthrough);
+            setBattleData(playthrough.battle)
         } catch (error) {
             dispatch(showSnackbar({ message: "Failed to make choice.", severity: "error" }));
         }
@@ -58,7 +62,8 @@ export default function Page() {
         try {
             const luckCheckResponse = await performLuckCheck(numericPlaythroughId);
             setPlaythroughData(luckCheckResponse.playthrough);
-            console.log(luckCheckResponse);
+            setLuckCheckResult({ diceRoll: luckCheckResponse.diceRoll, passed: luckCheckResponse.passed });
+            setLuckDialogOpen(true);
         } catch (error) {
             dispatch(showSnackbar({ message: "Failed to perform luck test.", severity: "error" }));
         }
@@ -162,13 +167,13 @@ export default function Page() {
                             key={`choice-${index}`} 
                             sx={{ cursor: "pointer" }}
                           >
-                            {choice.text} {choice.requiresLuckCheck && `(Luck Test Passed)`}
+                            &gt; {choice.text} {choice.requiresLuckCheck && `(Luck Test Passed)`}
                           </Link>
                     }
                     <br></br>
                 </React.Fragment>
             ))}
-            {page?.choices.length === 0 && (
+            {!battlePending && page?.choices.length === 0 && (
                 <>
                     <br />
                     <Typography variant="h5" color="text.secondary" align="center" sx={{ mt: 4 }}>
@@ -183,67 +188,114 @@ export default function Page() {
                     </Link>
                     </Box>
                 </>
-                )}
+            )}
         </Paper>
         <Dialog open={isBattleDialogOpen} onClose={() => setBattleDialogOpen(false)} maxWidth="sm" fullWidth>
-            <DialogTitle>Battle Against {battleData?.enemyName}</DialogTitle>
+            <DialogTitle sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+                ⚔️ Battle Against {battleData?.enemyName} 🛡️
+            </DialogTitle>
             <DialogContent dividers>
                 {battleData ? (
-                    <Box>
-                        <Typography>Player - Skill: {battleData.playerSkill} / Stamina: {battleData.playerStamina} / Luck: {battleData.playerLuck}</Typography>
-                        <Typography>Player Roll: {battleData.lastPlayerRoll}</Typography>
-                        <br></br>
-                        <Typography>{battleData.enemyName} - Skill: {battleData.enemySkill} / Stamina: {battleData.enemyStamina}</Typography>
-                        <Typography>Enemy Roll: {battleData.lastEnemyRoll}</Typography>
-                        <br></br>
-                        <Typography variant="body2">{battleData.battleLog}</Typography>
-                        <Box sx={{mt: 2}}>
-                            {battleData.completed 
-                                ?   <Button
-                                        variant="contained" 
-                                        size="large" 
-                                        sx={{ display: "block", margin: "auto", width: 200}}
-                                        onClick={handleFinishBattle}
-                                    >
-                                        Finish Battle
-                                    </Button>
-                                : battleData.roundFinalized 
-                                    ? <Button
-                                        variant="contained" 
-                                        size="large" 
-                                        sx={{ display: "block", margin: "auto", width: 200}}
-                                        onClick={handleRolls}
-                                    >
-                                        Roll
-                                    </Button>
-                                    : <Box sx={{textAlign: "center"}}>
-                                        {battleData.pendingDamageTarget !== "NONE" && 
-                                            <Button 
-                                                variant="contained" 
-                                                sx={{width: 200, margin: 1}}
-                                                onClick={handleUseLuckInBattle}
-                                            >
-                                                Use Luck
-                                            </Button>
-                                        }
-                                        <Button 
-                                            variant="contained" 
-                                            sx={{width: 200, margin: 1}}
-                                            onClick={handleContinueBattle}
+                <Box>
+                    {/* Player Section */}
+                    <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" gutterBottom>🧍‍♂️ You</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        ❤️ Stamina:{' '}
+                        <CountUp end={battleData.playerStamina} duration={0.8} separator="," preserveValue={true}/>
+                    </Typography>
+                    <Typography variant="h6" color="primary" sx={{ mt: 0.5 }}>
+                        🎲 Roll:{' '}
+                        <CountUp end={battleData.lastPlayerRoll} duration={0.5} preserveValue={true}/>
+                        <Typography variant="h6" color="text.secondary" display="inline"> + {battleData.playerSkill}</Typography>
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>💪 Skill: {battleData.playerSkill}</Typography>
+                    <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>🍀 Luck: {battleData.playerLuck}</Typography>
+                    </Box>
+
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }} />
+
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="h6" gutterBottom>👹 {battleData.enemyName}</Typography>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            ❤️ Stamina:{' '} 
+                            <CountUp end={battleData.enemyStamina} duration={0.8} separator="," preserveValue={true}/>
+                        </Typography>
+                        <Typography variant="h6" color="primary" sx={{ mt: 0.5 }}>
+                            🎲 Roll:{' '}
+                            <CountUp end={battleData.lastEnemyRoll} duration={0.5} preserveValue={true}/>
+                            <Typography variant="h6" color="text.secondary" display="inline"> + {battleData.enemySkill}</Typography>
+                        </Typography>
+                        <Typography variant="body2" color="text.disabled" sx={{ mt: 0.5 }}>💪 Skill: {battleData.enemySkill}</Typography>
+                    </Box>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }} />
+                        <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                            📝 {battleData.battleLog}
+                        </Typography>
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
+                            {battleData.completed ? (
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    size="large"
+                                    sx={{ width: 200, m: 1 }}
+                                    onClick={handleFinishBattle}
+                                >
+                                    ✅ Finish Battle
+                                </Button>
+                            ) : battleData.roundFinalized ? (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ width: 200, m: 1 }}
+                                    onClick={handleRolls}
+                                >
+                                    🎲 Roll
+                                </Button>
+                            ) : (
+                                <>
+                                    {battleData.pendingDamageTarget !== "NONE" && (
+                                        <Button
+                                            variant="contained"
+                                            color="warning"
+                                            sx={{ width: 200, m: 1 }}
+                                            onClick={handleUseLuckInBattle}
                                         >
-                                            Continue
+                                            🍀 Use Luck
                                         </Button>
-                                    </Box>
-                            }
+                                    )}
+                                    <Button
+                                        variant="contained"
+                                        sx={{ width: 200, m: 1 }}
+                                        onClick={handleContinueBattle}
+                                    >
+                                        🔁 Continue
+                                    </Button>
+                                </>
+                            )}
                         </Box>
                     </Box>
                 ) : (
-                    <Typography>Loading battle data...</Typography>
+                <Typography textAlign="center">⏳ Loading battle data...</Typography>
                 )}
             </DialogContent>
-            {/* <DialogActions>
-                <Button variant="outlined" onClick={() => setBattleDialogOpen(false)}>Close</Button>
-            </DialogActions> */}
+        </Dialog>
+        <Dialog open={isLuckDialogOpen} onClose={() => {setLuckDialogOpen(false); setLuckCheckResult(null);}} maxWidth="xs" fullWidth>
+            <DialogContent dividers>
+                {luckCheckResult && (
+                    <Box textAlign="center">
+                        <Typography variant="h6">You rolled a {luckCheckResult.diceRoll}!</Typography>
+                        <Typography variant="h5" color={luckCheckResult.passed ? "success.main" : "error.main"}>
+                            {luckCheckResult.passed ? "You passed the Luck Check! 🍀" : "You failed the Luck Check. 😞"}
+                        </Typography>
+                        <Box mt={2}>
+                            <Button variant="contained" onClick={() => setLuckDialogOpen(false)}>
+                                Continue
+                            </Button>
+                        </Box>
+                    </Box>
+                )}
+            </DialogContent>
         </Dialog>
       </Box>
     )

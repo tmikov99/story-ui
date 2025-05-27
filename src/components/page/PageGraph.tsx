@@ -16,8 +16,8 @@ import {
   Background,
 } from "@xyflow/react";
 import '@xyflow/react/dist/style.css';
-import { ChoiceData, PageData, PageDataNode } from "../../types/page";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Menu, MenuItem, Stack, TextField } from "@mui/material";
+import { ChoiceData, Enemy, PageData, PageDataNode, StatModifiers } from "../../types/page";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { updateStartPageNumber } from "../../api/story";
 import { createPage, deletePage, updatePage } from "../../api/page";
 import { nodeTypes } from "../../utils/reactFlowUtil";
@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
 import { useConfirmDialog } from "../../hooks/ConfirmDialogProvider";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface PageGraphProps {
   pages: PageDataNode[];
@@ -71,11 +72,16 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   const [edgeState, setEdges, onEdgesChange] = useEdgesState(edges);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [choiceText, setChoiceText] = useState("");
+  const [requiresLuckCheck, setRequiresLuckCheck] = useState(false);
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
   const [isAddPageDialogOpen, setIsAddPageDialogOpen] = useState(false);
   const [newPageTitle, setNewPageTitle] = useState("");
   const [newPageParagraphs, setNewPageParagraphs] = useState(['']);
   const [newPageChoices, setNewPageChoices] = useState<ChoiceData[]>([]);
+  const [newEnemy, setNewEnemy] = useState<Enemy | undefined>(undefined);
+  const [newStatModifiers, setNewStatModifiers] = useState<StatModifiers | undefined>(undefined);
+  const [showEnemy, setShowEnemy] = useState(false);
+  const [showModifiers, setShowModifiers] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [menuTargetPage, setMenuTargetPage] = useState<PageData | null>(null);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
@@ -181,6 +187,8 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
     setNewPageTitle("");
     setNewPageParagraphs([""]);
     setNewPageChoices([]);
+    setNewEnemy(undefined);
+    setNewStatModifiers(undefined);
     setIsAddPageDialogOpen(true);
   };
 
@@ -193,6 +201,8 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
         title: newPageTitle || `Untitled Page`,
         paragraphs: newPageParagraphs,
         choices: newPageChoices,
+        enemy: newEnemy,
+        statModifiers: newStatModifiers,
         positionX: 100 + pageNumber * 100,
         positionY: 100,
         endPage: false,
@@ -216,6 +226,10 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
     
         setIsAddPageDialogOpen(false);
         setNewPageTitle("");
+        setNewPageParagraphs([""]);
+        setNewPageChoices([]);
+        setNewEnemy(undefined);
+        setNewStatModifiers(undefined);
         dispatch(showSnackbar({ message: "Page created.", severity: "success" }));
       } catch (err) {
         dispatch(showSnackbar({ message: "Failed to create page.", severity: "error" }));
@@ -230,7 +244,9 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
             ...pageData,
             title: newPageTitle,
             paragraphs: newPageParagraphs,
-            choices: newPageChoices
+            choices: newPageChoices,
+            enemy: newEnemy,
+            statModifiers: newStatModifiers,
           };
   
           updateQueueRef.current.set(page.id!, page);
@@ -252,6 +268,10 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   
       setIsAddPageDialogOpen(false);
       setNewPageTitle("");
+      setNewPageParagraphs([""]);
+      setNewPageChoices([]);
+      setNewEnemy(undefined);
+      setNewStatModifiers(undefined);
       setEditingPageNumber(null);
       setDialogMode("add");
     }
@@ -260,6 +280,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
   const handleConnect: OnConnect = useCallback((params: Connection) => {
     setPendingConnection(params);
     setChoiceText("");
+    setRequiresLuckCheck(false);
     setIsModalOpen(true);
   }, []);
 
@@ -271,6 +292,15 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
       setNewPageParagraphs([...menuTargetPage.paragraphs]);
       setNewPageChoices([...menuTargetPage.choices]);
       setIsAddPageDialogOpen(true);
+      setNewEnemy(menuTargetPage.enemy);
+      setNewStatModifiers(menuTargetPage.statModifiers);
+      setShowEnemy(!!menuTargetPage.enemy?.enemyName);
+      setShowModifiers(
+        !!menuTargetPage.statModifiers &&
+        (menuTargetPage.statModifiers.skill !== 0 ||
+        menuTargetPage.statModifiers.stamina !== 0 ||
+        menuTargetPage.statModifiers.luck !== 0)
+      );
     }
     handleMenuClose();
   }
@@ -331,6 +361,7 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
             {
               targetPage: targetId,
               text: choiceText || "Untitled Choice",
+              requiresLuckCheck: requiresLuckCheck,
             },
           ],
         };
@@ -433,14 +464,24 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
             value={choiceText}
             onChange={(e) => setChoiceText(e.target.value)}
           />
+          <FormControlLabel
+            sx={{float: "right"}}
+            control={
+              <Checkbox
+                checked={requiresLuckCheck}
+                onChange={(e) => setRequiresLuckCheck(e.target.checked)}
+              />
+            }
+            label="Test luck"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleConfirmChoice}>Add Choice</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={isAddPageDialogOpen} onClose={() => setIsAddPageDialogOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>New Page</DialogTitle>
+      <Dialog open={isAddPageDialogOpen} onClose={() => setIsAddPageDialogOpen(false)} fullWidth maxWidth="md">
+        <DialogTitle>{dialogMode === "add" ? "New Page" : "Edit Page"}</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -448,31 +489,47 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
             placeholder="Page Title"
             value={newPageTitle}
             onChange={(e) => setNewPageTitle(e.target.value)}
+            sx={{ mb: 1 }}
           />
+          <Typography variant="h6" sx={{mt: 2, mb: 1}}>Paragrahs</Typography>
           {newPageParagraphs.map((p, idx) => (
-            <TextField
-              key={idx}
-              fullWidth
-              multiline
-              placeholder={`Paragraph ${idx + 1}`}
-              value={p}
-              onChange={(e) => {
-                const updated = [...newPageParagraphs];
-                updated[idx] = e.target.value;
-                setNewPageParagraphs(updated);
-              }}
-              sx={{ mb: 1 }}
-            />
+            <Stack key={idx} direction="row" spacing={1} alignItems="flex-start" sx={{ mb: 1 }}>
+              <TextField
+                key={idx}
+                fullWidth
+                multiline
+                minRows={4}
+                placeholder={`Paragraph ${idx + 1}`}
+                value={p}
+                onChange={(e) => {
+                  const updated = [...newPageParagraphs];
+                  updated[idx] = e.target.value;
+                  setNewPageParagraphs(updated);
+                }}
+              />
+              <IconButton size="small"
+                aria-label="delete paragraph"
+                title="delete paragraph"
+                onClick={() => {
+                  const updated = [...newPageParagraphs];
+                  updated.splice(idx, 1);
+                  setNewPageParagraphs(updated);
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
           ))}
-          <Button onClick={() => setNewPageParagraphs([...newPageParagraphs, ''])}>
+          <Button variant="outlined" onClick={() => setNewPageParagraphs([...newPageParagraphs, ''])}>
             Add Paragraph
           </Button>
-
+          <Typography variant="h6" sx={{mt: 2, mb: 1}}>Choices</Typography>
           {newPageChoices.map((choice, idx) => (
-            <Stack direction="row" spacing={1} alignItems="center" key={idx} sx={{ mt: 1 }}>
+            <Stack direction="row" spacing={1} alignItems="flex-start" key={idx} sx={{ mb: 1 }}>
               <TextField
                 fullWidth
                 placeholder="Choice Text"
+                multiline
                 value={choice.text}
                 onChange={(e) => {
                   const updated = [...newPageChoices];
@@ -481,20 +538,113 @@ function PageGraph({ pages, storyId, rootPageNumber, setRootPageNumber }: PageGr
                 }}
               />
               <TextField
-                placeholder="Target Page"
+                label="Target Page"
                 value={choice.targetPage}
+                type="number"
                 onChange={(e) => {
                   const updated = [...newPageChoices];
-                  updated[idx].targetPage = Number(e.target.value);
+                  updated[idx].targetPage = e.target.value;
                   setNewPageChoices(updated);
                 }}
-                sx={{ width: 100 }}
+                sx={{ width: 150 }}
               />
+              <FormControlLabel
+                sx={{width: 200}}
+                control={
+                  <Checkbox
+                    checked={choice.requiresLuckCheck || false}
+                    onChange={(e) => {
+                      const updated = [...newPageChoices];
+                      updated[idx].requiresLuckCheck = e.target.checked;
+                      setNewPageChoices(updated);
+                    }}
+                  />
+                }
+                label="Test luck"
+              />
+              <IconButton size="small"
+                aria-label="delete choice"
+                title="delete choice"
+                onClick={() => {
+                  const updated = [...newPageChoices];
+                  updated.splice(idx, 1);
+                  setNewPageChoices(updated);
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
             </Stack>
           ))}
-          <Button onClick={() => setNewPageChoices([...newPageChoices, { text: '', targetPage: 0 }])}>
+          <Button variant="outlined" onClick={() => setNewPageChoices([...newPageChoices, { text: '', targetPage: 0, requiresLuckCheck: false }])}>
             Add Choice
           </Button>
+          <Typography variant="h6" sx={{mt: 2, mb: 1}}>Enemy</Typography>
+          {showEnemy && (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                label="Enemy Name"
+                fullWidth
+                value={newEnemy?.enemyName}
+                onChange={(e) => setNewEnemy({ ...newEnemy, enemyName: e.target.value })}
+              />
+              <TextField
+                label="Enemy Skill"
+                value={newEnemy?.enemySkill}
+                type="number"
+                onChange={(e) => setNewEnemy({ ...newEnemy, enemySkill: e.target.value })}
+                sx={{width: 200 }}
+              />
+              <TextField
+                label="Enemy Stamina"
+                value={newEnemy?.enemyStamina}
+                type="number"
+                onChange={(e) => setNewEnemy({ ...newEnemy, enemyStamina: e.target.value })}
+                sx={{width: 200 }}
+              />
+              <IconButton 
+                onClick={() => { setShowEnemy(false); setNewEnemy(undefined); }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+          )}
+          {!showEnemy && (
+            <Button variant="outlined" onClick={() => setShowEnemy(true)}>Add Enemy</Button>
+          )}       
+          <Typography variant="h6" sx={{mt: 2, mb: 1}}>Stat Modifiers</Typography>
+          {showModifiers && (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <TextField
+                label="Skill Modifier"
+                fullWidth
+                type="number"
+                value={newStatModifiers?.skill}
+                onChange={(e) => setNewStatModifiers({ ...newStatModifiers, skill: e.target.value })}
+              />
+              <TextField
+                label="Stamina Modifier"
+                fullWidth
+                type="number"
+                value={newStatModifiers?.stamina}
+                onChange={(e) => setNewStatModifiers({ ...newStatModifiers, stamina: e.target.value })}
+              />
+              <TextField
+                label="Luck Modifier"
+                fullWidth
+                type="number"
+                value={newStatModifiers?.luck}
+                onChange={(e) => setNewStatModifiers({ ...newStatModifiers, luck: e.target.value })}
+              />
+              <IconButton 
+                onClick={() => { setShowModifiers(false); setNewStatModifiers({ skill: 0, stamina: 0, luck: 0 }); }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+          )}
+          {!showModifiers && (
+            <Button variant="outlined" onClick={() => setShowModifiers(true)}>Add Stat Modifiers</Button>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsAddPageDialogOpen(false)}>Cancel</Button>
