@@ -11,3 +11,10 @@ export const formatStoryReads = (reads: number | undefined): string => {
 
   return `${reads} ${reads === 1 ? 'read' : 'reads'}`;
 };
+
+export const getStatFormatting = (stat: number | undefined):string => {
+  if (!stat) return "+0";
+
+  const statSign = Math.sign(stat) >= 0 ? "+" : "-";
+  return `${statSign}${Math.abs(stat)}`;
+}

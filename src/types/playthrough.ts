@@ -1,4 +1,4 @@
-import { PageData } from "./page";
+import { PageData, StoryItem } from "./page";
 
 export interface Stats {
     skill: number;
@@ -39,6 +39,7 @@ export interface PlaythroughData {
     active?: boolean;
     page: PageData;
     stats: Stats;
+    inventory: StoryItem[];
     luckRequired: boolean;
     luckPassed: boolean;
     battlePending: boolean;
