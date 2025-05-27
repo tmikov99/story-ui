@@ -10,6 +10,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import Button from '@mui/material/Button';
 import { PageData } from '../../types/page';
 import { Stack, Chip } from '@mui/material';
+import { getStatFormatting } from '../../utils/formatStory';
 
 const SyledCard = styled(Card)(({ theme }) => ({
   display: 'flex',
@@ -111,9 +112,25 @@ export default function PageCard({ page, onClick, onMenuOpen, selected }: PageCa
           {page.luckRequired && <Chip label="🍀 Requires Luck" color="warning" size="small" />}
           {(!!page.statModifiers?.skill || !!page.statModifiers?.stamina || !!page.statModifiers?.luck) && (
             <Chip
-              label={`⚙️ stats: ${page.statModifiers.skill || 0} skill / ${page.statModifiers.stamina || 0} stam / ${page.statModifiers.luck || 0} luck`}
+              label={`⚙️ Stats: ${getStatFormatting(page.statModifiers.skill)} SK / ${getStatFormatting(page.statModifiers.stamina)} ST / ${getStatFormatting(page.statModifiers.luck)} LK`}
               color="info"
               size="small"
+            />
+          )}
+          {page.itemsGranted && page.itemsGranted?.length > 0 && (
+            <Chip
+              label={`🎁 Gives: ${page.itemsGranted.map((item) => item.icon || "📦").join(" ")}`}
+              color="success"
+              size="small"
+              variant="outlined"
+            />
+          )}
+          {page.itemsRemoved && page.itemsRemoved?.length > 0 && (
+            <Chip
+              label={`🗑️ Removes: ${page.itemsRemoved.map((item) => item.icon || "📦").join(" ")}`}
+              color="warning"
+              size="small"
+              variant="outlined"
             />
           )}
         </Stack>

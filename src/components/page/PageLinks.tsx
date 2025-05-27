@@ -11,6 +11,7 @@ export default function PageLinks() {
   const { storyId } = useParams();
   const [pages, setPages] = useState(null);
   const [rootPageNumber, setRootPageNumber] = useState<number>(0);
+  const [storyTitle, setStoryTitle] = useState<string>("");
   const dispatch = useDispatch();
 
   const fetchStoryPageData = async () => {
@@ -21,6 +22,7 @@ export default function PageLinks() {
       ]);
       setPages(fetchedPages);
       setRootPageNumber(story.startPageNumber);
+      setStoryTitle(story.title);
     } catch (err) {
       dispatch(showSnackbar({ message: "Failed to fetch story or pages.", severity: "error" }));
     }
@@ -37,7 +39,8 @@ export default function PageLinks() {
       {pages !== null && (
         <PageGraph 
           pages={pages} 
-          storyId={Number(storyId)} 
+          storyId={Number(storyId)}
+          storyTitle={storyTitle}
           rootPageNumber={rootPageNumber}
           setRootPageNumber={setRootPageNumber} 
         />

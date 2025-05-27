@@ -1,4 +1,5 @@
-import { Button, Dialog, DialogContent, DialogTitle, Link, styled, Typography } from "@mui/material";
+import { Avatar, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Link, Stack, styled, Typography } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
@@ -9,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { showSnackbar } from "../../redux/snackbarSlice";
 import { Battle, PlaythroughData } from "../../types/playthrough";
 import CountUp from "react-countup";
+import { getStatFormatting } from "../../utils/formatStory";
+import { gray } from "../../theme/themePrimitives";
 
 const InactiveChoice = styled(Typography)(({ theme }) => ({
     color: theme.palette.action.disabled,
@@ -25,6 +28,7 @@ export default function Page() {
     const [isBattleDialogOpen, setBattleDialogOpen] = useState(false);
     const [isLuckDialogOpen, setLuckDialogOpen] = useState(false);
     const [luckCheckResult, setLuckCheckResult] = useState<{ diceRoll: number; passed: boolean } | null>(null);
+    const [isInventoryOpen, setIsInventoryOpen] = useState(false);
 
     useEffect(() => {
         try {
@@ -115,14 +119,16 @@ export default function Page() {
 
     return (
       <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-        <Button 
-            variant="outlined"
-            onClick={() => { page && navigate(`/story/${page.storyId}`)}}
-            sx={{ mb: 2 }}
-        >
-            Back to Story
-        </Button>
-        <Typography>Skill: {stats?.skill} / Stamina: {stats?.stamina} / Luck: {stats?.luck}</Typography>
+        <Stack direction="row" sx={{justifyContent: "space-between", mb: 2}}>
+            <Button 
+                variant="outlined"
+                onClick={() => { page && navigate(`/story/${page.storyId}`)}}
+            >
+                Back to Story
+            </Button>
+            <Button variant="contained" onClick={() => setIsInventoryOpen(true)}>Inventory ({playthroughData.inventory.length})</Button>
+        </Stack>
+        <Typography sx={{mb: 1}}>🗡️ Skill: {stats?.skill} / ❤️ Stamina: {stats?.stamina} / 🍀 Luck: {stats?.luck}</Typography>
         <Paper 
             elevation={3}
             sx={{
@@ -197,7 +203,6 @@ export default function Page() {
             <DialogContent dividers>
                 {battleData ? (
                 <Box>
-                    {/* Player Section */}
                     <Box sx={{ mb: 3 }}>
                     <Typography variant="h6" gutterBottom>🧍‍♂️ You</Typography>
                     <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
@@ -209,7 +214,7 @@ export default function Page() {
                         <CountUp end={battleData.lastPlayerRoll} duration={0.5} preserveValue={true}/>
                         <Typography variant="h6" color="text.secondary" display="inline"> + {battleData.playerSkill}</Typography>
                     </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>💪 Skill: {battleData.playerSkill}</Typography>
+                    <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>🗡️ Skill: {battleData.playerSkill}</Typography>
                     <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>🍀 Luck: {battleData.playerLuck}</Typography>
                     </Box>
 
@@ -226,7 +231,7 @@ export default function Page() {
                             <CountUp end={battleData.lastEnemyRoll} duration={0.5} preserveValue={true}/>
                             <Typography variant="h6" color="text.secondary" display="inline"> + {battleData.enemySkill}</Typography>
                         </Typography>
-                        <Typography variant="body2" color="text.disabled" sx={{ mt: 0.5 }}>💪 Skill: {battleData.enemySkill}</Typography>
+                        <Typography variant="body2" color="text.disabled" sx={{ mt: 0.5 }}>🗡️ Skill: {battleData.enemySkill}</Typography>
                     </Box>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }} />
                         <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
@@ -296,6 +301,48 @@ export default function Page() {
                     </Box>
                 )}
             </DialogContent>
+        </Dialog>
+        <Dialog
+            open={isInventoryOpen}
+            onClose={() => setIsInventoryOpen(false)}
+            fullWidth
+            maxWidth="md"
+        >
+            <DialogTitle>Inventory ({playthroughData.inventory.length})</DialogTitle>
+            <DialogContent dividers>
+                <Grid container spacing={2} sx={{ mt: 1 }}>
+                    {playthroughData.inventory.map((item) =>
+                        <Grid size={{xs:12, sm:6, md:4}} key={item.id}>
+                            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+                                    <Avatar 
+                                        variant="rounded" 
+                                        sx={(theme) => ({bgcolor: theme.palette.mode === 'light' ? gray[100] : gray[600]})}
+                                    >
+                                        {item.icon}
+                                    </Avatar>
+                                    <Typography variant="h6">{item.name}</Typography>
+                                </Stack>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                    {item.description}
+                                </Typography>
+                                {item.statModifiers && 
+                                    <Typography variant="caption">
+                                    {!!item.statModifiers.skill && <span><strong>Skill:</strong> {getStatFormatting(item.statModifiers.skill)} &nbsp;</span>}
+                                    {!!item.statModifiers.skill && <span><strong>Stam:</strong> {getStatFormatting(item.statModifiers.stamina)} &nbsp;</span>}
+                                    {!!item.statModifiers.skill && <span><strong>Luck:</strong> {getStatFormatting(item.statModifiers.luck)}</span>}
+                                    </Typography>
+                                }
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    )}
+                </Grid>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setIsInventoryOpen(false)}>Close</Button>
+            </DialogActions>
         </Dialog>
       </Box>
     )

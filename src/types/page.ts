@@ -3,6 +3,7 @@ export interface ChoiceData {
     text: string;
     targetPage: number;
     requiresLuckCheck: boolean;
+    requiredItems?: StoryItem[];
 }
 
 export interface StatModifiers {
@@ -10,6 +11,14 @@ export interface StatModifiers {
   stamina: number;
   luck: number;
 };
+
+export interface StoryItem {
+    id: number | null;
+    name: string;
+    description: string;
+    icon: string;
+    statModifiers?: StatModifiers;
+}
 
 export interface Enemy {
     enemyName: string;
@@ -26,6 +35,8 @@ export interface PageData {
     choices: ChoiceData[];
     enemy?: Enemy;
     statModifiers?: StatModifiers;
+    itemsGranted?: StoryItem[];
+    itemsRemoved?: StoryItem[];
     endPage: boolean;
     luckRequired?: boolean;
 }
