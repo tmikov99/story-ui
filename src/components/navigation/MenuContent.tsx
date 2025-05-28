@@ -43,7 +43,7 @@ const mainListItems3 = [
 const secondaryListItems = [
   { text: 'Landing page', icon: PhotoRoundedIcon, path: '/landing' },
   { text: 'Settings', icon: SettingsRoundedIcon, path: '/account' },
-  { text: 'Notes', icon: AssignmentRoundedIcon, path: '/notes' },
+  { text: 'Rules', icon: AssignmentRoundedIcon, path: '/rules' },
 ];
 
 const mapListItems = (listItems: OptionsListItem[], pathname: string) => {

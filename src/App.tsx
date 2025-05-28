@@ -39,6 +39,7 @@ import { useEffect } from 'react';
 import { refreshToken } from './api/auth';
 import { useDispatch } from 'react-redux';
 import { loginSuccess, logout } from './redux/authSlice';
+import RulesPage from './components/RulesPage';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -130,6 +131,7 @@ function App() {
             {isAuthenticated && <Route path="/edit/:storyId" element={<StoryEdit />} />}
             {isAuthenticated && <Route path="/pageLinks/:storyId" element={<PageLinks />}/>}
             <Route path="/account" element={ isAuthenticated ? <AccountSettings /> : <UserEmptyState />} />
+            <Route path="/rules" element={<RulesPage />} />
             <Route path="/user/:username" element={<ProfilePage />} />
             <Route 
               path="*" 
