@@ -12,11 +12,18 @@ import { Battle, PlaythroughData } from "../../types/playthrough";
 import CountUp from "react-countup";
 import { getStatFormatting } from "../../utils/formatStory";
 import { gray } from "../../theme/themePrimitives";
+import { ChoiceData, StoryItem } from "../../types/page";
 
 const InactiveChoice = styled(Typography)(({ theme }) => ({
     color: theme.palette.action.disabled,
     display: 'inline',
 }));
+
+const missingChoiceItems = (choice: ChoiceData, inventory: StoryItem[]) => {
+    return choice.requiredItems 
+        ? choice.requiredItems.filter(reqItem => !inventory.some(invItem => invItem.id === reqItem.id )).map(i => i.name) 
+        : [];
+}
 
 export default function Page() {
     const { playthroughId } = useParams();
@@ -162,23 +169,28 @@ export default function Page() {
                     <Button variant="contained" size="large" onClick={handleLuckCheck}>Test Your Luck</Button>
                 </Box>
             )}
-            {!battlePending && !luckPending && page?.choices.map((choice, index) => (
-                <React.Fragment key={`choice-${index}`}>
-                    <br></br>
-                    {choice.requiresLuckCheck && !playthroughData.luckPassed 
-                        ? <InactiveChoice>{choice.text} (Luck Test Failed)</InactiveChoice>
-                        : <Link 
-                            onClick={() => 
-                            handleChoice(choice.id)} 
-                            key={`choice-${index}`} 
-                            sx={{ cursor: "pointer" }}
-                          >
-                            &gt; {choice.text} {choice.requiresLuckCheck && `(Luck Test Passed)`}
-                          </Link>
-                    }
-                    <br></br>
-                </React.Fragment>
-            ))}
+            {!battlePending && !luckPending && page?.choices.map((choice, index) => {
+                const missingItems = missingChoiceItems(choice, playthroughData.inventory);
+                return (
+                    <React.Fragment key={`choice-${index}`}>
+                        <br></br>
+                        {missingItems.length !== 0
+                            ? <InactiveChoice>{choice.text} (Missing Items: {missingItems.join(", ")})</InactiveChoice>
+                            : choice.requiresLuckCheck && !playthroughData.luckPassed 
+                            ? <InactiveChoice>{choice.text} (Luck Test Failed)</InactiveChoice>
+                            : <Link 
+                                onClick={() => 
+                                handleChoice(choice.id)} 
+                                key={`choice-${index}`} 
+                                sx={{ cursor: "pointer" }}
+                            >
+                                &gt; {choice.text} {choice.requiresLuckCheck && `(Luck Test Passed)`}
+                            </Link>
+                        }
+                        <br></br>
+                    </React.Fragment>
+                )
+            })}
             {!battlePending && page?.choices.length === 0 && (
                 <>
                     <br />
