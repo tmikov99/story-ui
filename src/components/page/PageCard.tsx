@@ -100,7 +100,7 @@ export default function PageCard({ page, onClick, onMenuOpen, selected }: PageCa
           {page?.paragraphs && page.paragraphs[0]}
         </StyledTypographyLarge>
         <Stack direction="row" gap={1} sx={{ px: 1, flexWrap: 'wrap' }}>
-          {page.endPage && <Chip label="🏁 End Page" color="success" size="small" />}
+          {page.choices.length === 0 && <Chip label="🏁 End Page" color="success" size="small" />}
           {page.enemy && (
             <Chip
               label={`👹 Enemy: ${page.enemy.enemyName}`}

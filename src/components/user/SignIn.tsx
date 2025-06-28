@@ -153,14 +153,14 @@ export default function SignIn() {
           }}
         >
           <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="email">Username</FormLabel>
             <TextField
               error={emailError}
               helperText={emailErrorMessage}
               id="email"
-              type="email"
+              // type="email"
               name="email"
-              placeholder="your@email.com"
+              placeholder="Username"
               autoComplete="email"
               autoFocus
               required
