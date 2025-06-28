@@ -229,6 +229,23 @@ function PageGraph({ pages, storyId, storyTitle, rootPageNumber, setRootPageNumb
   const handleConfirmAddPage = async () => {
     if (dialogMode === "add") {
       const pageNumber = getFirstAvailablePageNumber(nodes.map(node => node.data.page as PageDataNode));
+      let positionX = -Infinity;
+      let positionY = -Infinity;
+
+      nodes.forEach(node => {
+        if (node.position.x > positionX) {
+          positionX = node.position.x;
+          positionY = node.position.y;
+        }
+      });
+      
+      if (nodes.length > 0) {
+        positionX += 400;
+      } else {
+        positionX = 100 + pageNumber * 100;
+        positionY = 100;
+      }
+
       const newPage: PageDataNode = {
         storyId,
         pageNumber,
@@ -239,8 +256,8 @@ function PageGraph({ pages, storyId, storyTitle, rootPageNumber, setRootPageNumb
         statModifiers: newStatModifiers,
         itemsGranted: newPageItemsGranted,
         itemsRemoved: newPageItemsRemoved,
-        positionX: 100 + pageNumber * 100,
-        positionY: 100,
+        positionX,
+        positionY,
         endPage: false,
       };
   
@@ -250,7 +267,7 @@ function PageGraph({ pages, storyId, storyTitle, rootPageNumber, setRootPageNumb
           id: responsePage.pageNumber.toString(),
           type: "pageNode",
           position: { x: responsePage.positionX, y: responsePage.positionY },
-          data: { page: responsePage, onMenuOpen: handleMenuOpen },
+          data: { page: responsePage, rootPageNumber: rootPageNumber, onMenuOpen: handleMenuOpen },
         };
   
         setNodes((prev) => {
